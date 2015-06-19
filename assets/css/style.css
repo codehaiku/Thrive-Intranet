@@ -1,0 +1,81 @@
+.thrive-clearfix {
+	display: block;
+	width: 100%;
+	clear: both;
+}
+.thrive-tabs {
+	display: inline-block;
+	margin-bottom: -5px;
+	width: 100%;
+}
+.thrive-tabs .thrive-tabs-tabs,
+.thrive-tabs .thrive-tabs-content {
+	float: left;
+	width: 20%;
+}
+
+.thrive-tabs .thrive-tabs-tabs ul{
+	margin-top: 0;
+	padding-top: 0;
+}
+
+	.thrive-tabs .thrive-tabs-tabs li {
+		margin-bottom: -1px;
+	}
+
+		.thrive-tabs .thrive-tabs-tabs li a {
+			color: #444;
+			text-decoration: none;
+			font-weight: 700;
+			display: block;
+			padding: 10px 20px;
+			border: 1px solid #eee;
+			outline: 0;
+		}
+
+		.thrive-tabs .thrive-tabs-tabs li.ui-state-active a{
+			background: #A00;
+			color: #fff;
+			border :1px solid #740000;
+		}
+
+		#thrive-tasks.thrive-tabs li.ui-state-active a {
+			background: #0079BF;
+			color: #fff;
+			border :1px solid #026FAE;
+		}
+
+			.thrive-tabs .thrive-tabs-tabs li:focus,
+			.thrive-tabs .thrive-tabs-tabs li a:focus {
+				outline: 0;
+				box-shadow: none;
+			}
+
+.thrive-tabs .thrive-tabs-content {
+    width: 70%;
+    padding: 20px;
+    border: 1px solid #EEE;
+    margin-left: -1px;
+}
+
+
+.ui-datepicker-header {
+  background-color: #000;
+  color: #FFF;
+  padding: 10px;
+}
+.ui-datepicker-next {
+	float: right;
+}
+.ui-datepicker-header a{
+  color: #FFF;
+}
+.ui-datepicker-title {
+	font-size: 18px;
+	padding: 20px;
+	text-align: center;
+}
+#ui-datepicker-div table { background: #fff; box-shadow: 1px 1px 15px #eee;}
+#ui-datepicker-div table thead td{ color: #fff; background: #121212; padding: 5px; }
+#ui-datepicker-div table td{ background: #fff; padding: 10px; }
+#ui-datepicker-div table td a{ text-decoration: none; font-weight: bold; }

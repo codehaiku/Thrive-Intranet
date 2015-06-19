@@ -29,7 +29,32 @@
  */
 if (!defined('ABSPATH')) die();
 
-include_once plugin_dir_path(__FILE__) . 'shortcodes.php';
-include_once plugin_dir_path(__FILE__) . 'functions.php';
-include_once plugin_dir_path(__FILE__) . 'locked-down-page.php';
+require_once(plugin_dir_path(__FILE__) . 'shortcodes.php');
+require_once(plugin_dir_path(__FILE__) . 'functions.php');
+require_once(plugin_dir_path(__FILE__) . 'locked-down-page.php');
+require_once(plugin_dir_path(__FILE__) . 'includes/thrive-projects-post.php');
+/* Only load code that needs BuddyPress to run once BP is loaded and initialized. */
+function thrive_register_projects_component() {
+	require_once(plugin_dir_path(__FILE__) . '/includes/thrive-projects-component.php' );
+}
+
+
+function thrive_component_id() {
+	return 'projects';
+}
+
+function thrive_component_name() {
+	return __('Projects', 'buddypress');
+}
+
+function thrive_template_dir() {
+	return plugin_dir_path(__FILE__) . 'templates';
+}
+
+function thrive_include_dir() {
+	return plugin_dir_path(__FILE__) . 'includes';
+}
+
+add_action('bp_loaded', 'thrive_register_projects_component' );
+
 ?>

@@ -17,7 +17,6 @@
  * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
  * @since      1.0
  */
-
 if (!defined('ABSPATH')) die();
 
 // Disable login modals introduced in WordPress 3.6
