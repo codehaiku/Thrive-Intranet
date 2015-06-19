@@ -1,32 +1,38 @@
 <?php
+
+/**
+ * Register our project admin styling
+ */
 add_action('admin_head', 'thrive_admin_css');
 
 function thrive_admin_css() {
 	wp_enqueue_style('thrive_admin_style', plugin_dir_url(__FILE__) . '../assets/css/style.css');
 }
 
-add_action( 'init', 'codex_project_init' );
+add_action( 'init', 'thrive_projects_register_post_type' );
+
 /**
- * Register a project post type.
- *
- * @link http://codex.wordpress.org/Function_Reference/register_post_type
+ * Register 'Projects' component post type
+ * 
+ * @return void
  */
-function codex_project_init() {
+function thrive_projects_register_post_type() {
+
 	$labels = array(
-		'name'               => _x( 'Projects', 'post type general name', 'your-plugin-textdomain' ),
-		'singular_name'      => _x( 'Project', 'post type singular name', 'your-plugin-textdomain' ),
-		'menu_name'          => _x( 'Projects', 'admin menu', 'your-plugin-textdomain' ),
-		'name_admin_bar'     => _x( 'Project', 'add new on admin bar', 'your-plugin-textdomain' ),
-		'add_new'            => _x( 'Add New', 'project', 'your-plugin-textdomain' ),
-		'add_new_item'       => __( 'Add New Project', 'your-plugin-textdomain' ),
-		'new_item'           => __( 'New Project', 'your-plugin-textdomain' ),
-		'edit_item'          => __( 'Edit Project', 'your-plugin-textdomain' ),
-		'view_item'          => __( 'View Project', 'your-plugin-textdomain' ),
-		'all_items'          => __( 'All Projects', 'your-plugin-textdomain' ),
-		'search_items'       => __( 'Search Projects', 'your-plugin-textdomain' ),
-		'parent_item_colon'  => __( 'Parent Projects:', 'your-plugin-textdomain' ),
-		'not_found'          => __( 'No projects found.', 'your-plugin-textdomain' ),
-		'not_found_in_trash' => __( 'No projects found in Trash.', 'your-plugin-textdomain' )
+		'name'               => _x( 'Projects', 'post type general name', 'thrive' ),
+		'singular_name'      => _x( 'Project', 'post type singular name', 'thrive' ),
+		'menu_name'          => _x( 'Projects', 'admin menu', 'thrive' ),
+		'name_admin_bar'     => _x( 'Project', 'add new on admin bar', 'thrive' ),
+		'add_new'            => _x( 'Add New', 'project', 'thrive' ),
+		'add_new_item'       => __( 'Add New Project', 'thrive' ),
+		'new_item'           => __( 'New Project', 'thrive' ),
+		'edit_item'          => __( 'Edit Project', 'thrive' ),
+		'view_item'          => __( 'View Project', 'thrive' ),
+		'all_items'          => __( 'All Projects', 'thrive' ),
+		'search_items'       => __( 'Search Projects', 'thrive' ),
+		'parent_item_colon'  => __( 'Parent Projects:', 'thrive' ),
+		'not_found'          => __( 'No projects found.', 'thrive' ),
+		'not_found_in_trash' => __( 'No projects found in Trash.', 'thrive' )
 	);
 
 	$args = array(
@@ -42,58 +48,60 @@ function codex_project_init() {
 		'has_archive'        => true,
 		'hierarchical'       => false,
 		'menu_position'      => null,
-		'register_meta_box_cb'      => 'project_meta_box',
+		'register_meta_box_cb'      => 'thrive_project_meta_box',
 		'supports'           => array( 'title', 'editor', 'thumbnail' )
 	);
 
 	register_post_type( 'project', $args );
+
+	return;
 }
 
 
-add_action('add_meta_boxes_post' ,'project_meta_box');
+add_action('add_meta_boxes_post' ,'thrive_project_meta_box');
 
-function project_meta_box() {
+function thrive_project_meta_box() {
 
     wp_enqueue_script('jquery-ui-tabs');
     wp_enqueue_script('jquery-ui-datepicker');
 
-    add_meta_box(
-		'some_meta_box_name', 
-		__( 'Contributors', 'myplugin_textdomain' ), 
-		'render_meta_box_content',
+   /** add_meta_box(
+		'thrive_contributors_metabox', 
+		__('Contributors', 'thrive'), 
+		'thrive_contributors_metabox_content',
 		'project',
 		'advanced',
 		'high'
 	);
 
 	add_meta_box(
-		'shit2', 
-		__( 'Milestones', 'myplugin_textdomain' ), 
-		'render_meta_box_content1',
+		'thrive_milestones_metabox', 
+		__('Milestones', 'thrive'), 
+		'thrive_milestones_metabox_content',
 		'project',
 		'advanced',
 		'high'
-	);
+	); **/
 
 	add_meta_box(
-		'shit3', 
-		__( 'Tasks', 'myplugin_textdomain' ), 
-		'render_meta_box_content2',
+		'thrive_tasks_metabox', 
+		__( 'Tasks', 'thrive' ), 
+		'thrive_tasks_metabox_content',
 		'project',
 		'advanced',
 		'high'
 	);
 }
 
-function render_meta_box_content() {
+function thrive_contributors_metabox_content() {
 	?>
 	<div id="thrive-contributors">
-		Add contributors to this project
+		Assign a group for this project
 	</div>
 	<?php
 }
 
-function render_meta_box_content1() {
+function thrive_milestones_metabox_content() {
 	?>
 	<div id="thrive-milestones-tabs" class="thrive-tabs">
 		<div class="thrive-tabs-tabs">
@@ -147,7 +155,7 @@ function render_meta_box_content1() {
 	<?php
 }
 
-function render_meta_box_content2() {
+function thrive_tasks_metabox_content() {
 	?>
 	<div id="thrive-tasks" class="thrive-tabs">
 		<div class="thrive-tabs-tabs">
@@ -166,26 +174,26 @@ function render_meta_box_content2() {
 			<div id="thrive-add-task">
 				<div class="form-wrap">
 					<div class="thrive-form-field">
-						<input placeholder="Task Title" type="text" id="title" name="title" class="widefat"/>
+						<input placeholder="Task Title" type="text" id="thriveTaskTitle" name="title" class="widefat"/>
 						<br><span class="description"><?php _e('Enter the title of this task. Max 160 characters', 'thrive'); ?></span>
 					</div><br/>
 				
 					<div class="thrive-form-field">
-						<textarea class="widefat" rows="5" cols="100" id="description" placeholder="Description"></textarea>
+						<textarea class="widefat" rows="5" cols="100" id="thriveTaskDescription" placeholder="Description"></textarea>
 						<br><span class="description"><?php _e('In few words, explain what this task is all about', 'thrive'); ?></span>
 					</div><br/>
 
 					<div class="thrive-form-field">
 						<label for="thrive-milestone">Milestone:</label>
-						<select id="thrive-milestone" name="thrive-milestone">
-							<option>Alpha Release RC2.2</option>
-							<option>Alpha Release RC2</option>
-							<option>Alpha Release RC1</option>
+						<select id="thriveTaskMilestone" name="thrive-milestone">
+							<option value="1">Alpha Release RC2.2</option>
+							<option value="2">Alpha Release RC2</option>
+							<option value="3">Alpha Release RC1</option>
 						</select>
 					</div>
 
 					<div class="thrive-form-field">
-						<button class="button button-primary button-large" style="float:right">
+						<button id="thrive-submit-btn" class="button button-primary button-large" style="float:right">
 							<?php _e('Save Task', 'dunhakdis'); ?>
 						</button>
 						<div style="clear:both"></div>
@@ -196,8 +204,44 @@ function render_meta_box_content2() {
 	</div>
 	<script>
 	jQuery(document).ready(function($){
+		
+		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+
 		$('#thrive-tasks').tabs({
 			active: 0
+		});
+
+		$('#thrive-submit-btn').click(function(e){
+			
+			e.preventDefault();
+			
+			var element = $(this);
+				element.attr('disabled', true);
+				element.text('Loading ...');
+
+			$.ajax({
+				url: ajaxurl,
+				data: {
+					action: 'thrive_transactions_request',
+					title: $('#thriveTaskTitle').val(),
+					description: $('#thriveTaskDescription').val(),
+					milestone_id: $('#thriveTaskMilestone').val(),
+					project_id: 1,
+					user_id: 1,
+					priority: 1,
+				},
+				method: 'post',
+				success: function(message) {
+					element.text('Save Task');
+					element.removeAttr('disabled');
+
+					console.log('success...');
+						console.log(message);
+				}, 
+				error: function() {
+
+				}
+			});
 		});
 	});
 	</script>

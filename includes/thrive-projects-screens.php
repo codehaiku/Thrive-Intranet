@@ -1,10 +1,15 @@
 <?php
 /**
+ * 
+ * @TODO TODO TODO
  * [bp_projects_load_template_filter description]
  * @param  [type] $found_template [description]
  * @param  [type] $templates      [description]
  * @return [type]                 [description]
  */
+
+if (!defined('ABSPATH')) die();
+
 function bp_projects_load_template_filter( $found_template, $templates ) {
  
     //Only filter the template location when we're on the bp-plugin component pages.
@@ -14,18 +19,22 @@ function bp_projects_load_template_filter( $found_template, $templates ) {
     if (!bp_projects_is_bp_default())
         return $found_template;
 
-    foreach ( (array) $templates as $template ) {
-        if ( file_exists( STYLESHEETPATH . '/' . $template ) )
+    foreach ((array) $templates as $template) 
+    {
+
+        if (file_exists(STYLESHEETPATH . '/' . $template)) {
             $filtered_templates[] = STYLESHEETPATH . '/' . $template;
-        elseif( file_exists( TEMPLATEPATH . '/' . $template ) )
+        } else if (file_exists(TEMPLATEPATH . '/' . $template)) {
             $filtered_templates[] = TEMPLATEPATH . '/' . $template;
-        else
+        } else {
             $filtered_templates[] = thrive_template_dir() . '/' . $template;
+        }
+           
     }
  
     $found_template = $filtered_templates[0];
  
-    return apply_filters( 'bp_projects_load_template_filter', $found_template );
+    return apply_filters('bp_projects_load_template_filter', $found_template);
 }
  
 add_filter( 'bp_located_template', 'bp_projects_load_template_filter', 10, 2 );

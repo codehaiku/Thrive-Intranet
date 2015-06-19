@@ -1,3 +1,14 @@
+/**
+ * Focus
+ */
+
+#postdivrich {
+	display: none;
+}
+/**
+ * End Focus
+ */
+
 .thrive-clearfix {
 	display: block;
 	width: 100%;

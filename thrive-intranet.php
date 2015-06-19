@@ -34,6 +34,7 @@ require_once(plugin_dir_path(__FILE__) . 'shortcodes.php');
 require_once(plugin_dir_path(__FILE__) . 'functions.php');
 require_once(plugin_dir_path(__FILE__) . 'locked-down-page.php');
 require_once(plugin_dir_path(__FILE__) . 'includes/thrive-projects-post.php');
+require_once(plugin_dir_path(__FILE__) . 'transactions/actions.php');
 
 // include thrive projects component
 add_action('bp_loaded', 'thrive_register_projects_component' );
