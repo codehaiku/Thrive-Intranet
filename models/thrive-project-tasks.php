@@ -81,7 +81,20 @@ class ThriveProjectTasksModel{
 		echo 'last query:' . $this->last_query;
 	}
 
-	public function fetch() {
+	public function fetch($id = null) {
+
+		// fetch all tickets if there is no id specified
+		global $wpdb;
+
+		if ($id === null) {
+
+			$stmt = sprintf("SELECT * FROM {$this->model} order by date_created desc");
+			$results = $wpdb->get_results($stmt, OBJECT);
+
+			if (!empty($results)) {
+				return $results;
+			}
+		}
 		return array();
 	}
 

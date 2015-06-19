@@ -166,13 +166,15 @@ function thrive_tasks_metabox_content() {
 		</div>
 		<div class="thrive-tabs-content">
 			<div id="thrive-task-list" class="active">
-				<p>
-					<strong>There are no tasks to this project yet.</strong>
-					Click 'Add Task' tab above to add new task for this project
-				</p>
+				<?php if (function_exists('thrive_render_task')) {?>
+					<?php thrive_render_task(); ?>
+				<?php } ?>
 			</div>
 			<div id="thrive-add-task">
+
 				<div class="form-wrap">
+					<div id="thrive-add-task-message" class="thrive-notifier"></div>
+
 					<div class="thrive-form-field">
 						<input placeholder="Task Title" type="text" id="thriveTaskTitle" name="title" class="widefat"/>
 						<br><span class="description"><?php _e('Enter the title of this task. Max 160 characters', 'thrive'); ?></span>
@@ -234,7 +236,7 @@ function thrive_tasks_metabox_content() {
 				success: function(message) {
 					element.text('Save Task');
 					element.removeAttr('disabled');
-
+					$('#thrive-add-task-message').text('New ticket sucessfully added (edit)');
 					console.log('success...');
 						console.log(message);
 				}, 

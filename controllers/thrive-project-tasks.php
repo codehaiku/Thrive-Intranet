@@ -31,17 +31,22 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 
 	public function deleteTicket($id = 0) {
 
+		$this->setId($id)->prepare()->delete();
+
 		return false;
 	}
 
 	public function updateTicket($id = 0, $args = array()) {
+
+		$this->prepare()->delete();
 
 		return false;
 	}
 
 	public function renderTickets($id = null) {
 
-		return array();
+		return $this->prepare()->fetch($id);
+
 	}
 
 	public function renderTicketsByMilestone($milestone_id = 0){

@@ -16,11 +16,17 @@ do_action( 'bp_before_projects_directory' ); ?>
 			$loop = new WP_Query( $args );
 		
 			while ( $loop->have_posts() ) : $loop->the_post(); ?>
-			<h2>
-				<a href="<?php echo the_permalink(); ?>">
-					<?php the_title(); ?>
-				</a>
-			</h2>
+			<div style="width: 400px;" class="dunhakdis-card">
+				<p><?php the_post_thumbnail(); ?></p>
+				<h3 class="h4" style="line-height: 1.3">
+					<a href="<?php echo the_permalink(); ?>">
+						<?php the_title(); ?>
+					</a>
+				</h3>
+				<p>
+					<?php the_excerpt(); ?>
+				</p>
+			</div>
 			<?php 
 			endwhile;
 		?>
