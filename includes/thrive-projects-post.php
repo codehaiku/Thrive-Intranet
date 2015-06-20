@@ -4,6 +4,11 @@
  * Register our project admin styling
  */
 add_action('admin_head', 'thrive_admin_css');
+add_action('admin_print_scripts', 'thrive_register_backbone');
+
+function thrive_register_backbone() {
+	wp_enqueue_script('backbone');
+}
 
 function thrive_admin_css() {
 	wp_enqueue_style('thrive_admin_style', plugin_dir_url(__FILE__) . '../assets/css/style.css');
@@ -62,7 +67,6 @@ add_action('add_meta_boxes_post' ,'thrive_project_meta_box');
 
 function thrive_project_meta_box() {
 
-    wp_enqueue_script('jquery-ui-tabs');
     wp_enqueue_script('jquery-ui-datepicker');
 
    /** add_meta_box(
@@ -111,12 +115,12 @@ function thrive_milestones_metabox_content() {
 			</ul>
 		</div>
 		<div class="thrive-tabs-content">
-			<div id="thrive-milestones-list" class="active">
+			<div id="thrive-milestones-list" class="thrive-tab-item-content active">
 				<ul>
 					<li>General Milestone <a href="#">View</a> | <a href="#">Edit</a></li>
 				</ul>
 			</div>
-			<div id="thrive-milestones-add">
+			<div id="thrive-milestones-add" class="thrive-tab-item-content">
 				<div class="form-wrap">
 					<div class="thrive-form-field">
 						<input placeholder="Milestone Name (e.g. Version 2.3.76)" type="text" id="title" name="title" class="widefat"/>
@@ -146,9 +150,6 @@ function thrive_milestones_metabox_content() {
 	</div>
 	<script>
 	jQuery(document).ready(function($){
-		$('#thrive-milestones-tabs').tabs({
-			active: 0
-		});
 		$( "#thrive-date-picker" ).datepicker();
 	});
 	</script>
@@ -160,18 +161,18 @@ function thrive_tasks_metabox_content() {
 	<div id="thrive-tasks" class="thrive-tabs">
 		<div class="thrive-tabs-tabs">
 			<ul>
-			    <li><a href="#thrive-task-list">Tasks List</a></li>
-			    <li><a href="#thrive-add-task">Add Task</a></li>
+			    <li><a href="#tasks">Tasks List</a></li>
+			    <li><a href="#tasks/add">Add Task</a></li>
+			    <li class="hidden" id="thrive-edit-task-list"><a href="#thrive-edit-task">Edit Task</a></li>
 			</ul>
 		</div>
 		<div class="thrive-tabs-content">
-			<div id="thrive-task-list" class="active">
+			<div id="thrive-task-list" class="thrive-tab-item-content active">
 				<?php if (function_exists('thrive_render_task')) {?>
 					<?php thrive_render_task(); ?>
 				<?php } ?>
 			</div>
-			<div id="thrive-add-task">
-
+			<div id="thrive-add-task" class="thrive-tab-item-content">
 				<div class="form-wrap">
 					<div id="thrive-add-task-message" class="thrive-notifier"></div>
 
@@ -201,7 +202,38 @@ function thrive_tasks_metabox_content() {
 						<div style="clear:both"></div>
 					</div>
 				</div>
-			</div>	
+			</div><!--.#thrive-add-task-->
+			<div id="thrive-edit-task" class="thrive-tab-item-content">
+				<div class="form-wrap">
+					<div id="thrive-add-task-message" class="thrive-notifier"></div>
+
+					<div class="thrive-form-field">
+						<input placeholder="Task Title" type="text" id="thriveTaskTitle" name="title" class="widefat"/>
+						<br><span class="description"><?php _e('Enter the title of this task. Max 160 characters', 'thrive'); ?></span>
+					</div><br/>
+				
+					<div class="thrive-form-field">
+						<textarea class="widefat" rows="5" cols="100" id="thriveTaskDescription" placeholder="Description"></textarea>
+						<br><span class="description"><?php _e('In few words, explain what this task is all about', 'thrive'); ?></span>
+					</div><br/>
+
+					<div class="thrive-form-field">
+						<label for="thrive-milestone">Milestone:</label>
+						<select id="thriveTaskMilestone" name="thrive-milestone">
+							<option value="1">Alpha Release RC2.2</option>
+							<option value="2">Alpha Release RC2</option>
+							<option value="3">Alpha Release RC1</option>
+						</select>
+					</div>
+
+					<div class="thrive-form-field">
+						<button id="thrive-submit-btn" class="button button-primary button-large" style="float:right">
+							<?php _e('Save Task', 'dunhakdis'); ?>
+						</button>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+			</div><!--.#thrive-edit-task-->
 		</div>
 	</div>
 	<script>
@@ -209,10 +241,40 @@ function thrive_tasks_metabox_content() {
 		
 		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
 
-		$('#thrive-tasks').tabs({
-			active: 0
+		/**
+		 * Delete Event
+		 */
+		$('.thrive-delete-ticket-btn').click(function(e){
+
+			e.preventDefault();
+
+			var element = $(this);
+				element.text('Removing Ticket ...');
+
+				element.parent().parent().parent().parent().remove();
+
+			$.ajax({
+				url: ajaxurl,
+				method: 'post',
+				data: {
+					id: element.attr('data-ticket-id'),
+					action: 'thrive_transactions_request',
+					method: 'thrive_transaction_delete_ticket'
+				},
+				success: function(response) {
+					console.log(response);
+				},
+				error: function(error_response, error_message) {
+					console.log('Error:' + error_message);
+				}
+			});
+
+			return;	
 		});
 
+		/**
+		 * Save Event
+		 */
 		$('#thrive-submit-btn').click(function(e){
 			
 			e.preventDefault();
@@ -225,6 +287,7 @@ function thrive_tasks_metabox_content() {
 				url: ajaxurl,
 				data: {
 					action: 'thrive_transactions_request',
+					method: 'thrive_transaction_add_ticket',
 					title: $('#thriveTaskTitle').val(),
 					description: $('#thriveTaskDescription').val(),
 					milestone_id: $('#thriveTaskMilestone').val(),
@@ -245,6 +308,42 @@ function thrive_tasks_metabox_content() {
 				}
 			});
 		});
+
+		/**
+		 * Edit Event
+		 */
+		var ThriveRouter = Backbone.Router.extend({
+			routes: {
+				"tasks": "index",
+				"tasks/add": "add",
+				"tasks/edit/:id": "edit"
+			},
+			index: function() {
+				$('.thrive-tab-item-content').removeClass('active');
+				$('#thrive-edit-task-list').addClass('hidden');
+				
+				$('#thrive-task-list').addClass('active');
+			},
+			add: function() {
+
+				$('.thrive-tab-item-content').removeClass('active');
+				$('#thrive-edit-task-list').addClass('hidden');
+
+				$('#thrive-add-task').addClass('active');
+			},
+			edit: function(id) {
+
+				$('#thrive-edit-task-list').removeClass('hidden');
+				$('.thrive-tab-item-content').removeClass('active');
+				$('#thrive-edit-task').addClass('active');
+				// call the post
+				
+			}
+		}); 
+
+		var ThriveRouter = new ThriveRouter();
+
+		Backbone.history.start(); 
 	});
 	</script>
 	<?php

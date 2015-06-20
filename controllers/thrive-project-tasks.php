@@ -31,7 +31,16 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 
 	public function deleteTicket($id = 0) {
 
-		$this->setId($id)->prepare()->delete();
+		// delete the ticket
+		if (0 === $id) {
+			echo 'invalid id provided';
+		}
+
+		if ($this->setId($id)->prepare()->delete()){
+			echo "delete: {$id} - success";
+		} else {
+			echo "delete: {$id} - failed";
+		}
 
 		return false;
 	}

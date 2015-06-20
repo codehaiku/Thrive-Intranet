@@ -27,6 +27,11 @@ class ThriveProjectTasksModel{
 		return $this;
 	}
 
+	public function setId($id = 0) {
+		$this->id = $id;
+		return $this;
+	}
+
 	public function setTitle($title = "") {
 		$this->title = $title;
 
@@ -122,4 +127,16 @@ class ThriveProjectTasksModel{
 		return $wpdb->insert($this->model, $args, $format);
 	}
 
+	public function delete() {
+		
+		global $wpdb;
+
+		if (0 === $this->id) {
+			echo 'Model Error: ticket ID is ' . $this->id;
+		} else {
+			$wpdb->delete($this->model, array('id'=>$this->id), array('%d'));
+		}
+
+		return $this;
+	}
 }

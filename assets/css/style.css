@@ -3,12 +3,19 @@
  */
 
 #postdivrich {
-	display: none;
 }
 /**
  * End Focus
  */
 
+#thrive-add-task-message {
+	
+}
+
+#thrive-add-task {
+	padding: 20px;
+	background: #eee;
+}
 .bp-template-notice.error {
 	background: #A00;
 	color: #fff;
@@ -28,17 +35,21 @@
 }
 .thrive-tabs .thrive-tabs-tabs,
 .thrive-tabs .thrive-tabs-content {
-	float: left;
-	width: 20%;
+
 }
 
 .thrive-tabs .thrive-tabs-tabs ul{
 	margin-top: 0;
 	padding-top: 0;
+	margin-bottom: -4px;
+	display: inline-block;
+
 }
 
 	.thrive-tabs .thrive-tabs-tabs li {
 		margin-bottom: -1px;
+		margin-right: -1px;
+		float: left;
 	}
 
 		.thrive-tabs .thrive-tabs-tabs li a {
@@ -46,21 +57,20 @@
 			text-decoration: none;
 			font-weight: 700;
 			display: block;
-			padding: 10px 20px;
 			border: 1px solid #eee;
+			padding: 10px 20px;
 			outline: 0;
 		}
 
 		.thrive-tabs .thrive-tabs-tabs li.ui-state-active a{
 			background: #A00;
 			color: #fff;
-			border :1px solid #740000;
 		}
 
 		#thrive-tasks.thrive-tabs li.ui-state-active a {
 			background: #0079BF;
+			border-color: #0079BF;
 			color: #fff;
-			border :1px solid #026FAE;
 		}
 
 			.thrive-tabs .thrive-tabs-tabs li:focus,
@@ -70,12 +80,15 @@
 			}
 
 .thrive-tabs .thrive-tabs-content {
-    width: 70%;
-    padding: 20px;
-    border: 1px solid #EEE;
-    margin-left: -1px;
 }
 
+.thrive-tabs .thrive-tab-item-content {
+	display: none;
+}
+
+.thrive-tabs .thrive-tab-item-content.active {
+	display: block;
+}
 
 .ui-datepicker-header {
   background-color: #000;

@@ -39,11 +39,24 @@ function thrive_render_task() {
 	} else {
 		echo '<table class="wp-list-table widefat fixed striped pages" id="thrive-core-functions-render-task">';
 		echo '<tr>';
-			echo '<th></th>';
+			echo '<th width="70%">'.__('Title', 'thrive').'</th>';
+			echo '<th>'.__('Priority', 'thrive').'</th>';
+			echo '<th>'.__('Date', 'thrive').'</th>';
 		echo '</tr>';
+		
 		foreach((array)$tasks as $task) {
+			
+			$row_actions = '<div class="row-actions">';
+				$row_actions .= '<span class="edit"><a href="#tasks/edit/'.intval($task->id).'">Edit</a> | </span>';
+				$row_actions .= '<span class="complete"><a href="#">Complete</a> | </span>';
+				$row_actions .= '<span class="trash"><a data-ticket-id="'.intval($task->id).'" class="thrive-delete-ticket-btn" href="#">Delete</a> </span>';
+			$row_actions .= '</div>';
+				
 			echo '<tr>';
-				echo '<td><h3>'.esc_html($task->title).'</h3></td>';
+				echo '<td><strong><a class="row-title" href="#">'.stripslashes(esc_html($task->title)).'</a></strong>'.$row_actions.'</td>';
+				echo '<td>'.esc_html($task->priority).'</h3></td>';
+				echo '<td>'.esc_html(date("Y/m/d", strtotime($task->date_created))).'</h3></td>';
+
 			echo '</tr>';
 		}
 		echo '</table>';
