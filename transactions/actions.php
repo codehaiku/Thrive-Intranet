@@ -56,7 +56,7 @@ function thrive_transactions_callblack() {
 }
 
 function thrive_api_message($args = array()) {
-	echo json_encode($args, JSON_HEX_QUOT);
+	echo json_encode($args);
 	die();
 }
 
@@ -99,19 +99,19 @@ function thrive_transaction_fetch_task() {
 	$task_id = (int)filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 	$page = (int)filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
 	$priority = (int)filter_input(INPUT_GET, 'priority', FILTER_VALIDATE_INT);
-
+	$search = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_URL);
 	$limit = 5;
 
 	$task = new ThriveProjectTasksController();
 
 	if (0 === $task_id) {
 		$task_id = null;
-		$template = thrive_render_task(false, $page, $priority);
+		$template = thrive_render_task(false, $page, $priority, $search);
 	} else {
 		$template = null;
 	}
 
-	$task_collection = $task->renderTasks($task_id, $page);
+	$task_collection = $task->renderTasks($task_id, $page, $priority, $search);
 
 	thrive_api_message(array(
 			'message' => 'success',

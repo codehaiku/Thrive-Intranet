@@ -172,6 +172,9 @@ function thrive_tasks_metabox_content() {
 		</div>
 		<div class="thrive-tabs-content">
 			<div id="thrive-task-list" class="thrive-tab-item-content active">
+				<?php if (function_exists('thrive_task_filters')) { ?>
+					<?php thrive_task_filters(); ?>
+				<?php } ?>
 				<?php if (function_exists('thrive_render_task')) {?>
 					<?php thrive_render_task(); ?>
 				<?php } ?>
@@ -194,7 +197,7 @@ function thrive_tasks_metabox_content() {
 
 					<div class="thrive-form-field">
 						<label for="thrive-task-priority-select">
-							<strong><?php __('Priority:', 'thrive'); ?> </strong>
+							<strong><?php _e('Priority:', 'thrive'); ?> </strong>
 							<?php echo thrive_task_priority_select(); ?>
 						</label>
 					</div>
@@ -227,7 +230,7 @@ function thrive_tasks_metabox_content() {
 
 					<div class="thrive-form-field">
 						<label for="thrive-task-priority-select">
-							<strong><?php __('Priority:', 'thrive'); ?> </strong>
+							<strong><?php _e('Priority:', 'thrive'); ?> </strong>
 								<?php echo thrive_task_priority_select($default = 1, $name = 'thrive-task-edit-priority', $id='thrive-task-edit-select-id'); ?>
 						</label>
 					</div>

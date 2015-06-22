@@ -109,18 +109,54 @@ class ThriveProjectTasksModel{
 		echo 'last query:' . $this->last_query;
 	}
 
-	public function fetch($id = null, $page = 1, $priority = -1, $orderby = 'date_created', $order = 'desc') {
+	public function fetch($id = null, $page = 1, $priority = -1, $search = '', $orderby = 'date_created', $order = 'desc') {
 		// fetch all tickets if there is no id specified
 		global $wpdb;
-
 		if ($id === null) {
+
+			$funnels = array();
 
 			// where claused
 			$filters = '';
 				$allowed_priority = array('1','2','3');
 				if ($priority != -1 && in_array($priority, $allowed_priority)) {
-					$filters = sprintf("WHERE priority = %d", $priority);
+					$funnels[] = array(
+							'column'  => 'priority',
+							'operand' => '=',
+							'value'   => $priority,
+							'format'  => 'raw'
+						);
 				}
+			// search
+			if (!empty($search)) {
+				$funnels[] = array(
+						'column'  => 'title',
+						'operand' => 'like',
+						'value'   => '%'.$search.'%',
+						'format'  => 'string'
+					);
+			}	
+			
+			if (!empty($funnels)) {
+				$filters .= 'WHERE ';
+			}
+
+			$count = 0;
+
+			foreach ($funnels as $funnel) {
+				
+				$count++;
+				
+				if ($funnel['format'] == 'string') {
+					$funnel['value'] = "'".$funnel['value']."'";
+				}
+
+				$filters .= "{$funnel['column']} {$funnel['operand']}  {$funnel['value']} AND ";
+
+			}
+			//echo $filters;
+
+			$filters = substr($filters, 0, strlen($filters) - 4);
 
 			// limit claused
 			$limit = THRIVE_PROJECT_LIMIT;
@@ -185,6 +221,9 @@ class ThriveProjectTasksModel{
 			$stmt = sprintf("SELECT * FROM {$this->model} WHERE id = {$id} order by date_created desc");
 
 			$result = $wpdb->get_row($stmt);
+
+			$result->title = stripslashes($result->title);
+			$result->description = stripslashes($result->description);
 
 			return $result;
 		}

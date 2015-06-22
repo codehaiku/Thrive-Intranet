@@ -61,23 +61,24 @@ function thrive_task_priority_select($default = 1, $select_name = 'thrive_task_p
 function thrive_task_filters() {
 	?>
 	<div id="thrive-tasks-filter">
-		<div class="alignleft actions bulkactions">
-			<label for="bulk-action-selector-top" class="screen-reader-text"><?php _e('Select bulk action', 'thrive'); ?></label>
-				<select name="action" id="thrive-task-filter-select">
-					<option value="-1" selected="selected"><?php _e('Show All', 'thrive'); ?></option>
-					<option value="1"><?php _e('Normal Priority', 'thrive'); ?></option>
-					<option value="2"><?php _e('High Priority', 'thrive'); ?></option>
-					<option value="3"><?php _e('Critical Priority', 'thrive'); ?></option>
-				</select>
+		<div class="alignleft">
+			<select name="thrive-task-filter-select-action" id="thrive-task-filter-select">
+				<option value="-1" selected="selected"><?php _e('Show All', 'thrive'); ?></option>
+				<option value="1"><?php _e('Normal Priority', 'thrive'); ?></option>
+				<option value="2"><?php _e('High Priority', 'thrive'); ?></option>
+				<option value="3"><?php _e('Critical Priority', 'thrive'); ?></option>
+			</select>
 		</div><!--.alignleft actions bulkactions-->
 
-		<p class="search-box">
-			<label class="screen-reader-text" for="post-search-input">
-				<?php _e('Search Tasks:', 'thrive'); ?>
-			</label>
-			<input type="search" id="thrive-task-search-field" name="thrive-task-search" value="">
-			<input type="button" id="thrive-task-search-submit" class="button" value="<?php _e('Search', 'thrive'); ?>">
-		</p><!--.search box-->
+		<div class="alignright">
+			<p class="thrive-search-box">
+				<label class="screen-reader-text">
+					<?php _e('Search Tasks:', 'thrive'); ?>
+				</label>
+				<input maxlength="160" placeholder="<?php _e('Search Task', 'thrive'); ?>" type="search" id="thrive-task-search-field" name="thrive-task-search" value="">
+				<input type="button" id="thrive-task-search-submit" class="button" value="<?php _e('Apply', 'thrive'); ?>">
+			</p><!--.search box-->
+		</div>
 
 	</div><!--#thrive-task-filter-->
 	<?php
@@ -94,27 +95,24 @@ function thrive_task_filters() {
  * @param  integer $limit limits the number of task displayed
  * @return void if $echo is set to true other wise returns the constructed markup for tasks
  */
-function thrive_render_task($echo = true, $page = 1, $limit = 10) {
+function thrive_render_task($echo = true, $page = 1, $priority = -1, $search = '', $orderby = 'date_created', $order = 'desc') {
 	
 	if (!$echo) { ob_start(); }
 
 	require_once(plugin_dir_path(__FILE__) . '../controllers/thrive-project-tasks.php');
 
 	$thrive_tasks = new ThriveProjectTasksController();
-	$tasks = $thrive_tasks->renderTasks($id=null, $page, $limit);
+	$tasks = $thrive_tasks->renderTasks($id=null, $page, $priority, $search);
 	$stats = $tasks['stats'];
 	$tasks = $tasks['results'];
 
 	if (empty($tasks)) {
 		
 		echo '<p class="bp-template-notice error" id="thrive-message">';
-			echo __('There are no tasks assigned to this project yet.', 'thrive');
+			echo __('No results found. Try another filter or add new task.', 'thrive');
 		echo '</p>';
 
 	} else {
-		
-		// display the filters (already echoed inside the function)
-		thrive_task_filters();
 
 		echo '<div id="thrive-task-list-canvas">';	  
 		echo '<table class="wp-list-table widefat fixed striped pages" id="thrive-core-functions-render-task">';

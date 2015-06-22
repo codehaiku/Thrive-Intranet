@@ -49,9 +49,8 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 
 	}
 
-	public function renderTasks($id = null, $page = 1, $priority = -1, $orderby = 'date_created', $order = 'desc') {
-
-		return $this->prepare()->fetch($id, $page, $priority, $orderby, $order);
+	public function renderTasks($id = null, $page = 1, $priority = -1, $search="", $orderby = 'date_created', $order = 'desc') {
+		return $this->prepare()->fetch($id, $page, $priority, $search, $orderby, $order);
 
 	}
 

@@ -30,7 +30,7 @@
 
 if (!defined('ABSPATH')) exit();
 
-define('THRIVE_PROJECT_LIMIT', 10);
+define('THRIVE_PROJECT_LIMIT', 5);
 
 require_once(plugin_dir_path(__FILE__) . 'shortcodes.php');
 require_once(plugin_dir_path(__FILE__) . 'functions.php');

@@ -134,8 +134,8 @@ jQuery(document).ready(function($){
 			
 			page: 1,
 			current_page: 1,
-			max_pages: 1,
-			min_pages: 1,
+			max_page: 1,
+			min_page: 1,
 			total: 0,
 			total_pages: 0,
 			
@@ -205,10 +205,12 @@ jQuery(document).ready(function($){
 			events: {
 				"click .next-page": "nextPage",
 				"click .prev-page": "prevPage",
+				"click #thrive-task-search-submit": "searchTasks",
 				"change #thrive-task-filter-select": "filterByPriority",
 			},
 			
 			prevPage: function(e) {
+
 				e.preventDefault();
 				var minimum_page = 1;
 				
@@ -233,6 +235,7 @@ jQuery(document).ready(function($){
 				var maximum_page = this.model.get('max_page'); 
 				var current_page = this.model.get('page');
 
+				console.log(maximum_page);
 					if (current_page < maximum_page) {
 						
 						var current_page = this.model.get('page');
@@ -261,14 +264,31 @@ jQuery(document).ready(function($){
 				var new_priority = priority[selected];
 
 					if (new_priority) {
-						location.href='#tasks/show/'+new_priority;
+						location.href = '#tasks/show/'+new_priority;
+					} else {
+						this.priority = -1;
+						location.href = '#tasks';
 					}
 
+			},
+
+			searchTasks: function(e){
+
+				var keywords = $('#thrive-task-search-field').val();
+				
+				if (keywords.length >= 1) {
+					location.href = '#tasks/search/' + encodeURIComponent(keywords);
+				} else {
+					location.href = '#tasks';
+				}
+
+				return;
 			},
 
 			render: function() {
 
 				var model = ThriveModel;
+				var view = this;
 
 				$('.thrive-tabs-tabs li').removeClass('ui-state-active');
 				$('.thrive-tabs-tabs li:nth-child(1)').addClass('ui-state-active');
@@ -279,6 +299,15 @@ jQuery(document).ready(function($){
 
 				$('#thrive-action-preloader').css('display', 'block');
 
+				$('#thrive-task-list-canvas').css('opacity', 0.25);
+				$('#thrive-tasks-filter').css('opacity', 0.25);
+
+				if (this.search.length === 0) {
+					$('#thrive-task-search-field').val('');
+				} else {
+					$('#thrive-task-search-field').val(this.search);
+				}
+
 				$.ajax({
 					url: ajaxurl,
 					method: 'get',
@@ -287,26 +316,33 @@ jQuery(document).ready(function($){
 						method: 'thrive_transaction_fetch_task',
 						page: model.get('page'),
 						priority: this.priority,
+						search: this.search,
 						id: 0
 					},
 					success: function(response) {
 
 						var response = JSON.parse(response);
 							
-							console.log(response);
-
-							model.set({
-								max_page: response.task.stats.max_page,
-								page: response.task.stats.current_page
-							});
+							if (response.task.stats) {
+								console.log('ssssss');
+								model.set({
+									max_page: response.task.stats.max_page,
+									page: response.task.stats.current_page
+								});
+							}
 							
 							$('#thrive-task-list-canvas').html(response.html);
 							$('#thrive-action-preloader').css('display', 'none');
-								
+							
+							$('#thrive-task-list-canvas').css('opacity',1);
+							$('#thrive-tasks-filter').css('opacity', 1);
+
 							setTimeout(function(){
 								$('#thrive-task-current-page-selector').val(model.get('page'));
 							}, 2000);
 
+							$('#thrive-task-filter-select').val(view.priority);
+							console.log(view.priority);
 						return;
 
 					},
@@ -319,6 +355,7 @@ jQuery(document).ready(function($){
 
 			initialize: function() {
 				$('#thrive-task-current-page-selector').val(this.model.get('page'));
+				$('#thrive-task-filter-select').val(this.priority);
 			}
 		});
 		
@@ -335,7 +372,8 @@ jQuery(document).ready(function($){
 				"tasks/add": "add",
 				"tasks/edit/:id": "edit",
 				"tasks/page/:id": "navigatePage",
-				"tasks/show/:priority": "filterByPriority"
+				"tasks/show/:priority": "filterByPriority",
+				"tasks/search/:search": "search"
 			},
 
 			view: ThriveTaskView,
@@ -343,6 +381,15 @@ jQuery(document).ready(function($){
 			model: ThriveModel,
 
 			index: function() {
+				// reset paging
+				this.model.set({
+					page: 1
+				});
+				// reset priority
+				this.view.priority = -1;
+				// reset search
+				this.view.search = "";
+
 				this.view.render();
 			},
 
@@ -361,12 +408,26 @@ jQuery(document).ready(function($){
 					priority['critical']  = 3;
 
 				var new_priority = priority[priority_label];
-
+				// reset paging
+				this.model.set({
+					page: 1
+				});
 				if (new_priority) {
 					this.view.priority = parseInt(new_priority);
 					this.view.render();
 				}	
 			},
+
+			search: function(keywords) {
+				this.model.set({
+					page: 1
+				});
+				// reset priority
+				this.view.priority = -1;
+				this.view.search = keywords;
+				this.view.render();
+			},
+
 			add: function() {
 				ThriveModel.renderAddForm();
 			},
@@ -381,5 +442,9 @@ jQuery(document).ready(function($){
 
 		var ThriveRouter = new ThriveRouter();
 
-		Backbone.history.start(); 
+		Backbone.history.start();
+		// prevent form submission
+		$('#thrive-task-search-field').keypress(function(e){
+		    if ( e.which == 13 ) e.preventDefault();
+		}); 
 	});
