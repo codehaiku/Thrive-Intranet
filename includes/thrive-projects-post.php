@@ -50,7 +50,7 @@ function thrive_projects_register_post_type() {
 		'query_var'          => true,
 		'rewrite'            => array( 'slug' => 'project' ),
 		'capability_type'    => 'post',
-		'has_archive'        => true,
+		'has_archive'        => false,
 		'hierarchical'       => false,
 		'menu_position'      => null,
 		'register_meta_box_cb'      => 'thrive_project_meta_box',
@@ -159,9 +159,12 @@ function thrive_milestones_metabox_content() {
 function thrive_tasks_metabox_content() {
 	?>
 	<div id="thrive-tasks" class="thrive-tabs">
+		<div id="thrive-action-preloader" class="active">
+			<span><?php _e('Loading', 'thrive'); ?> &hellip;</span>
+		</div> 
 		<div class="thrive-tabs-tabs">
 			<ul>
-			    <li><a href="#tasks">Tasks List</a></li>
+			    <li class="ui-state-active"><a href="#tasks">Tasks List</a></li>
 			    <li><a href="#tasks/add">Add Task</a></li>
 			    <li class="hidden" id="thrive-edit-task-list"><a href="#thrive-edit-task">Edit Task</a></li>
 			</ul>
@@ -177,22 +180,24 @@ function thrive_tasks_metabox_content() {
 					<div id="thrive-add-task-message" class="thrive-notifier"></div>
 
 					<div class="thrive-form-field">
-						<input placeholder="Task Title" type="text" id="thriveTaskTitle" name="title" class="widefat"/>
+						<input placeholder="Task Title" type="text" id="thriveTaskTitle" maxlength="160" name="title" class="widefat"/>
 						<br><span class="description"><?php _e('Enter the title of this task. Max 160 characters', 'thrive'); ?></span>
 					</div><br/>
 				
 					<div class="thrive-form-field">
 						<textarea class="widefat" rows="5" cols="100" id="thriveTaskDescription" placeholder="Description"></textarea>
 						<br><span class="description"><?php _e('In few words, explain what this task is all about', 'thrive'); ?></span>
-					</div><br/>
+					</div><br />
 
 					<div class="thrive-form-field">
-						<label for="thrive-milestone">Milestone:</label>
-						<select id="thriveTaskMilestone" name="thrive-milestone">
-							<option value="1">Alpha Release RC2.2</option>
-							<option value="2">Alpha Release RC2</option>
-							<option value="3">Alpha Release RC1</option>
-						</select>
+						<label for="thriveTaskPriority">
+							<strong>Priority: </strong>
+							<select>
+								<option>Normal</option>
+								<option>High Priority</option>
+								<option>Critical</option>
+							</select>
+						</label>
 					</div>
 
 					<div class="thrive-form-field">
@@ -205,30 +210,33 @@ function thrive_tasks_metabox_content() {
 			</div><!--.#thrive-add-task-->
 			<div id="thrive-edit-task" class="thrive-tab-item-content">
 				<div class="form-wrap">
-					<div id="thrive-add-task-message" class="thrive-notifier"></div>
+					<div id="thrive-edit-task-message" class="thrive-notifier"></div>
 
+					<input type="hidden" id="thriveTaskId" />
 					<div class="thrive-form-field">
-						<input placeholder="Task Title" type="text" id="thriveTaskTitle" name="title" class="widefat"/>
+						<input placeholder="Task Title" type="text" id="thriveTaskEditTitle" maxlength="160" name="title" class="widefat"/>
 						<br><span class="description"><?php _e('Enter the title of this task. Max 160 characters', 'thrive'); ?></span>
 					</div><br/>
 				
 					<div class="thrive-form-field">
-						<textarea class="widefat" rows="5" cols="100" id="thriveTaskDescription" placeholder="Description"></textarea>
+						<textarea class="widefat" rows="5" cols="100" id="thriveTaskEditDescription" placeholder="Description"></textarea>
 						<br><span class="description"><?php _e('In few words, explain what this task is all about', 'thrive'); ?></span>
 					</div><br/>
 
 					<div class="thrive-form-field">
-						<label for="thrive-milestone">Milestone:</label>
-						<select id="thriveTaskMilestone" name="thrive-milestone">
-							<option value="1">Alpha Release RC2.2</option>
-							<option value="2">Alpha Release RC2</option>
-							<option value="3">Alpha Release RC1</option>
-						</select>
+						<label for="thriveEditTaskPriority">
+							<strong>Priority: </strong>
+							<select>
+								<option>Normal</option>
+								<option>High Priority</option>
+								<option>Critical</option>
+							</select>
+						</label>
 					</div>
 
 					<div class="thrive-form-field">
-						<button id="thrive-submit-btn" class="button button-primary button-large" style="float:right">
-							<?php _e('Save Task', 'dunhakdis'); ?>
+						<button id="thrive-edit-btn" class="button button-primary button-large" style="float:right">
+							<?php _e('Update Task', 'dunhakdis'); ?>
 						</button>
 						<div style="clear:both"></div>
 					</div>
@@ -244,7 +252,7 @@ function thrive_tasks_metabox_content() {
 		/**
 		 * Delete Event
 		 */
-		$('.thrive-delete-ticket-btn').click(function(e){
+		$('body').on('click', '.thrive-delete-ticket-btn', function(e){
 
 			e.preventDefault();
 
@@ -273,6 +281,47 @@ function thrive_tasks_metabox_content() {
 		});
 
 		/**
+		 * Edit Event
+		 */
+		$('#thrive-edit-btn').click(function(e){
+			e.preventDefault();
+
+			var element = $(this);
+				element.attr('disabled', true);
+				element.text('Loading ...');
+
+			$.ajax({
+				url: ajaxurl,
+				data: {
+					action: 'thrive_transactions_request',
+					method: 'thrive_transaction_edit_ticket',
+					title: $('#thriveTaskEditTitle').val(),
+					description: $('#thriveTaskEditDescription').val(),
+					milestone_id: $('#thriveTaskMilestone').val(),
+					id: $('#thriveTaskId').val(),
+					project_id: 1,
+					user_id: 1,
+					priority: 1,
+				},
+				method: 'post',
+				success: function(message) {
+					
+					$('#thrive-edit-task-message').text('Task successfully updated').show();
+					
+					setTimeout(function(){
+						$('#thrive-edit-task-message').text('').hide();
+					}, 3000);
+					
+					element.attr('disabled', false);
+					
+					element.text('Update Task');
+				},
+				error: function() {
+
+				}
+			});
+		});	
+		/**
 		 * Save Event
 		 */
 		$('#thrive-submit-btn').click(function(e){
@@ -297,11 +346,30 @@ function thrive_tasks_metabox_content() {
 				},
 				method: 'post',
 				success: function(message) {
-					element.text('Save Task');
-					element.removeAttr('disabled');
-					$('#thrive-add-task-message').text('New ticket sucessfully added (edit)');
-					console.log('success...');
-						console.log(message);
+					message = JSON.parse(message);
+					console.log(message);
+
+					if (message.message === 'success') {
+						
+						element.text('Save Task');
+							element.removeAttr('disabled');
+						
+						$('#thriveTaskDescription').val('');
+							$('#thriveTaskTitle').val('');
+
+						location.href="#tasks/edit/"+message.response.id;	
+
+					} else {
+
+						$('#thrive-add-task-message').text(message.response).show().addClass('error');
+						
+						setTimeout(function(){
+							$('#thrive-add-task-message').text('').hide().removeClass('error');
+						}, 3000);
+
+						element.text('Save Task');
+							element.removeAttr('disabled');
+					}
 				}, 
 				error: function() {
 
@@ -309,6 +377,96 @@ function thrive_tasks_metabox_content() {
 			});
 		});
 
+		/**
+		 * Thrive Task View
+		 */
+		var ThriveTaskView = Backbone.View.extend({
+			className: 'thrive-next-page',
+			 
+
+		});
+		
+		var ThriveModel = Backbone.Model.extend({
+			initialize: function() {
+				// do nothing
+			},
+			renderTasks: function() {
+				$('.thrive-tabs-tabs li').removeClass('ui-state-active');
+				$('.thrive-tabs-tabs li:nth-child(1)').addClass('ui-state-active');
+
+				$('.thrive-tab-item-content').removeClass('active');
+				$('#thrive-edit-task-list').addClass('hidden');
+				$('#thrive-task-list').addClass('active');
+
+				$('#thrive-action-preloader').css('display', 'block');
+
+				$.ajax({
+					url: ajaxurl,
+					method: 'get',
+					data: {
+						action: 'thrive_transactions_request',
+						method: 'thrive_transaction_fetch_task',
+						id: 0
+					},
+					success: function(response) {
+						var response = JSON.parse(response);
+							console.log(response);
+						$('#thrive-task-list').html(response.html);
+						$('#thrive-action-preloader').css('display', 'none');
+
+					},
+					error: function(error, errormessage) {
+						console.log(errormessage);
+						$('#thrive-action-preloader').css('display', 'none');
+					}
+				});
+			},
+			renderAddForm: function() {
+
+				$('.thrive-tabs-tabs li').removeClass('ui-state-active');
+				$('.thrive-tabs-tabs li:nth-child(2)').addClass('ui-state-active');
+				$('.thrive-tab-item-content').removeClass('active');
+				$('#thrive-edit-task-list').addClass('hidden');
+
+				$('#thrive-add-task').addClass('active');
+			},
+			renderEditForm: function(task_id) {
+
+				$('.thrive-tabs-tabs li').removeClass('ui-state-active');
+				$('.thrive-tabs-tabs li:nth-child(3)').addClass('ui-state-active');
+				$('#thrive-edit-task-list').removeClass('hidden');
+				$('.thrive-tab-item-content').removeClass('active');
+				$('#thrive-edit-task').addClass('active');
+
+				$('#thriveTaskEditTitle').val('').attr('disabled', true).val('loading...');
+				$('#thriveTaskEditDescription').val('').attr('disabled', true).val('loading...');
+
+				$('#thriveTaskId').val(task_id);
+
+				$.ajax({
+					url: ajaxurl,
+					method: 'get',
+					data: {
+						action: 'thrive_transactions_request',
+						method: 'thrive_transaction_fetch_task',
+						id: task_id
+					},
+					success: function(response) {
+						var response = JSON.parse(response);
+							console.log(response);
+								if (response.message == "success") {
+									$('#thriveTaskEditTitle').val(response.task.title).removeAttr('disabled')
+									$('#thriveTaskEditDescription').val(response.task.description).removeAttr('disabled');
+								}
+					},
+					error: function(error, errormessage, error2) {
+						console.log(error2);
+					}
+				});
+			}
+		});
+	
+		var ThriveModel = new ThriveModel();
 		/**
 		 * Edit Event
 		 */
@@ -319,25 +477,14 @@ function thrive_tasks_metabox_content() {
 				"tasks/edit/:id": "edit"
 			},
 			index: function() {
-				$('.thrive-tab-item-content').removeClass('active');
-				$('#thrive-edit-task-list').addClass('hidden');
-				
-				$('#thrive-task-list').addClass('active');
+				ThriveModel.renderTasks();
 			},
 			add: function() {
-
-				$('.thrive-tab-item-content').removeClass('active');
-				$('#thrive-edit-task-list').addClass('hidden');
-
-				$('#thrive-add-task').addClass('active');
+				ThriveModel.renderAddForm();
 			},
 			edit: function(id) {
-
-				$('#thrive-edit-task-list').removeClass('hidden');
-				$('.thrive-tab-item-content').removeClass('active');
-				$('#thrive-edit-task').addClass('active');
+				ThriveModel.renderEditForm(id);
 				// call the post
-				
 			}
 		}); 
 

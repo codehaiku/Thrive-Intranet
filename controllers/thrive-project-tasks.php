@@ -19,14 +19,12 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 			 ->setUser($args['user_id'])
 			 ->setPriority($args['priority']);
 
-		if ($this->prepare()->save()) {
-			echo 'success save';
-		} else {
-			echo 'addTicket::error';
-			//$this->showError();
+		if (empty($this->title) || empty($this->description)) {
+			return false;
 		}
 
-		return false;
+		return $this->prepare()->save();
+
 	}
 
 	public function deleteTicket($id = 0) {
@@ -36,25 +34,23 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 			echo 'invalid id provided';
 		}
 
-		if ($this->setId($id)->prepare()->delete()){
-			echo "delete: {$id} - success";
-		} else {
-			echo "delete: {$id} - failed";
-		}
+		return $this->setId($id)->prepare()->delete();
 
-		return false;
 	}
 
 	public function updateTicket($id = 0, $args = array()) {
 
-		$this->prepare()->delete();
+		$this->setTitle($args['title']);
+		$this->setId($id);
+		$this->setDescription($args['description']);
 
-		return false;
+		return $this->prepare()->save();
+
 	}
 
-	public function renderTickets($id = null) {
-
-		return $this->prepare()->fetch($id);
+	public function renderTasks($id = null, $page = 1) {
+		
+		return $this->prepare()->fetch($id, $page);
 
 	}
 

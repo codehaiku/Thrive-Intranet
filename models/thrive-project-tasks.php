@@ -37,7 +37,7 @@ class ThriveProjectTasksModel{
 
 		return $this;
 	}
-	
+
 	public function setDescription($description = "") {
 		$this->description = $description;
 
@@ -86,20 +86,73 @@ class ThriveProjectTasksModel{
 		echo 'last query:' . $this->last_query;
 	}
 
-	public function fetch($id = null) {
-
+	public function fetch($id = null, $page = 1) {
 		// fetch all tickets if there is no id specified
 		global $wpdb;
 
 		if ($id === null) {
 
-			$stmt = sprintf("SELECT * FROM {$this->model} order by date_created desc");
-			$results = $wpdb->get_results($stmt, OBJECT);
+			// where claused
+			$filters = '';
 
+			// limit claused
+			$limit = THRIVE_PROJECT_LIMIT;
+
+			// total number of task per page
+			$perpage = ceil($limit);
+			
+			// set the current page to 1
+			$currpage = ceil($page); if ($currpage <= 0) {$currpage = 1;}
+
+			// initiate the row offset to zero
+			$offset  = 0;
+
+			// get total number of rows in the table
+			$row_count_stmt = "SELECT COUNT(*) as count from {$this->model} {$filters}";			
+				$row = $wpdb->get_row($row_count_stmt, OBJECT);
+					$row_count = intval($row->count);
+
+			// control the offset
+			if ($currpage !== 0) {
+			    $offset = $perpage * ($currpage-1);
+			}
+
+			// controls the maximum number of page
+			// if user throws a page more than
+			// the result has, set it to the highest
+			// number of page 
+			if ($offset >= $row_count) {
+				$offset = $row_count - $perpage;
+			}
+
+			$stmt = "SELECT * FROM {$this->model} {$filters} ORDER BY date_created DESC LIMIT {$perpage} OFFSET {$offset}";
+
+			$results = $wpdb->get_results($stmt, OBJECT);
+			
 			if (!empty($results)) {
-				return $results;
+				
+				$stats = array();
+					
+					$total = $stats['total'] = $row_count;
+					$perpage = $stats['perpage'] = $perpage;
+					$totalpage = $stats['total_page'] = ceil($total/$perpage);
+
+				return array(
+						'stats' => $stats,
+						'results' => (object)$results
+					);
 			}
 		}
+
+		if (!empty($id)) {
+
+			$stmt = sprintf("SELECT * FROM {$this->model} WHERE id = {$id} order by date_created desc");
+
+			$result = $wpdb->get_row($stmt);
+
+			return $result;
+		}
+
 		return array();
 	}
 
@@ -124,7 +177,18 @@ class ThriveProjectTasksModel{
 				'%d',
 				'%d'
 			);
-		return $wpdb->insert($this->model, $args, $format);
+
+		if (!empty($this->id)) {
+
+			return ($wpdb->update($this->model, $args, array('id'=>$this->id), $format, array('%d')) === 0);
+			
+		} else {
+			 if ($wpdb->insert($this->model, $args, $format) ) {
+			 	return $wpdb->insert_id;
+			 } else {
+			 	return false;
+			 }
+		}
 	}
 
 	public function delete() {

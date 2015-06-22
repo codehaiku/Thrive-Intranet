@@ -8,10 +8,45 @@
  * End Focus
  */
 
+#thrive-edit-task-message,
 #thrive-add-task-message {
-	
+  padding: 10px 20px;
+  background-color: #3EA11D;
+  color: #FFF;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  display: none;
 }
 
+#thrive-edit-task-message.error,
+#thrive-add-task-message.error {
+	background: #E50C24;
+}
+
+#current-page-selector{
+	padding: 2.5px 5px;
+}
+
+#thrive-action-preloader {
+	display: inline-block;
+	text-align: center;
+	width: 100%;
+	position: absolute;
+	display: none;
+}
+
+#thrive-action-preloader span {
+	  background: #FFE800;
+  color: #8C8A7B;
+  padding: 5px 15px;
+  display: inline-block;
+  margin-top: -5px;
+  border-radius: 5px;
+  font-weight: bold;
+  border: 1px solid #DDCB0D;
+}
+
+#thrive-edit-task,
 #thrive-add-task {
 	padding: 20px;
 	background: #eee;
@@ -58,8 +93,11 @@
 			font-weight: 700;
 			display: block;
 			border: 1px solid #eee;
-			padding: 10px 20px;
+			padding: 7.5px 15px;
 			outline: 0;
+			border-radius: 25px;
+		    margin-right: 10px;
+		    margin-bottom: 10px;
 		}
 
 		.thrive-tabs .thrive-tabs-tabs li.ui-state-active a{
@@ -84,6 +122,13 @@
 
 .thrive-tabs .thrive-tab-item-content {
 	display: none;
+}
+
+.thrive-tabs .thrive-tab-item-content input[type=text],
+.thrive-tabs .thrive-tab-item-content textarea {
+	padding: 10px 15px;
+	border-radius: 5px;
+	margin-bottom: 5px;
 }
 
 .thrive-tabs .thrive-tab-item-content.active {
