@@ -142,55 +142,7 @@ jQuery(document).ready(function($){
 			initialize: function() {
 				// do nothing
 			},
-			renderTasks: function() {
-
-				var model = this;
-
-				$('.thrive-tabs-tabs li').removeClass('ui-state-active');
-				$('.thrive-tabs-tabs li:nth-child(1)').addClass('ui-state-active');
-
-				$('.thrive-tab-item-content').removeClass('active');
-				$('#thrive-edit-task-list').addClass('hidden');
-				$('#thrive-task-list').addClass('active');
-
-				$('#thrive-action-preloader').css('display', 'block');
-
-				$.ajax({
-					url: ajaxurl,
-					method: 'get',
-					data: {
-						action: 'thrive_transactions_request',
-						method: 'thrive_transaction_fetch_task',
-						page: this.get('page'),
-						id: 0
-					},
-					success: function(response) {
-
-						var response = JSON.parse(response);
-							
-							console.log(response);
-
-							model.set({
-								max_page: response.task.stats.max_page,
-								page: response.task.stats.current_page
-							});
-							
-							$('#thrive-task-list-canvas').html(response.html);
-							$('#thrive-action-preloader').css('display', 'none');
-								
-							setTimeout(function(){
-								$('#thrive-task-current-page-selector').val(model.get('page'));
-							}, 2000);
-
-						return;
-
-					},
-					error: function(error, errormessage) {
-						console.log(errormessage);
-						$('#thrive-action-preloader').css('display', 'none');
-					}
-				});
-			},
+			
 			renderAddForm: function() {
 
 				$('.thrive-tabs-tabs li').removeClass('ui-state-active');
@@ -248,10 +200,14 @@ jQuery(document).ready(function($){
 			model: ThriveModel,
 			el: 'body',
 			id: 'thrive_tasks_metabox',
+			priority: -1,
+			search: '',
 			events: {
 				"click .next-page": "nextPage",
-				"click .prev-page": "prevPage"
+				"click .prev-page": "prevPage",
+				"change #thrive-task-filter-select": "filterByPriority",
 			},
+			
 			prevPage: function(e) {
 				e.preventDefault();
 				var minimum_page = 1;
@@ -269,6 +225,7 @@ jQuery(document).ready(function($){
 				}
 				return;
 			},
+
 			nextPage: function(e) {
 				
 				e.preventDefault();
@@ -291,8 +248,73 @@ jQuery(document).ready(function($){
 				return;
 
 			},
-			render: function() {
+			
+			filterByPriority: function(e){
 				
+				selected = e.target.value;
+
+				var priority = [];
+					priority['1']  = 'normal';
+					priority['2']  = 'high';
+					priority['3']  = 'critical';
+
+				var new_priority = priority[selected];
+
+					if (new_priority) {
+						location.href='#tasks/show/'+new_priority;
+					}
+
+			},
+
+			render: function() {
+
+				var model = ThriveModel;
+
+				$('.thrive-tabs-tabs li').removeClass('ui-state-active');
+				$('.thrive-tabs-tabs li:nth-child(1)').addClass('ui-state-active');
+
+				$('.thrive-tab-item-content').removeClass('active');
+				$('#thrive-edit-task-list').addClass('hidden');
+				$('#thrive-task-list').addClass('active');
+
+				$('#thrive-action-preloader').css('display', 'block');
+
+				$.ajax({
+					url: ajaxurl,
+					method: 'get',
+					data: {
+						action: 'thrive_transactions_request',
+						method: 'thrive_transaction_fetch_task',
+						page: model.get('page'),
+						priority: this.priority,
+						id: 0
+					},
+					success: function(response) {
+
+						var response = JSON.parse(response);
+							
+							console.log(response);
+
+							model.set({
+								max_page: response.task.stats.max_page,
+								page: response.task.stats.current_page
+							});
+							
+							$('#thrive-task-list-canvas').html(response.html);
+							$('#thrive-action-preloader').css('display', 'none');
+								
+							setTimeout(function(){
+								$('#thrive-task-current-page-selector').val(model.get('page'));
+							}, 2000);
+
+						return;
+
+					},
+					error: function(error, errormessage) {
+						console.log(errormessage);
+						$('#thrive-action-preloader').css('display', 'none');
+					}
+				});
 			},
 
 			initialize: function() {
@@ -306,20 +328,44 @@ jQuery(document).ready(function($){
 		 * Edit Event
 		 */
 		var ThriveRouter = Backbone.Router.extend({
+
 			routes: {
 				"": "index",
 				"tasks": "index",
 				"tasks/add": "add",
 				"tasks/edit/:id": "edit",
-				"tasks/page/:id": "navigatePage"
+				"tasks/page/:id": "navigatePage",
+				"tasks/show/:priority": "filterByPriority"
 			},
+
+			view: ThriveTaskView,
+
 			model: ThriveModel,
+
 			index: function() {
-				this.model.renderTasks();
+				this.view.render();
 			},
+
 			navigatePage: function(__page) {
 				this.model.set({page: __page});
-					this.model.renderTasks();
+				this.view.render();
+			},
+
+			filterByPriority: function(priority_label) {
+				
+				console.log(priority_label);
+
+				var priority = [];
+					priority['normal']    = 1;
+					priority['high']      = 2;
+					priority['critical']  = 3;
+
+				var new_priority = priority[priority_label];
+
+				if (new_priority) {
+					this.view.priority = parseInt(new_priority);
+					this.view.render();
+				}	
 			},
 			add: function() {
 				ThriveModel.renderAddForm();

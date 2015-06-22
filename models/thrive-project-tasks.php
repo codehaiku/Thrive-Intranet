@@ -100,7 +100,7 @@ class ThriveProjectTasksModel{
 		$this->project_id = $project_id;
 
 		return $this;
-		
+
 	}
 
 	public function showError() {
@@ -109,7 +109,7 @@ class ThriveProjectTasksModel{
 		echo 'last query:' . $this->last_query;
 	}
 
-	public function fetch($id = null, $page = 1) {
+	public function fetch($id = null, $page = 1, $priority = -1, $orderby = 'date_created', $order = 'desc') {
 		// fetch all tickets if there is no id specified
 		global $wpdb;
 
@@ -117,6 +117,10 @@ class ThriveProjectTasksModel{
 
 			// where claused
 			$filters = '';
+				$allowed_priority = array('1','2','3');
+				if ($priority != -1 && in_array($priority, $allowed_priority)) {
+					$filters = sprintf("WHERE priority = %d", $priority);
+				}
 
 			// limit claused
 			$limit = THRIVE_PROJECT_LIMIT;
@@ -154,7 +158,7 @@ class ThriveProjectTasksModel{
 			// maximum page is the total number of page, hence ceil(total/perpage)
 			$max_page = ceil($row_count/$limit);
 
-			$stmt = "SELECT * FROM {$this->model} {$filters} ORDER BY date_created DESC LIMIT {$perpage} OFFSET {$offset}";
+			$stmt = "SELECT * FROM {$this->model} {$filters} ORDER BY {$orderby} {$order} LIMIT {$perpage} OFFSET {$offset}";
 
 			$results = $wpdb->get_results($stmt, OBJECT);
 			

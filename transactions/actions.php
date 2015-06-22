@@ -98,13 +98,15 @@ function thrive_transaction_fetch_task() {
 
 	$task_id = (int)filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 	$page = (int)filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
+	$priority = (int)filter_input(INPUT_GET, 'priority', FILTER_VALIDATE_INT);
+
 	$limit = 5;
 
 	$task = new ThriveProjectTasksController();
 
 	if (0 === $task_id) {
 		$task_id = null;
-		$template = thrive_render_task(false, $page);
+		$template = thrive_render_task(false, $page, $priority);
 	} else {
 		$template = null;
 	}

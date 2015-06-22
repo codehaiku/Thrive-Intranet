@@ -58,8 +58,34 @@ function thrive_task_priority_select($default = 1, $select_name = 'thrive_task_p
 	return;
 }
 
+function thrive_task_filters() {
+	?>
+	<div id="thrive-tasks-filter">
+		<div class="alignleft actions bulkactions">
+			<label for="bulk-action-selector-top" class="screen-reader-text"><?php _e('Select bulk action', 'thrive'); ?></label>
+				<select name="action" id="thrive-task-filter-select">
+					<option value="-1" selected="selected"><?php _e('Show All', 'thrive'); ?></option>
+					<option value="1"><?php _e('Normal Priority', 'thrive'); ?></option>
+					<option value="2"><?php _e('High Priority', 'thrive'); ?></option>
+					<option value="3"><?php _e('Critical Priority', 'thrive'); ?></option>
+				</select>
+		</div><!--.alignleft actions bulkactions-->
+
+		<p class="search-box">
+			<label class="screen-reader-text" for="post-search-input">
+				<?php _e('Search Tasks:', 'thrive'); ?>
+			</label>
+			<input type="search" id="thrive-task-search-field" name="thrive-task-search" value="">
+			<input type="button" id="thrive-task-search-submit" class="button" value="<?php _e('Search', 'thrive'); ?>">
+		</p><!--.search box-->
+
+	</div><!--#thrive-task-filter-->
+	<?php
+}
 /**
- * renders a table that enables admin to manage
+ * thrive_render_task($echo = true, $page = 1, $limit = 10)
+ * 
+ * Renders a table that enables admin to manage
  * tickets under a project. Only use this function
  * when calling inside the administration area
  * 
@@ -78,7 +104,6 @@ function thrive_render_task($echo = true, $page = 1, $limit = 10) {
 	$tasks = $thrive_tasks->renderTasks($id=null, $page, $limit);
 	$stats = $tasks['stats'];
 	$tasks = $tasks['results'];
-	
 
 	if (empty($tasks)) {
 		
@@ -87,24 +112,11 @@ function thrive_render_task($echo = true, $page = 1, $limit = 10) {
 		echo '</p>';
 
 	} else {
-		echo '<div id="thrive-task-list-canvas">';
+		
+		// display the filters (already echoed inside the function)
+		thrive_task_filters();
 
-		echo '<div class="alignleft actions bulkactions">
-			<label for="bulk-action-selector-top" class="screen-reader-text">Select bulk action</label><select name="action" id="bulk-action-selector-top">
-			<option value="-1" selected="selected">Filter Tickets</option>
-				<option value="trash">Normal Priority</option>
-				<option value="trash">High Priority</option>
-				<option value="trash">Critical</option>
-				<option value="edit" class="hide-if-no-js">Completed</option>
-
-			</select>
-			<input type="submit" id="doaction" class="button action" value="Apply">
-		</div>';
-
-		echo '<p class="search-box">
-	<label class="screen-reader-text" for="post-search-input">Search Tasks:</label>
-	<input type="search" id="post-search-input" name="s" value="">
-	<input type="submit" id="search-submit" class="button" value="Search Tasks"></p><br/><br/>';
+		echo '<div id="thrive-task-list-canvas">';	  
 		echo '<table class="wp-list-table widefat fixed striped pages" id="thrive-core-functions-render-task">';
 		echo '<tr>';
 			echo '<th width="70%">'.__('Title', 'thrive').'</th>';
@@ -114,15 +126,17 @@ function thrive_render_task($echo = true, $page = 1, $limit = 10) {
 		
 		foreach((array)$tasks as $task) {
 			
+			$priority_label = $thrive_tasks->getPriority($task->priority);
+
 			$row_actions = '<div class="row-actions">';
 				$row_actions .= '<span class="edit"><a href="#tasks/edit/'.intval($task->id).'">Edit</a> | </span>';
 				$row_actions .= '<span class="complete"><a href="#">Complete</a> | </span>';
 				$row_actions .= '<span class="trash"><a data-ticket-id="'.intval($task->id).'" class="thrive-delete-ticket-btn" href="#">Delete</a> </span>';
 			$row_actions .= '</div>';
 				
-			echo '<tr>';
+			echo '<tr class='.esc_attr(sanitize_title($priority_label)).'>';
 				echo '<td><strong><a class="row-title" href="#tasks/edit/'.intval($task->id).'">'.stripslashes(esc_html($task->title)).'</a></strong>'.$row_actions.'</td>';
-				echo '<td>'.esc_html($thrive_tasks->getPriority($task->priority)).'</h3></td>';
+				echo '<td>'.esc_html($priority_label).'</h3></td>';
 				echo '<td>'.esc_html(date("Y/m/d", strtotime($task->date_created))).'</h3></td>';
 
 			echo '</tr>';
