@@ -66,18 +66,41 @@ class ThriveProjectTasksModel{
 		
 		$priority = intval($priority);
 
-		if ($priory < 1) {$priority = 1;}
-		if ($priory > 4) {$priority = 4;}
+		if ($priority < 1) {$priority = 1;}
+		if ($priority > 3) {$priority = 3;}
 
 		$this->priority = $priority;
 
 		return $this;
 	}
+
+	public function getPriority($priority = 1) {
+
+		$priority = abs($priority);
+		
+		if ($priority > 3 || $priority === 0) {
+			$priority = 3;
+		}
+
+		$priority_collection = $this->getPriorityCollection();
+
+		return $priority_collection["{$priority}"];
+	}
+
+	public function getPriorityCollection() {
+		return array(
+			'1' => apply_filters('thrive_task_priority_1_label', 'Normal'),
+			'2' => apply_filters('thrive_task_priority_2_label', 'High'),
+			'3' => apply_filters('thrive_task_priority_3_label', 'Critical'),
+		);
+	}
 	
 	public function setProjectId($project_id = 0) {
+
 		$this->project_id = $project_id;
 
 		return $this;
+		
 	}
 
 	public function showError() {
@@ -125,6 +148,12 @@ class ThriveProjectTasksModel{
 				$offset = $row_count - $perpage;
 			}
 
+			// minimum page is always equal to 1
+			$min_page = 1;
+
+			// maximum page is the total number of page, hence ceil(total/perpage)
+			$max_page = ceil($row_count/$limit);
+
 			$stmt = "SELECT * FROM {$this->model} {$filters} ORDER BY date_created DESC LIMIT {$perpage} OFFSET {$offset}";
 
 			$results = $wpdb->get_results($stmt, OBJECT);
@@ -133,9 +162,12 @@ class ThriveProjectTasksModel{
 				
 				$stats = array();
 					
-					$total = $stats['total'] = $row_count;
-					$perpage = $stats['perpage'] = $perpage;
-					$totalpage = $stats['total_page'] = ceil($total/$perpage);
+					$total     = $stats['total'] 		= $row_count;
+					$perpage   = $stats['perpage'] 		= $perpage;
+					$totalpage = $stats['total_page'] 	= ceil($total/$perpage);
+					$currpage  = $stats['current_page'] = $currpage;
+					$min_page  = $stats['min_page'] 	= $min_page;
+					$max_page  = $stats['max_page'] 	= $max_page;
 
 				return array(
 						'stats' => $stats,

@@ -9,9 +9,6 @@
 // check if access directly
 if (!defined('ABSPATH'))  {die();}
 
-// check if user is is logged in
-if (!is_user_logged_in()) {die();}
-
 header('Content-Type: application/json');
 
 add_action( 'wp_ajax_thrive_transactions_request', 'thrive_transactions_callblack' );
@@ -100,7 +97,7 @@ function thrive_transaction_delete_ticket() {
 function thrive_transaction_fetch_task() {
 
 	$task_id = (int)filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-	$page = (int)filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+	$page = (int)filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
 	$limit = 5;
 
 	$task = new ThriveProjectTasksController();
@@ -130,13 +127,15 @@ function thrive_transaction_edit_ticket() {
 	$task_id = (int)filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 	$title = filter_input(INPUT_POST, 'title', FILTER_UNSAFE_RAW);
 	$description = filter_input(INPUT_POST, 'description', FILTER_UNSAFE_RAW);
+	$priority = filter_input(INPUT_POST, 'priority', FILTER_UNSAFE_RAW);
 
 	$task = new ThriveProjectTasksController();
 
 	$args = array(
 			'title' => $title,
 			'id' => $id,
-			'description' => $description
+			'description' => $description,
+			'priority' => $priority
 		);
 
 	$json_response = array(

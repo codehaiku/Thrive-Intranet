@@ -43,13 +43,14 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 		$this->setTitle($args['title']);
 		$this->setId($id);
 		$this->setDescription($args['description']);
+		$this->setPriority($args['priority']);
 
 		return $this->prepare()->save();
 
 	}
 
 	public function renderTasks($id = null, $page = 1) {
-		
+
 		return $this->prepare()->fetch($id, $page);
 
 	}
@@ -66,6 +67,9 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 	
 	public function completeTicket($ticketID = 0){}
 
+	public function getPriority($priority = 1) {
+		return parent::getPriority($priority);
+	}
 
 }
 ?>

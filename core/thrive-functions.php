@@ -9,6 +9,10 @@
  */
 if (!defined('ABSPATH')) die();
 
+/**
+ * Returns the thrive component id or slug
+ * @return string the thrive component id or slug
+ */
 function thrive_component_id() {
 	return apply_filters('thrive_component_id', 'projects');
 }
@@ -25,6 +29,45 @@ function thrive_include_dir() {
 	return plugin_dir_path(__FILE__) . '../includes';
 }
 
+/**
+ * Display a select field with list of available priorities
+ * @param  integer $default     the default priority
+ * @param  string  $select_name the name of the select field
+ * @param  string  $select_id   the id of the select field
+ * @return void              
+ */
+function thrive_task_priority_select($default = 1, $select_name = 'thrive_task_priority', $select_id = 'thrive-task-priority-select') {
+
+	require_once(plugin_dir_path(__FILE__) . '../controllers/thrive-project-tasks.php');
+	
+	$thrive_tasks = new ThriveProjectTasksController();
+
+	$priorities = $thrive_tasks->getPriorityCollection();
+
+	echo '<select name="'.esc_attr($select_name).'" id="'.esc_attr($select_id).'" class="thrive-task-select">';
+	
+	foreach($priorities as $priority_id => $priority_label) {
+		
+		$selected = (intval($priority_id) === $default) ? 'selected': '';
+
+		echo '<option '.esc_html($selected).' value="'.esc_attr($priority_id).'">'.esc_html($priority_label).'</option>';
+	}
+
+	echo '</select>';
+
+	return;
+}
+
+/**
+ * renders a table that enables admin to manage
+ * tickets under a project. Only use this function
+ * when calling inside the administration area
+ * 
+ * @param  boolean $echo  option to show or store the task inside the variable
+ * @param  integer $page  sets the current page of tasks
+ * @param  integer $limit limits the number of task displayed
+ * @return void if $echo is set to true other wise returns the constructed markup for tasks
+ */
 function thrive_render_task($echo = true, $page = 1, $limit = 10) {
 	
 	if (!$echo) { ob_start(); }
@@ -44,6 +87,7 @@ function thrive_render_task($echo = true, $page = 1, $limit = 10) {
 		echo '</p>';
 
 	} else {
+		echo '<div id="thrive-task-list-canvas">';
 
 		echo '<div class="alignleft actions bulkactions">
 			<label for="bulk-action-selector-top" class="screen-reader-text">Select bulk action</label><select name="action" id="bulk-action-selector-top">
@@ -61,7 +105,6 @@ function thrive_render_task($echo = true, $page = 1, $limit = 10) {
 	<label class="screen-reader-text" for="post-search-input">Search Tasks:</label>
 	<input type="search" id="post-search-input" name="s" value="">
 	<input type="submit" id="search-submit" class="button" value="Search Tasks"></p><br/><br/>';
-
 		echo '<table class="wp-list-table widefat fixed striped pages" id="thrive-core-functions-render-task">';
 		echo '<tr>';
 			echo '<th width="70%">'.__('Title', 'thrive').'</th>';
@@ -79,7 +122,7 @@ function thrive_render_task($echo = true, $page = 1, $limit = 10) {
 				
 			echo '<tr>';
 				echo '<td><strong><a class="row-title" href="#tasks/edit/'.intval($task->id).'">'.stripslashes(esc_html($task->title)).'</a></strong>'.$row_actions.'</td>';
-				echo '<td>'.esc_html($task->priority).'</h3></td>';
+				echo '<td>'.esc_html($thrive_tasks->getPriority($task->priority)).'</h3></td>';
 				echo '<td>'.esc_html(date("Y/m/d", strtotime($task->date_created))).'</h3></td>';
 
 			echo '</tr>';
@@ -89,25 +132,29 @@ function thrive_render_task($echo = true, $page = 1, $limit = 10) {
 		$total      = intval($stats['total']);
 		$perpage    = intval($stats['perpage']);
 		$total_page = intval($stats['total_page']);
+		$currpage   = intval($stats['current_page']);
+		$min_page	= intval($stats['min_page']);
+		$max_page   = intval($stats['max_page']);
 
 		echo '<div class="tablenav"><div class="tablenav-pages">';
 		echo '<span class="displaying-num">'.sprintf(_n('%s task', '%s tasks', $total, 'thrive'),$total).'</span>';
 		
 		if ($total_page >= 1) {
 			echo '<span id="trive-task-paging" class="pagination-links">';
-				echo '<a class="first-page disabled" title="'.__('Go to the first page', 'thrive').'" href="#">«</a>';
+				echo '<a class="first-page disabled" title="'.__('Go to the first page', 'thrive').'" href="#tasks/page/'.$min_page.'">«</a>';
 				echo '<a class="prev-page disabled" title="'.__('Go to the previous page', 'thrive').'" href="#">‹</a>';
 
-						echo '<span class="paging-input"><label for="current-page-selector" class="screen-reader-text">'.__('Select Page', 'thrive').'</label>';
-						echo '<input class="current-page" id="current-page-selector" type="text" maxlength="'.strlen($total_page).'" size="'.strlen($total_page).'"value="1">';
+						echo '<span class="paging-input"><label for="thrive-task-current-page-selector" class="screen-reader-text">'.__('Select Page', 'thrive').'</label>';
+						echo '<input readonly class="current-page" id="thrive-task-current-page-selector" type="text" maxlength="'.strlen($total_page).'" size="'.strlen($total_page).'"value="'.intval($currpage).'">';
 						echo ' of <span class="total-pages">'.$total_page.'</span></span>';
 
 				echo '<a class="next-page" title="'.__('Go to the next page', 'thrive').'" href="#">›</a>';
-				echo '<a class="last-page" title="'.__('Go to the last page', 'trive').'" href="">»</a></span>';
+				echo '<a class="last-page" title="'.__('Go to the last page', 'trive').'" href="#tasks/page/'.$max_page.'">»</a></span>';
 			echo '</span>';
 		}
 
 		echo '</div></div><!--.tablenav--><!--.tablenav-pages-->';
+		echo '</div><!--#thrive-task-list-canvas-->';
 	}
 
 	if (!$echo) { 

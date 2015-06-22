@@ -30,12 +30,13 @@
 
 if (!defined('ABSPATH')) exit();
 
-define('THRIVE_PROJECT_LIMIT', 5);
+define('THRIVE_PROJECT_LIMIT', 10);
 
 require_once(plugin_dir_path(__FILE__) . 'shortcodes.php');
 require_once(plugin_dir_path(__FILE__) . 'functions.php');
 require_once(plugin_dir_path(__FILE__) . 'locked-down-page.php');
 require_once(plugin_dir_path(__FILE__) . 'includes/thrive-projects-post.php');
+require_once(plugin_dir_path(__FILE__) . 'core/thrive-hooks.php');
 
 // include thrive projects transactions
 add_action('init', 'thrive_register_transactions');
