@@ -165,9 +165,10 @@ function thrive_tasks_metabox_content() {
 		</div> 
 		<div class="thrive-tabs-tabs">
 			<ul>
-			    <li class="ui-state-active"><a href="#tasks">Tasks List</a></li>
-			    <li><a href="#tasks/add">Add Task</a></li>
-			    <li class="hidden" id="thrive-edit-task-list"><a href="#thrive-edit-task">Edit Task</a></li>
+			    <li id="thrive-task-list-tab" class="thrive-task-tabs ui-state-active"><a href="#tasks"><span class="dashicons dashicons-list-view"></span> Tasks List</a></li>
+			    <li id="thrive-task-completed-tab" class="thrive-task-tabs"><a href="#tasks/completed"><span class="dashicons dashicons-yes"></span> Completed</a></li>
+			    <li id="thrive-task-add-tab" class="thrive-task-tabs"><a href="#tasks/add"><span class="dashicons dashicons-plus"></span> New Task</a></li>
+			    <li id="thrive-task-edit-tab" class="thrive-task-tabs hidden" id="thrive-edit-task-list"><a href="#thrive-edit-task">Edit Task</a></li>
 			</ul>
 		</div>
 		<div class="thrive-tabs-content">
@@ -180,89 +181,75 @@ function thrive_tasks_metabox_content() {
 				<?php } ?>
 			</div>
 
-			<!-- THRIVE ADD TASK-->
 			<div id="thrive-add-task" class="thrive-tab-item-content">
-				<div class="form-wrap">
-					<div id="thrive-add-task-message" class="thrive-notifier"></div>
-
-					<div class="thrive-form-field">
-						<input placeholder="Task Title" type="text" id="thriveTaskTitle" maxlength="160" name="title" class="widefat"/>
-						<br><span class="description"><?php _e('Enter the title of this task. Max 160 characters', 'thrive'); ?></span>
-					</div><br/>
-				
-					<div class="thrive-form-field">
-						<textarea class="widefat" rows="5" cols="100" id="thriveTaskDescription" placeholder="Description"></textarea>
-						<br><span class="description"><?php _e('In few words, explain what this task is all about', 'thrive'); ?></span>
-					</div><br />
-
-					<div class="thrive-form-field">
-						<label for="thrive-task-priority-select">
-							<strong><?php _e('Priority:', 'thrive'); ?> </strong>
-							<?php echo thrive_task_priority_select(); ?>
-						</label>
-					</div>
-
-					<div class="thrive-form-field">
-						<button id="thrive-submit-btn" class="button button-primary button-large" style="float:right">
-							<?php _e('Save Task', 'dunhakdis'); ?>
-						</button>
-						<div style="clear:both"></div>
-					</div>
-				</div>
+				<?php thrive_add_task_form(); ?>
 			</div><!--.#thrive-add-task-->
-			<!-- THRIVE END ADDING OF TASK-->
 
-			<!-- THRIVE EDIT TASK-->
 			<div id="thrive-edit-task" class="thrive-tab-item-content">
-				<div class="form-wrap">
-					<div id="thrive-edit-task-message" class="thrive-notifier"></div>
-
-					<input type="hidden" id="thriveTaskId" />
-					<div class="thrive-form-field">
-						<input placeholder="Task Title" type="text" id="thriveTaskEditTitle" maxlength="160" name="title" class="widefat"/>
-						<br><span class="description"><?php _e('Enter the title of this task. Max 160 characters', 'thrive'); ?></span>
-					</div><br/>
-				
-					<div class="thrive-form-field">
-						<textarea class="widefat" rows="5" cols="100" id="thriveTaskEditDescription" placeholder="Description"></textarea>
-						<br><span class="description"><?php _e('In few words, explain what this task is all about', 'thrive'); ?></span>
-					</div><br/>
-
-					<div class="thrive-form-field">
-						<label for="thrive-task-priority-select">
-							<strong><?php _e('Priority:', 'thrive'); ?> </strong>
-								<?php echo thrive_task_priority_select($default = 1, $name = 'thrive-task-edit-priority', $id='thrive-task-edit-select-id'); ?>
-						</label>
-					</div>
-
-					<div class="thrive-form-field">
-						<button id="thrive-edit-btn" class="button button-primary button-large" style="float:right">
-							<?php _e('Update Task', 'dunhakdis'); ?>
-						</button>
-						<div style="clear:both"></div>
-					</div>
-				</div>
+				<?php thrive_edit_task_form(); ?>
 			</div><!--.#thrive-edit-task-->
-			<!-- THRIVE EDIT TASK-->
-
+			
 		</div>
 	</div>
 	<script>
+		<?php global $post; ?>
 		var thriveAjaxUrl = '<?php echo admin_url('admin-ajax.php'); ?>';
+		var thriveTaskConfig = {
+			currentProjectId: '<?php echo $post->ID; ?>',
+			currentUserId: '<?php echo get_current_user_id(); ?>',
+		}
 	</script>
 	<?php
 }
 
-function get_custom_post_type_template($content) {
-     ob_start();
-     global $post;
 
-     if ($post->post_type == 'project') {
-          include_once thrive_template_dir(). '/thrive-single-project.php';
-     }
-     $content .= ob_get_clean();
-     return $content;
+add_action('wp', 'thrive_register_project_content_filter');
+
+function thrive_register_project_content_filter() {
+	
+	global $post;
+
+	if (is_singular('project')) {
+		add_filter( 'the_content', 'thrive_project_content_filter' );
+	}
+
+	return;
 }
+function thrive_project_content_filter($content) {
+    
+    global $post;
 
-add_filter( 'the_content', 'get_custom_post_type_template' );
+    require_once(plugin_dir_path(__FILE__) . '../core/thrive-functions.php');
+
+    $container = '<div id="thrive-project">';
+    $container_end = '</div><!--#thrive-project-->';
+
+	    $heading = '<div class="thrive-project-tabs">';
+	    	$heading .= '<ul id="thrive-project-tab-li">';
+	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-activity" class="thrive-project-tab-li-item-a" href="#activity">Activity</a></li>';
+	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-about" class="thrive-project-tab-li-item-a" href="#about">About</a></li>';
+	    		$heading .= '<li class="thrive-project-tab-li-item active"><a data-content="thrive-project-tasks" class="thrive-project-tab-li-item-a" href="#tasks">Tasks</a></li>';
+	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-add-new" class="thrive-project-tab-li-item-a" href="#tasks/add-new">Add New</a></li>';
+	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-edit" id="thrive-project-edit-tab" class="thrive-project-tab-li-item-a" href="#">Edit</a></li>';
+	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-settings" class="thrive-project-tab-li-item-a" href="#tasks/settings">Settings</a></li>';
+	    	$heading .= '</ul>';
+	    $heading .= '</div>';
+
+	    $body  = '<div id="thrive-project-tab-content">';
+	    	$body .= '<div class="thrive-project-tab-content-item" data-content="thrive-project-about" id="thrive-project-about-context">';
+	    		$body .= $content;
+	    	$body .= '</div>';
+	    		
+	    		ob_start();
+	    	  		if ($post->post_type == 'project') {
+			    		include_once thrive_template_dir(). '/thrive-single-project.php';
+			    	}
+			    $project_contents = ob_get_clean();
+			
+			$body .= $project_contents;
+
+	    $body .= '</div>';
+
+    return  $container . $heading . $body .  $container_end;
+}
 ?>

@@ -52,10 +52,12 @@
 	background: #eee;
 }
 .bp-template-notice.error {
-	background: #A00;
-	color: #fff;
-	font-weight: bold;
-	padding: 15px;
+  border: 1px solid #DB4B4B;
+  color: #DB4B4B;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
 }
 
 .thrive-clearfix {
@@ -168,6 +170,33 @@
 #ui-datepicker-div table td{ background: #fff; padding: 10px; }
 #ui-datepicker-div table td a{ text-decoration: none; font-weight: bold; }
 
-#thrive-core-functions-render-task tr.normal   strong a{color: #0A911B;}
+#thrive-core-functions-render-task tr.normal   strong a{color: #088399;}
 #thrive-core-functions-render-task tr.high     strong a{color: #B2A633;}
 #thrive-core-functions-render-task tr.critical strong a{color: #A91515;}
+
+#thrive-core-functions-render-task tr.completed strong a{
+	text-decoration: line-through;
+	opacity: 0.70;
+	color: #0A911B;
+}
+
+#thrive-core-functions-render-task tr td {
+	position: relative;
+}
+
+#thrive-core-functions-render-task tr .row-actions,
+#thrive-core-functions-render-task tr strong a {
+	padding-left: 25px;
+	display: block;
+}
+#thrive-core-functions-render-task tr strong a:before {
+	content: "\f159";
+	font-family: 'dashicons';
+	position: absolute;
+	left: 15px;
+	top: 10px;
+}
+
+#thrive-core-functions-render-task tr.completed strong a:before {
+	content: "\f147";
+}

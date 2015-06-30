@@ -2,43 +2,107 @@
 /**
  * ThriveProjectTasksModel 
  */
-class ThriveProjectTasksModel{
+class ThriveProjectTasksModel {
 
-	var $db = '';
+	/**
+	 * Contains the name of task
+	 * @var string
+	 */
 	var $model = '';
+
+	/**
+	 * The ID of the task
+	 * @var integer
+	 */
 	var $id = 0;
+
+	/**
+	 * The title of the task
+	 * @var string
+	 */
 	var $title = "";
+
+	/**
+	 * The description of the task
+	 * @var string
+	 */
 	var $description = "";
+
+	/**
+	 * The user id
+	 * @var integer
+	 */
 	var $user_id = 1;
+
+	/**
+	 * The date pertaining time the task is inserted into the table
+	 * @var string
+	 */
 	var $date = "";
+
+	/**
+	 * The milestone ID (Coming Soon)
+	 * @var integer
+	 */
 	var $milestone_id = 0;
+
+	/**
+	 * The priority of the task
+	 * @var integer
+	 */
 	var $priority = 0;
+
+	/**
+	 * The project id of task
+	 * @var integer
+	 */
 	var $project_id = 0;
 
+	/**
+	 * Update the table name on initiate
+	 */
 	public function __construct() {
+
 		global $wpdb;
 
 		$this->model = sprintf("%sthrive_tasks", $wpdb->prefix);
 	}
 
+	/**
+	 * Method that calls the __construct function
+	 * in case you don't need to instantitate the same 
+	 * object again and again
+	 * 
+	 * @return object self
+	 */
 	public function prepare() {
+
 		self::__construct();
 
 		return $this;
 	}
 
+	/**
+	 * Sets the id of our task
+	 * @param integer $id 
+	 */
 	public function setId($id = 0) {
+
 		$this->id = $id;
+		
 		return $this;
+
 	}
 
 	public function setTitle($title = "") {
+
 		$this->title = $title;
 
 		return $this;
 	}
 
 	public function setDescription($description = "") {
+
 		$this->description = $description;
 
 		return $this;
@@ -103,16 +167,109 @@ class ThriveProjectTasksModel{
 
 	}
 
+	public function completeTask($task_id = 0, $user_id = 0) {
+
+
+		if (empty($task_id) || empty($user_id)) {
+			
+			return false;
+
+		} else {
+
+			global $wpdb;
+
+			$task = array(
+					'completed_by' => $user_id,
+				);
+			
+			$task_format = array('%d');
+
+			$updated_task = array(
+					'id' => $task_id
+				);
+
+			$updated_task_format = array('%d');
+
+			$updated_task_query = $wpdb->update($this->model, $task, $updated_task, $task_format, $updated_task_format);
+			
+			if ($updated_task_query === 1) {
+				return $task_id;
+			} else {
+				return false;
+			}
+
+		}
+
+		return false;
+	}
+
+	public function renewTask($task_id = 0) {
+
+		$user_unassigned = 0;
+
+
+		if (empty($task_id)) {
+			return false;
+		} else {
+			global $wpdb;
+			$task = array(
+					'completed_by' => $user_unassigned,
+				);
+			$task_format  = array('%d');
+			$updated_task = array('id'=> $task_id);
+			$updated_task_format = array('%d');
+			$updated_task_query = $wpdb->update($this->model, $task, $updated_task, $task_format, $updated_task_format);
+			if ($updated_task_query === 1) {
+				return $task_id;
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+
 	public function showError() {
 		$this->show_errors();
 		$this->print_error();
 		echo 'last query:' . $this->last_query;
 	}
 
-	public function fetch($id = null, $page = 1, $priority = -1, $search = '', $orderby = 'date_created', $order = 'desc') {
+	public function fetch($args = array()) {
+
 		// fetch all tickets if there is no id specified
 		global $wpdb;
-		if ($id === null) {
+
+		$defaults = array(
+			'project_id' => 0,
+			'id' => 0,
+			'page' => 1,
+			'priority' => -1,
+			'search' => '',
+			'orderby' => 'date_created',
+			'order' => 'desc',
+			'show_completed' => 'no',
+			'echo' => true
+		);
+
+		foreach ($defaults as $option => $value) {
+			if (!empty($args[$option])) {
+				$$option = $args[$option];
+			} else {
+				$$option = $value;
+			}
+		}
+
+		// project id should be specified
+		// when not editing 
+		
+		if ($id === 0) {
+			if ($project_id === 0) {
+				return array();
+			}
+		}
+
+
+		if ($id === 0) {
 
 			$funnels = array();
 
@@ -136,7 +293,34 @@ class ThriveProjectTasksModel{
 						'format'  => 'string'
 					);
 			}	
-			
+
+			// show only tasks that are not completed
+			if ("no" === $show_completed) {
+				$funnels[] = array(
+					'column'  => 'completed_by',
+					'operand' => '=',
+					'value'   => '0',
+					'format'  => 'raw'
+				);
+			} else {
+				$funnels[] = array(
+					'column'  => 'completed_by',
+					'operand' => '<>',
+					'value'   => '0',
+					'format'  => 'raw'
+				);
+			}
+
+			// always specify the project id
+			if ($project_id !== 0) {
+				$funnels[] = array(
+					'column' => 'project_id',
+					'operand' => '=',
+					'value' => $project_id,
+					'format' => 'raw'
+				);
+			}
+
 			if (!empty($funnels)) {
 				$filters .= 'WHERE ';
 			}
@@ -216,14 +400,39 @@ class ThriveProjectTasksModel{
 			}
 		}
 
-		if (!empty($id)) {
+		if ($id !== 0) {
 
-			$stmt = sprintf("SELECT * FROM {$this->model} WHERE id = {$id} order by date_created desc");
+			$stmt = sprintf("SELECT * FROM {$this->model} WHERE id = {$id} order by priority desc, date_created desc");
 
 			$result = $wpdb->get_row($stmt);
+			
+			if (!empty($result)) {
+				
+				$allowed_html = array(
+					    'a' => array(
+					        'href' => array(),
+					        'title' => array()
+					    ),
+					    'br' => array(),
+					    'em' => array(),
+					    'strong' => array(),
+					    'del' => array(),
+					    'ul' => array(),
+					    'ol' => array(),
+					    'li' => array(),
+					    'code' => array(),
+					    'img' => array(),
+					    'ins' => array(),
+					    'blockquote' => array(),
+					    'hr' => array(),
+					    'p' => array(
+					    		'style' => array()
+					    	),
+					);
 
-			$result->title = stripslashes($result->title);
-			$result->description = stripslashes($result->description);
+				$result->title = stripslashes($result->title);
+				$result->description = stripslashes(wp_kses($result->description, $allowed_html));
+			}
 
 			return $result;
 		}
@@ -266,6 +475,40 @@ class ThriveProjectTasksModel{
 		}
 	}
 
+	public function getCount($project_id = 0, $type = 'all') {
+
+		global $wpdb;
+
+		if ($project_id === 0) {
+			return 0;
+		}
+
+		$where = sprintf("WHERE project_id = %d", $project_id);
+
+		if ($type == 'completed') {
+			$where .= " AND completed_by <> 0";
+		}
+
+		if ($type == 'open') {
+			$where .= " AND completed_by = 0";
+		}
+
+		$this->prepare();
+
+		$row_count = 0;
+
+		$row_count_stmt = "SELECT COUNT(*) as count from {$this->model} {$where}";			
+			$row = $wpdb->get_row($row_count_stmt, OBJECT);
+				$row_count = intval($row->count);
+
+		return $row_count;
+	}
+
+	/**
+	 * Deletes the task
+	 * @php todo should return the task id if successfal otherwise return false
+	 * @return 
+	 */
 	public function delete() {
 		
 		global $wpdb;

@@ -32,7 +32,9 @@ function thrive_transactions_callblack() {
 			'thrive_transaction_add_ticket',
 			'thrive_transaction_delete_ticket',
 			'thrive_transaction_fetch_task',
-			'thrive_transaction_edit_ticket'
+			'thrive_transaction_edit_ticket',
+			'thrive_transaction_complete_task',
+			'thrive_transaction_renew_task'
 		);
 
 	if (function_exists($method)) {
@@ -78,7 +80,7 @@ function thrive_transaction_add_ticket() {
 			'message' => 'fail',
 			'response' => __('There was an error trying to add this task. Title and Description fields are required or there was an unexpected error.',' thrive')
 		));
-	}
+	}	
 
 	return;
 }
@@ -98,20 +100,42 @@ function thrive_transaction_fetch_task() {
 
 	$task_id = (int)filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 	$page = (int)filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
+	$project_id = (int)filter_input(INPUT_GET, 'project_id', FILTER_VALIDATE_INT);
 	$priority = (int)filter_input(INPUT_GET, 'priority', FILTER_VALIDATE_INT);
 	$search = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_URL);
+	$show_completed = filter_input(INPUT_GET, 'show_completed', FILTER_SANITIZE_STRING);
+	$callback_template = filter_input(INPUT_GET, 'template', FILTER_SANITIZE_STRING);
+	$html_template = 'thrive_render_task';
+
+	if (!empty($callback_template) && function_exists($callback_template)) {
+		$html_template = $callback_template;
+	}
+
 	$limit = 5;
 
 	$task = new ThriveProjectTasksController();
 
+	$args = array(
+		'project_id' => $project_id,
+		'id' => $task_id,
+		'page' => $page,
+		'priority' => $priority,
+		'search' => $search,
+		'show_completed' => $show_completed,
+		'limit' => $limit,
+		'echo' => 'no',
+	);
+
+	$task_collection = $task->renderTasks($args);
+
 	if (0 === $task_id) {
 		$task_id = null;
-		$template = thrive_render_task(false, $page, $priority, $search);
+		$template = $html_template($args);
 	} else {
-		$template = null;
+		if (!empty($callback_template)) {
+			$template = $html_template($task_collection);
+		}
 	}
-
-	$task_collection = $task->renderTasks($task_id, $page, $priority, $search);
 
 	thrive_api_message(array(
 			'message' => 'success',
@@ -130,14 +154,18 @@ function thrive_transaction_edit_ticket() {
 	$title = filter_input(INPUT_POST, 'title', FILTER_UNSAFE_RAW);
 	$description = filter_input(INPUT_POST, 'description', FILTER_UNSAFE_RAW);
 	$priority = filter_input(INPUT_POST, 'priority', FILTER_UNSAFE_RAW);
+	$user_id = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
+	$project_id = filter_input(INPUT_POST, 'project_id', FILTER_VALIDATE_INT);
 
 	$task = new ThriveProjectTasksController();
 
 	$args = array(
 			'title' => $title,
-			'id' => $id,
+			'id' => $task_id,
 			'description' => $description,
-			'priority' => $priority
+			'priority' => $priority,
+			'user_id' => $user_id,
+			'project_id' => $project_id
 		);
 
 	$json_response = array(
@@ -155,5 +183,54 @@ function thrive_transaction_edit_ticket() {
 	thrive_api_message($args);
 
 	return;
+}
+
+function thrive_transaction_complete_task() {
+
+	$task_id = (int)filter_input(INPUT_POST, 'task_id', FILTER_VALIDATE_INT);
+	$user_id = (int)filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
+
+	$args = array(
+			'message' => 'success',
+			'task_id' => 0
+		);
+	
+	$task = new ThriveProjectTasksController();
+
+	$task_id = $task->completeTask($task_id, $user_id);
+
+	if ($task_id) {
+		$args['message'] = 'success';
+		$args['task_id'] = $task_id;
+	} else {
+		$args['message'] = 'fail';
+	}
+	
+	thrive_api_message($args);
+	
+	return;
+}
+
+function thrive_transaction_renew_task () {
+
+	$task_id = (int)filter_input(INPUT_POST, 'task_id', FILTER_VALIDATE_INT);
+	
+	$args = array(
+			'message' => 'success',
+			'task_id' => 0
+		);
+
+	$task = new ThriveProjectTasksController();
+
+	$task_id = $task->renewTask($task_id);
+
+	if ($task_id) {
+		$args['message'] = 'success';
+		$args['task_id'] = $task_id;
+	} else {
+		$args['message'] = 'fail';
+	}
+	
+	thrive_api_message($args);
 }
 ?>
