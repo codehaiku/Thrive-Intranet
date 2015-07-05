@@ -25,9 +25,14 @@
 	</div>
 
 	<div class="thrive-form-field">
+		<button id="thrive-delete-btn" class="button button-primary button-large" style="float:right; margin-left: 10px;">
+			<?php _e('Delete', 'dunhakdis'); ?>
+		</button>
+
 		<button id="thrive-edit-btn" class="button button-primary button-large" style="float:right">
 			<?php _e('Update Task', 'dunhakdis'); ?>
 		</button>
+		
 		<div style="clear:both"></div>
 	</div>
 </div>

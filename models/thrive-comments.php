@@ -43,10 +43,23 @@ class ThriveComments {
 	protected $ticket_id = 0;
 
 	/**
+	 * Holds the status of the comment
+	 * 0 for 'In Progress', 1 for 'Complete', 2 'reOpen'
+	 * @var integer
+	 */
+	protected $status = 0;
+
+	/**
 	 * Reference to custom table use for comments
 	 * @var string
 	 */
 	private $model = '';
+
+	// Set allowed status.
+	// 0 for 'In Progress'
+	// 1 for 'Completed'
+	// 2 for 'ReOpen'
+	private $allowed_status = array(0, 1, 2);
 
 	/**
 	 * Prepare the object properties before using
@@ -57,6 +70,8 @@ class ThriveComments {
 		global $wpdb;
 		$this->model = $wpdb->prefix . 'thrive_comments';
 		$this->date_added = date( 'Y-m-d g:i:s' );
+
+		
 	}
 
 	/**
@@ -103,7 +118,9 @@ class ThriveComments {
 	 */
 	public function set_user($user_id = 0) {
 
-		if ( ! get_userdata( $user_id ) ) {
+		$user_id = absint($user_id);
+
+		if ( 0 === $current_user_id ) {
 			throw new Exception( "Model/Comments/::user_id must not be equal to 0 'zero'" );
 		}
 
@@ -158,15 +175,91 @@ class ThriveComments {
 				'details' => $this->details,
 				'user' => $this->user,
 				'ticket_id' => $this->ticket_id,
+				'status' => $this->get_status()
 			);
 
 		$formats = array(
 				'%s', // The format for details.,
 				'%d', // The format for user.
 				'%d', // The format for ticket_id.
+				'%d', // The format for status.
 			);
 
-		return $wpdb->insert( $table, $data, $formats ); // Db call ok.
+		$insert_comments = $wpdb->insert( $table, $data, $formats ); // Db call ok.
+
+		if ( $insert_comments ) {
+			return $wpdb->insert_id;
+		} else {
+			return false;
+		}
+
+		return false;
+	}
+
+	public function set_status( $status = 0 ) {
+
+		$this->status = 0;
+
+		if ( $this->validate_status( $status ) ) {
+			$this->status = $status;
+		}
+
+		return $this;
+	}
+
+	public function validate_status( $status ) {
+		
+		if (in_array($status, $this->allowed_status)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public function get_status() {
+		
+		if ( in_array( $this->status, $this->allowed_status ) ) {
+			return $this->status;	
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Fetches the comment
+	 * @param  integer $comment_id The id of the comment.
+	 * @param  integer $task_id    The id of the task.
+	 * @return array               Returns single result if ID is present, 
+	 *                             otherwise return all comments under a
+	 *                             specific task.
+	 */
+	public function fetch($comment_id = 0, $task_id = 0) {
+
+		global $wpdb;
+
+		// Make sure $comment_id and $task_id are integer and non-negative value.
+		$comment_id = absint($comment_id);
+		$task_id = absint($task_id);
+
+		$results = array();
+
+		if ( $comment_id === 0 ) {
+			$stmt = sprintf( "SELECT * FROM $this->model WHERE task_id = %d ORDER BY dated_added DESC;", $task_id );
+			$results = $wpdb->get_results( $stmt, 'ARRAY_A' );
+		}
+
+		if ( $comment_id !== 0 ) {
+			$stmt = sprintf( "SELECT * FROM $this->model WHERE id = %d;", $comment_id );
+			$results = $wpdb->get_row( $stmt, 'ARRAY_A' );
+		}
+
+		if ( !empty( $results ) ) {
+			return $results;
+		}
+
+		// No conditions met? Return empty array.
+		return array();
 	}
 
 	/**
@@ -176,14 +269,24 @@ class ThriveComments {
 	 */
 	public function delete() {
 
+		global $wpdb;
+
 		if ( empty( $this->id ) ) {
 			return false;
 		}
 
+		// Check if current user can delete the requested comment.
+
 		if ( $this->current_user_can_delete() ) {
-		 	return wpdb->delete( $this->model, array( 'id' => $this->id, 'user' => $this->user ), array( '%d', '%d' ) );
+			
+			$_delete_comment = $wpdb->delete( $this->model, array( 'id' => $this->id ), array( '%d' ) );
+			
+		 	return $_delete_comment;
+
 		} else {
+
 			return false;
+
 		}
 
 		return false;

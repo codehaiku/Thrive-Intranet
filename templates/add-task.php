@@ -1,4 +1,5 @@
 <div class="form-wrap">
+	
 	<div id="thrive-add-task-message" class="thrive-notifier"></div>
 
 	<div class="thrive-form-field">
@@ -7,7 +8,13 @@
 	</div><br/>
 	
 	<div class="thrive-form-field">
-		<textarea class="widefat" rows="5" cols="100" id="thriveTaskDescription" placeholder="Description"></textarea>
+		<?php $args = array(
+			'teeny' => true,
+			'editor_height' => 250
+		); ?>
+		
+		<?php echo wp_editor($content = null, $editor_id = "thriveTaskDescription", $args); ?>
+
 		<br><span class="description"><?php _e('In few words, explain what this task is all about', 'thrive'); ?></span>
 	</div><br />
 

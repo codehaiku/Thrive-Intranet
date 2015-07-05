@@ -29,13 +29,16 @@ function thrive_transactions_callblack() {
 	}
 
 	$allowed_callbacks = array(
-			'thrive_transaction_add_ticket',
-			'thrive_transaction_delete_ticket',
-			'thrive_transaction_fetch_task',
-			'thrive_transaction_edit_ticket',
-			'thrive_transaction_complete_task',
-			'thrive_transaction_renew_task'
-		);
+		'thrive_transaction_add_ticket',
+		'thrive_transaction_delete_ticket',
+		'thrive_transaction_fetch_task',
+		'thrive_transaction_edit_ticket',
+		'thrive_transaction_complete_task',
+		'thrive_transaction_renew_task',
+		// Comments callback functions.
+		'thrive_transaction_add_comment_to_ticket',
+		'thrive_transaction_delete_comment'
+	);
 
 	if (function_exists($method)) {
 		if (in_array($method, $allowed_callbacks)) {
@@ -111,7 +114,6 @@ function thrive_transaction_fetch_task() {
 		$html_template = $callback_template;
 	}
 
-	$limit = 5;
 
 	$task = new ThriveProjectTasksController();
 
@@ -122,7 +124,8 @@ function thrive_transaction_fetch_task() {
 		'priority' => $priority,
 		'search' => $search,
 		'show_completed' => $show_completed,
-		'limit' => $limit,
+		'orderby' => 'priority',
+		'order' => 'desc',
 		'echo' => 'no',
 	);
 
@@ -232,5 +235,96 @@ function thrive_transaction_renew_task () {
 	}
 	
 	thrive_api_message($args);
+}
+
+function thrive_transaction_add_comment_to_ticket() {
+
+	require_once plugin_dir_path(__FILE__) . '../models/thrive-comments.php';
+	require_once plugin_dir_path(__FILE__) . '../models/thrive-project-tasks.php';
+
+	$comment   = new ThriveComments();
+	$task      = new ThriveProjectTasksModel();
+
+	$details   = filter_input(INPUT_POST, 'details', FILTER_SANITIZE_STRING);
+	$ticket_id = filter_input(INPUT_POST, 'ticket_id', FILTER_VALIDATE_INT);
+	$priority  = filter_input(INPUT_POST, 'priority', FILTER_VALIDATE_INT);
+	$completed = filter_input(INPUT_POST, 'completed', FILTER_SANITIZE_STRING);
+
+	// Get the current user that is logged in.
+	$user_id = get_current_user_id();
+
+	// Update the priority.
+	$task->update_priority($ticket_id, $priority);
+
+	// Prepare the comment statuses.
+	$status = array(
+			'no'     => 0,
+			'yes'    => 1,
+			'reopen' => 2
+		);
+
+	// Update the task status
+	if ($completed === 'yes') {
+		$task->completeTask($ticket_id, $user_id);
+	}
+		// Reopen task
+		if ($completed === 'reopen') {
+			$task->renewTask($ticket_id);
+		}
+
+	if (empty($user_id)) {
+		thrive_api_message(array(
+				'message' => 'fail',
+			));
+	}
+
+	$new_comment = $comment->set_details( $details )
+	        			   ->set_user( $user_id )
+	        			   ->set_status( $status[$completed] )
+	        			   ->set_ticket_id( $ticket_id )
+	                       ->save();
+
+	if ( $new_comment ) {
+
+		$added_comment = $comment->fetch( $new_comment );
+
+		thrive_api_message(array(
+				'message' => 'success',
+				'result' => thrive_comments_template($added_comment)
+			));
+	}                       
+	
+	return;
+}
+
+function thrive_transaction_delete_comment() {
+
+	require_once plugin_dir_path(__FILE__) . '../models/thrive-comments.php';
+
+	$comment_id = absint(filter_input(INPUT_POST, 'comment_id', FILTER_VALIDATE_INT));
+	
+	if (0 === $comment_id) {	
+		thrive_api_message(array(
+			'message'  => 'failure',
+			'response' => 'Invalid Comment ID'
+		));
+	}
+
+	// Proceed.
+	$comment = new ThriveComments();
+
+	// Delete the comment and handle the result
+	if ( $comment->set_id($comment_id)->set_user(get_current_user_id())->delete() ) {
+		thrive_api_message(array(
+			'message'  => 'success',
+		));
+	} else {
+	// Otherwise, tell the client to throw an error
+		thrive_api_message(array(
+			'message' => 'failure'
+		));	
+	}
+
+	return;
 }
 ?>

@@ -246,7 +246,7 @@ class ThriveProjectTasksModel {
 			'priority' => -1,
 			'search' => '',
 			'orderby' => 'date_created',
-			'order' => 'desc',
+			'order' => 'asc',
 			'show_completed' => 'no',
 			'echo' => true
 		);
@@ -378,7 +378,7 @@ class ThriveProjectTasksModel {
 			// maximum page is the total number of page, hence ceil(total/perpage)
 			$max_page = ceil($row_count/$limit);
 
-			$stmt = "SELECT * FROM {$this->model} {$filters} ORDER BY {$orderby} {$order} LIMIT {$perpage} OFFSET {$offset}";
+			$stmt = "SELECT * FROM {$this->model} {$filters} ORDER BY {$orderby} {$order}, id desc LIMIT {$perpage} OFFSET {$offset}";
 
 			$results = $wpdb->get_results($stmt, OBJECT);
 			
@@ -502,6 +502,28 @@ class ThriveProjectTasksModel {
 				$row_count = intval($row->count);
 
 		return $row_count;
+	}
+
+	public function update_priority($task_id = 0, $new_priority = 1) {
+
+		global $wpdb;
+
+		if ($task_id === 0) {
+			return false;
+		}
+
+		$this->setPriority($new_priority);
+
+		$wpdb->update(
+			$this->model, 
+			array( 'priority' => $this->priority ), // integer (number)
+			array( 'id' => $task_id ), 
+			array( '%d' ), // Integer Format for priority.
+			array( '%d' )  // Integer Format for ID.
+		);
+
+		return false;
+
 	}
 
 	/**

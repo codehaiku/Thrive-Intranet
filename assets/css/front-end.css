@@ -238,7 +238,7 @@
 }
 
 #thrive-project-tab-li li a {
-	padding: 10px 20px;
+	padding: 35px 20px;
 	background: #eee;
 	border:1px solid #ddd;
 	border-right: 0;
@@ -251,7 +251,7 @@
 
 #thrive-project-tab-li li.active a {
 	background: #fff;
-	padding: 10.5px 20px;
+	padding: 35.5px 20px;
 	position: relative;
 	border-bottom: 0;
 	z-index: 2;
@@ -281,10 +281,36 @@
 	display: block;
 }
 
-#thrive-project-tasks li {
+#thrive-project-tasks li.thrive-task-item {
 	border-bottom: 1px solid #EEE;
-	padding: 5px 0;
+	padding: 15px 0;
 }
+
+#thrive-project-tasks li.thrive-task-discussion {
+    margin: 0;
+    padding: 0;
+}
+
+#thrive-project-tasks li.thrive-task-discussion  h3 {
+    margin-bottom: 20px;
+    font-size: 32px;
+}
+
+#thrive-project-tasks ul.thrive-task-item-details:after {
+    content: " ";
+    display: block;
+    clear: both;
+    width: 100%;
+}
+
+#thrive-project-tasks ul.thrive-task-item-details li {
+    list-style: none;
+    margin-bottom: 0;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+
 /**
  * Meta
  */
@@ -296,20 +322,151 @@
 	display: inline-block;
 	width: 25px;
 	text-align: center;
+    padding: 0 5px;
+    margin: 0 5px;
+
 }
 
 .single-project #thrive-project-tasks h3 {
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: bold;
 	line-height: 1.3;
 }
 
 .single-project #thrive-project-tasks ul {
 	padding-left: 0;
+    margin-left: 0;
+    display: table;
+    width: 100%;
 }
 
-.single-project #thrive-project-tasks ul li {
+.single-project #thrive-project-tasks ul li.thrive-task-item:hover{
+    background: #F7F7F7;
+}
+
+.single-project #thrive-project-tasks ul li .task-user-name {
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 0 10px;
+    border-radius: 5px;
+    left: 95px;
+    top: 5px;
+    display: inline-table;
+    z-index: 2;
+    opacity: 0;
+    text-align: center;
+
+    transition: opacity 0.25 ease-in-out;
+    -moz-transition: opacity 0.25 ease-in-out;
+    -webkit-transition: opacity 0.25 ease-in-out;
+}
+
+.single-project #thrive-single-task-details {
+    padding: 25px;
+    background-color: #F9FBE7;
+    margin-bottom: 35px;
+    border: 1px solid #F0F4C3;
+}
+
+.single-project #thrive-single-task-details .task-content-meta {
+    padding-top: 35px;
+    border-top: 2px dashed rgba(0, 0, 0, 0.1);
+}
+
+.single-project #thrive-single-task-details .task-content {
+    padding: 0 0 35px;
+}
+
+.single-project #thrive-project-tasks ul li .task-user img.avatar {
+    border-radius: 50%;
+}
+
+.single-project .thrive-tabs-tabs ul {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.single-project .thrive-tabs-tabs ul li {
+    float: left;
+    list-style: none;
+}
+
+.single-project .thrive-tabs-tabs ul li a {
+      padding: 5px 15px;
+      display: inline-block;
+      border: 1px solid;
+      margin-right: 15px;
+      border-radius: 25px;
+}
+
+.single-project .thrive-tabs-tabs ul li a.active {
+    color: #4B933E;
+}
+
+.single-project .thrive-tabs-tabs ul li a .dashicons {
+    font-size: 16px;
+    padding-top: 5px;
+}
+
+.single-project #thrive-project-tasks ul li .task-user {
+    position: relative;
+}
+
+.single-project #thrive-project-tasks ul li .task-user:hover .task-user-name {
+    opacity: 1;
+}
+.single-project #thrive-project-tasks ul li.thrive-task-item {
 	list-style: none;
+    margin-bottom: 0;
+}
+
+.single-project #thrive-project-tasks ul li.priority {
+    width: 10%;
+    margin-right: 2%;
+}   
+    .task-priority,
+    .single-project #thrive-project-tasks ul li.priority span {
+        background-color: #4CAF50;
+        font-size: 12px;
+        color: #FFF;
+        display: block;
+        padding: 2.5px 10px;
+        border-radius: 4px;
+        text-align: center;
+    }
+
+    .task-priority.high,
+    .single-project #thrive-project-tasks li.high ul li.priority span {
+        background: #FB8C00;
+    }
+
+    .task-priority.critical,
+    .single-project #thrive-project-tasks li.critical ul li.priority span {
+        background: #f44336;
+    }
+
+    .task-priority {
+        padding: 10px 20px;
+        display: inline-block;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+.single-project #thrive-project-tasks ul li.details {
+    padding-left: 20px;
+}
+
+.single-project #thrive-project-tasks ul li.details h3 {
+    margin-bottom: 0;
+}
+
+.single-project #thrive-project-tasks ul li.last-user-update {
+    width: 15%;
+    text-align: right;
 }
 
 .single-project #thrive-project-tasks h3 a {
@@ -330,6 +487,13 @@
 .single-project #thrive-project #thrive-tasks-filter{
 	display: inline-block;
 	width: 100%;
+}
+
+.single-project #thrive-project .screen-reader-text {
+    height: 0;
+    display: block;
+    position: absolute;
+    z-index: -2;
 }
 
 .single-project #thrive-project #thrive-tasks-filter .alignleft,
@@ -355,14 +519,57 @@
 /**
  * Single View
  */
-#thrive-single-task h2.h3 {
+#thrive-single-task h2 {
 	line-height: 1.3;
 }
+
+
+#thrive-single-task .task-content ul,
+#thrive-single-task .task-content ol {
+    padding-left: 0;
+}
+
+#thrive-single-task .task-content ol li, 
+#thrive-single-task .task-content ul li {
+    padding: 0;
+    padding-left: 0;
+    list-style: disc;
+    margin: 5px 0 5px 20px;
+}
+
+#thrive-single-task .task-content ol li ol li, 
+#thrive-single-task .task-content ol li ul li, 
+#thrive-single-task .task-content ul li ol li, 
+#thrive-single-task .task-content ul li ul li{
+    margin-left: 3em;
+}
+
+#thrive-single-task .task-content ol li {
+    list-style: decimal;
+}
+
+ #thrive-single-task li {
+        padding: 35px 0;
+        list-style: none;
+    }
+
+    #thrive-single-task li.comment {
+        padding-left: 25px;
+        padding-right: 25px;
+        background-color: #F7F7F7;
+        margin-bottom: 0;
+        border-bottom: 1px solid #E7E7E7;
+    }
+
+    #thrive-single-task li:last-child {
+        border-bottom: 0;
+    }
+
 .task-meta {
 	font-size: 14px;
 	border: 2px solid #EEE;
-	background: #F7F7F7;
-	margin-bottom: 15px;
+	background: #fff;
+	margin-bottom: 30px;
 	padding: 5px 10px;
 }
 	.task-meta p {
@@ -370,6 +577,13 @@
 		margin-top: 0;
 	}
 
+        .task-meta .opened-by {
+            font-weight: bold;
+        }
+
+        .task-meta .added-on {
+            float: right;
+        }
 .task-update-owner {
 	float: left;
 	width: 10%;
@@ -395,3 +609,14 @@
 	#task-editor #task-comment-content {
 		background: #fff;
 	}
+
+    .thrive-edit-comment,
+    .thrive-delete-comment {
+        color: #F44336;
+        font-size: 80%;
+        font-weight: bold;
+    }
+
+    .thrive-edit-comment {
+        color: #d8d8d8;
+    }

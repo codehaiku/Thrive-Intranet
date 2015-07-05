@@ -229,7 +229,7 @@ function thrive_project_content_filter($content) {
 	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-activity" class="thrive-project-tab-li-item-a" href="#activity">Activity</a></li>';
 	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-about" class="thrive-project-tab-li-item-a" href="#about">About</a></li>';
 	    		$heading .= '<li class="thrive-project-tab-li-item active"><a data-content="thrive-project-tasks" class="thrive-project-tab-li-item-a" href="#tasks">Tasks</a></li>';
-	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-add-new" class="thrive-project-tab-li-item-a" href="#tasks/add-new">Add New</a></li>';
+	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-add-new" class="thrive-project-tab-li-item-a" href="#tasks/add">Add New</a></li>';
 	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-edit" id="thrive-project-edit-tab" class="thrive-project-tab-li-item-a" href="#">Edit</a></li>';
 	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-settings" class="thrive-project-tab-li-item-a" href="#tasks/settings">Settings</a></li>';
 	    	$heading .= '</ul>';

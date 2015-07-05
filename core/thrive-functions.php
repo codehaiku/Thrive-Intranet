@@ -77,29 +77,7 @@ function thrive_edit_task_form() {
 }
 
 function thrive_task_filters() {
-	?>
-	<div id="thrive-tasks-filter">
-		<div class="alignleft">
-			<select name="thrive-task-filter-select-action" id="thrive-task-filter-select">
-				<option value="-1" selected="selected"><?php _e('Show All', 'thrive'); ?></option>
-				<option value="1"><?php _e('Normal Priority', 'thrive'); ?></option>
-				<option value="2"><?php _e('High Priority', 'thrive'); ?></option>
-				<option value="3"><?php _e('Critical Priority', 'thrive'); ?></option>
-			</select>
-		</div><!--.alignleft actions bulkactions-->
-
-		<div class="alignright">
-			<p class="thrive-search-box">
-				<label class="screen-reader-text">
-					<?php _e('Search Tasks:', 'thrive'); ?>
-				</label>
-				<input maxlength="160" placeholder="<?php _e('Search Task', 'thrive'); ?>" type="search" id="thrive-task-search-field" name="thrive-task-search" value="">
-				<input type="button" id="thrive-task-search-submit" class="button" value="<?php _e('Apply', 'thrive'); ?>">
-			</p><!--.search box-->
-		</div>
-
-	</div><!--#thrive-task-filter-->
-	<?php
+	include plugin_dir_path(__FILE__) . '../templates/filter.php';
 }
 /**
  * thrive_render_task($echo = true, $page = 1, $limit = 10)
@@ -283,9 +261,13 @@ function thrive_the_tasks($args) {
 	}
 
 	$thrive_tasks = new ThriveProjectTasksController();
+
 	$tasks = $thrive_tasks->renderTasks($args);
+
 ?>
+
 <div class="clearfix"></div>
+
 <div id="thrive-project-tasks">
 	<?php if (!empty($tasks['results'])) { ?>
 		<ul>
@@ -298,19 +280,36 @@ function thrive_the_tasks($args) {
 			}
 			$classes = implode(' ', array(esc_attr(sanitize_title($priority_label)), $completed));
 			?>
-			<li class="<?php echo esc_attr($classes); ?>">
-				<h3>
-					<a href="#tasks/view/<?php echo intval($task->id); ?>">
-						<span class="task-id">#<?php echo intval($task->id) ;?></span> - 
-						<?php echo esc_html(stripslashes($task->title)); ?>
-						<span class="task-user pull-right">
-						&#65515; 
-						<?php echo get_avatar(intval($task->user), 18); ?>
-							<?php $user = get_userdata($task->user); ?>
-								<?php echo esc_html($user->display_name); ?>
+			<li class="thrive-task-item <?php echo esc_attr($classes); ?>">
+				<ul class="thrive-task-item-details">
+					<li class="priority">
+						<span>
+							<?php $priority_collection = $thrive_tasks->getPriorityCollection(); ?>
+							<?php echo $priority_collection[$task->priority]; ?>
 						</span>
-					</a>
-				</h3>
+					</li>
+					<li class="details">
+						<h3>
+							<a href="#tasks/view/<?php echo intval($task->id); ?>">
+								<span class="task-id">#<?php echo intval($task->id) ;?></span> - 
+								<?php echo esc_html(stripslashes($task->title)); ?>
+								
+							</a>
+						</h3>
+					</li>
+					<li class="last-user-update">
+						<div class="task-user">
+							<?php echo get_avatar(intval($task->user), 32); ?>
+							<?php $user = get_userdata($task->user); ?>
+							<div class="task-user-name">
+								<small>
+									<?php echo esc_html($user->display_name); ?>
+								</small>
+							</div>
+						</div>
+					</li>
+				</ul>
+				
 			</li>
 		<?php } ?>
 		</ul>
@@ -351,57 +350,119 @@ return ob_get_clean();
 function thrive_ticket_single($task) {
 	ob_start(); ?>
 	<div id="thrive-single-task">
-		<h2 class="h3">
-			<?php echo esc_html($task->title); ?>
-			<span class="edit-task">
-				<a href="#tasks/edit/<?php echo intval($task->id); ?>">
-					&#65515; Edit
-				</a>
-			</span>
-		</h2>
+		
+		<div id="thrive-single-task-details">
+			<?php 
+				$priority_label = array(
+					'1' => __('Normal', 'thrive'),
+					'2' => __('High', 'thrive'),
+					'3' => __('Critical', 'thrive')
+				); 
+			?>
+			<div class="task-priority <?php echo sanitize_title($priority_label[$task->priority]); ?>">
+				<?php echo esc_html($priority_label[$task->priority]); ?>
+			</div>
+			<h2>
+				<?php echo esc_html($task->title); ?>
+				<span class="clearfix"></span>
+			</h2>
+
+			<div class="task-content">
+				<?php echo do_shortcode($task->description); ?>
+			</div>
+
+			<div class="task-content-meta">
+				<div class="alignright">
+					<a href="#tasks" title="<?php _e('Tasks List', 'thrive'); ?>" class="button">
+						<?php _e('&larr; Tasks List', 'thrive'); ?>
+					</a>
+					<a href="#tasks/edit/<?php echo intval($task->id); ?>" class="button">
+						<?php _e('Edit', 'thrive'); ?>
+					</a>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div><!--#thrive-single-task-details-->
 
 		<ul id="task-lists">
-			<li class="task-lists-item" id="task-update-123">
-				<div class="task-item-update">
-					<div class="task-update-owner">
-						<img src="http://localhost/dunhakdis/wp-content/uploads/avatars/25/56883db478ea3307a3d801272d29967c-bpthumb.png" width="64"/>
-					</div>
-					<div class="task-update-details">
-						<div class="task-meta">
-							<p>
-								<?php _e('Opened by', 'thrive'); ?> <a href="#">Keith Thorman </a>
-									&middot; 
-								<?php _e('Status:', 'thrive'); ?> Closed
-									&middot; 
-								<?php _e('Priority:', 'thrive'); ?> Critical
-									&middot; 
-								<?php _e('Added On:', 'thrive'); ?> February 28, 1990
-							</p>
-						</div>
-
-						<div class="task-content">
-							<?php echo do_shortcode($task->description); ?>
-						</div>
-					</div>
-					<div class="clearfix"></div>
-				</div><!--task-item-update-->
+			<li class="thrive-task-discussion">
+				<h3>
+					<?php _e('Discussion', 'thrive'); ?>
+				</h3>
 			</li>
+			<?php $comments = thrive_get_tasks_comments($task->id); ?>
+			<?php if (!empty($comments)) { ?>
+				<?php foreach($comments as $comment) { ?>
+					<?php echo thrive_comments_template($comment, (array)$task); ?>
+				<?php } ?>
+			<?php } ?>
+
 		</ul><!--#task-lists-->
 
 		<div id="task-editor">
 			<div id="task-editor_update-status">
-					<div class="alignleft">
-						<label for="ticketStatusClosed"> 
-							<input id="ticketStatusClosed" type="radio" value="closed" name="status">
-							<small><?php _e('In Progress', 'thrive'); ?></small>
-						</label>
+				<?php 
+				$completed = 'no';
+				if ( absint($task->completed_by) !== 0 ) {
+					$completed = 'yes';
+				} 
+				?>
+					<div id="comment-completed-radio">
+						<?php if ($completed === 'no') { ?>
+						<div class="alignleft">
+							<label for="ticketStatusInProgress"> 
+								<input <?php echo $completed ===  'no' ?  'checked': ''; ?> id="ticketStatusInProgress" type="radio" value="no" name="task_commment_completed">
+								<small><?php _e('In Progress', 'thrive'); ?></small>
+							</label>
+						</div>
+						<?php } ?>
+						<div class="alignleft">
+							<label for="ticketStatusComplete">
+								<input <?php echo $completed ===  'yes' ? 'checked': ''; ?> id="ticketStatusComplete" type="radio" value="yes" name="task_commment_completed">
+								<small><?php _e('Completed', 'thrive'); ?></small>
+							</label>
+						</div>
+						<?php if ($completed === 'yes') { ?>
+						<div class="alignleft">
+							<label for="ticketStatusReOpen">
+								<input id="ticketStatusReOpen" type="radio" value="reopen" name="task_commment_completed">
+								<small><?php _e('Reopen Task', 'thrive'); ?></small>
+							</label>
+						</div>
+						<?php } ?>
 					</div>
-					<div class="alignleft">
-						<label for="ticketStatusComplete">
-							<input id="ticketStatusComplete" type="radio" value="closed" name="status">
-							<small><?php _e('Complete', 'thrive'); ?></small>
-						</label>
+					<!--On Complete -->
+					<div id="thrive-comment-completed-radio" class="hide">
+						<div class="alignleft">
+							<label for="ticketStatusCompleteUpdate">
+								<input disabled id="ticketStatusCompleteUpdate" type="radio" value="yes" name="task_commment_completed">
+								<small><?php _e('Completed', 'thrive'); ?></small>
+							</label>
+						</div>
+						<div class="alignleft">
+							<label for="ticketStatusReOpenUpdate">
+								<input disabled id="ticketStatusReOpenUpdate" type="radio" value="reopen" name="task_commment_completed">
+								<small><?php _e('Reopen Task', 'thrive'); ?></small>
+							</label>
+						</div>						
 					</div>
+
+					<!-- On ReOpen -->
+					<div id="thrive-comment-reopen-radio" class="hide">
+						<div class="alignleft">
+							<label disabled for="ticketStatusReOpenInProgress">
+								<input id="ticketStatusReOpenInProgress" type="radio" value="yes" name="task_commment_completed">
+								<small><?php _e('In Progress', 'thrive'); ?></small>
+							</label>
+						</div>
+						<div class="alignleft">
+							<label disabled for="ticketStatusReOpenComplete">
+								<input disabled id="ticketStatusReOpenComplete" type="radio" value="reopen" name="task_commment_completed">
+								<small><?php _e('Complete', 'thrive'); ?></small>
+							</label>
+						</div>						
+					</div>
+
 				<div class="clearfix"></div>	
 			</div>
 			
@@ -411,8 +472,8 @@ function thrive_ticket_single($task) {
 
 			<div id="task-editor_update-priority">
 				<label for="thrive-task-priority-select">
-					<?php _e('Priority', 'thrive'); ?>
-					<?php thrive_task_priority_select($select = 1, $name = "thrive-task-priority-update-select", $id = 'thrive-task-priority-update-select') ;?>
+					<?php _e('Update Priority:', 'thrive'); ?>
+					<?php thrive_task_priority_select($select = absint($task->priority), $name = "thrive-task-priority-update-select", $id = 'thrive-task-priority-update-select') ;?>
 				</label>
 			</div>
 			
@@ -425,5 +486,71 @@ function thrive_ticket_single($task) {
 	</div>
 	<?php 
 	return ob_get_clean();
+}
+
+function thrive_comments_template($args = array(), $task = array()) {
+ob_start(); ?>
+<?php $user = get_userdata(intval($args['user'])); ?>
+<li class="task-lists-item comment" id="task-update-{$args['id']}">
+	<div class="task-item-update">
+		<div class="task-update-owner">
+			<?php echo get_avatar($args['user'], 60); ?>
+		</div>
+		<div class="task-update-details">
+			<div class="task-meta">
+				
+				<?php $progress_label = __('New Progress by', 'thrive'); ?>
+				<?php $task_progress = absint($args['status']); ?>
+				
+				<?php if ( 1 === $task_progress ) { ?>
+					<?php $progress_label = __('Completed by', 'thrive') ;?>
+				<?php } ?>
+				
+				<?php if ( 2 === $task_progress ) { ?>
+					<?php $progress_label = __('Reopened by', 'thrive') ;?>
+				<?php } ?>
+				
+				<p class="<?php echo sanitize_title($progress_label); ?>">
+					<span class="opened-by">
+						<?php echo esc_html($progress_label); ?>
+					</span> 
+						<?php echo $user->display_name; ?>    
+					
+					<span class="added-on"> <?php echo date(sprintf("%s / g:i:s a", get_option("date_format")), strtotime($args['date_added'])); ?> </span>
+				</p>
+			</div>
+			<div class="task-content">
+				<?php echo wpautop(nl2br($args['details'])); ?>
+				
+				<?php $current_user_id = get_current_user_id(); ?>
+
+				<a href="#" title="<?php _e('Edit comment content', 'thrive'); ?>" data-comment-id="<?php echo absint($args['id']); ?>" class="thrive-edit-comment">
+					<?php _e('Edit', 'thrive'); ?>
+				</a>
+				<?php // Check if current user can delete the comment ?>
+				<?php if ( $current_user_id == $args['user'] or current_user_can( 'administrator' ) ) { ?>
+					<?php // Delete link. ?>
+					<span class="thrive-comments-action-separator"> | </span>
+					<a href="#" title="<?php _e('Delete comment', 'thrive'); ?>" data-comment-id="<?php echo absint($args['id']); ?>" class="thrive-delete-comment">
+						<?php _e('Delete', 'thrive'); ?>
+					</a>
+
+				<?php } ?>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div><!--task-item-update-->
+</li>
+<?php 
+return ob_get_clean();
+}
+
+function thrive_get_tasks_comments($ticket_id = 0) {
+	
+	global $wpdb;
+	
+	$results = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}thrive_comments WHERE ticket_id = $ticket_id", "ARRAY_A");
+	
+	return $results;
 }
 ?>
