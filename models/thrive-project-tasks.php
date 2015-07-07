@@ -467,10 +467,49 @@ class ThriveProjectTasksModel {
 			return ($wpdb->update($this->model, $args, array('id'=>$this->id), $format, array('%d')) === 0);
 			
 		} else {
+
 			 if ($wpdb->insert($this->model, $args, $format) ) {
-			 	return $wpdb->insert_id;
+
+			 	$last_insert_id = $wpdb->insert_id;
+
+			 	// Add new activity. Check if buddypress is active first
+			 	if ( function_exists( 'bp_activity_add' ) ) {
+			 		
+			 		$bp_user_link = "";
+
+			 		if ( function_exists( 'bp_core_get_userlink') ) {
+			 			$bp_user_link = bp_core_get_userlink( $this->user_id );
+			 		}
+
+			 		$thrive_project_post = get_post( $this->project_id, OBJECT );
+
+			 		$thrive_project_name = "";
+
+			 		$permalink = get_permalink( $this->project_id );
+
+			 		if ( !empty( $thrive_project_post ) ) {
+			 			$thrive_project_name = sprintf('<a href="%s" title="%s">%s<a/>', $permalink, $thrive_project_post->post_title, $thrive_project_post->post_title);
+			 		}
+
+			 		$action = sprintf( __( '%s added new task under %s', 'thrive' ), $bp_user_link, $thrive_project_name );
+
+			 		bp_activity_add( 
+			 			array(
+							'user_id' => $this->user_id,
+							'action' => apply_filters( 'thrive_new_task_activity_action', $action, $this->user_id ),
+							'component' => 'project',
+							'content' => apply_filters( 'thrive_new_task_activity_descriptioin', sprintf('<a href="%s" title="%s">#%d - %s</a>', $permalink . '#tasks/view/' . $last_insert_id, $this->title, $last_insert_id, $this->title ) ),
+							'type' => 'thrive_new_task'
+						)
+					);
+			 	}
+
+			 	return $last_insert_id;
+
 			 } else {
+
 			 	return false;
+
 			 }
 		}
 	}

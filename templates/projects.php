@@ -16,7 +16,7 @@ do_action( 'bp_before_projects_directory' ); ?>
 			$loop = new WP_Query( $args );
 		
 			while ( $loop->have_posts() ) : $loop->the_post(); ?>
-			<div style="width: 400px;" class="dunhakdis-card">
+			<div class="dunhakdis-card">
 				<p><?php the_post_thumbnail(); ?></p>
 				<h3 class="h4" style="line-height: 1.3">
 					<a href="<?php echo the_permalink(); ?>">

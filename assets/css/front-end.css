@@ -216,6 +216,12 @@
 /**
  * ====== 
  */
+.clearfix{
+    clear: both;
+}
+.hide {
+    display: none;
+}
 #thrive-preloader{
 	display: none;
 	position: absolute;
@@ -260,6 +266,10 @@
 
 #thrive-project-tab-li li:last-child a{
 	border-right: 1px solid #ddd;
+}
+
+#thrive-project-tab-li li a#thrive-project-add-new {
+    display: none;
 }
 
 /**
@@ -620,3 +630,33 @@
     .thrive-edit-comment {
         color: #d8d8d8;
     }
+
+/**
+ * Task At A Glance
+ */
+
+#thrive-dashboard-at-a-glance ul {
+    margin: 0;
+    padding: 0;
+}
+
+#thrive-dashboard-at-a-glance ul li {
+    text-align: center;
+    float: left;
+    padding: 0;
+    margin: 0;
+    width: 30%;
+    margin-right: 5%;
+    list-style: none;
+}
+
+#thrive-dashboard-at-a-glance ul li:nth-child(3n) {
+    margin-right: 0;
+}
+
+#thrive-dashboard-at-a-glance ul li .thrive-dashboard-at-a-glance-box {
+    border: 1px solid #EEE;
+    margin: 20px 0 35px;
+    padding: 35px 0;
+    display: block;
+}

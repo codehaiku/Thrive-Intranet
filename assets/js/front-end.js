@@ -32,6 +32,7 @@ jQuery(document).ready(function($){
 		switchView: function(e, elementID) {
 			
 			$('#thrive-project-edit-tab').css('display', 'none');
+			$('#thrive-project-add-new').css('display', 'none');
 
 			$('.thrive-project-tab-li-item').removeClass('active');
 			$('.thrive-project-tab-content-item').removeClass('active');
@@ -192,6 +193,10 @@ jQuery(document).ready(function($){
 							// render the result
 							$('#thrive-project-tasks').html(response.html);
 						}
+
+						if ( 0 === response.task.length ) {
+							$('#thrive-project-tasks').html('<div class="error" id="message"><p>No tasks found. If you\'re trying to find a task, kindly try different keywords and/or filters.</p></div>');
+						}
 						
 				},
 				error: function() {
@@ -227,6 +232,7 @@ jQuery(document).ready(function($){
 	var ThriveProjectRoute = Backbone.Router.extend({
 		routes: {
 			"tasks": "index",
+			"tasks/dashboard": "dashboard",
 			"tasks/completed": "completed_tasks",
 			"tasks/add": "add",
 			"tasks/edit/:id": "edit",
@@ -237,6 +243,9 @@ jQuery(document).ready(function($){
 		view: ThriveProjectView,
 		model: ThriveProjectModel,
 		index: function() {
+			
+			this.view.switchView(null, '#thrive-project-tasks-context');
+
 			this.model.page = 1;
 			this.model.id = 0;
 			this.model.show_completed = 'no';
@@ -244,10 +253,17 @@ jQuery(document).ready(function($){
 			this.view.search = '';
 			this.view.render();
 		},
+		dashboard: function() {
+			this.view.switchView(null, '#thrive-project-dashboard-context');
+		},
 		add: function() {
 			this.view.switchView(null, '#thrive-project-add-new-context');
+			$('#thrive-project-add-new').css('display', 'block');
 		},
 		completed_tasks: function() {
+			
+			this.view.switchView(null, '#thrive-project-tasks-context');
+
 			this.model.show_completed = 'yes';
 			this.view.render();
 		},

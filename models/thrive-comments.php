@@ -188,7 +188,42 @@ class ThriveComments {
 		$insert_comments = $wpdb->insert( $table, $data, $formats ); // Db call ok.
 
 		if ( $insert_comments ) {
-			return $wpdb->insert_id;
+			
+			$last_insert_id = $wpdb->insert_id;
+
+			// Add new activity. Check if buddypress is active first
+			
+			if ( function_exists( 'bp_activity_add' ) ) {
+			 		
+				$bp_user_link = "";
+
+			 	if ( function_exists( 'bp_core_get_userlink') ) {
+			 		$bp_user_link = bp_core_get_userlink( $this->user );
+			 	}
+
+			 	$status_label = array(
+			 			__('posted new updated in', 'thrive'),
+			 			__('completed', 'thrive'),
+			 			__('reopened', 'theive')
+			 		);
+			 	
+			 	$type = $status_label[$this->get_status()];
+
+			 	$action = sprintf( __( '%s %s the task: %s - ', 'thrive' ), $bp_user_link, $type, '#' . $this->ticket_id );
+
+			 	bp_activity_add( 
+			 		array(
+						'user_id' => $this->user,
+						'action' => apply_filters( 'thrive_update_task_activity_action', $action, $this->user ),
+						'component' => 'project',
+						'content' => $this->details,
+						'type' => sanitize_title('thrive-'.$type)
+					)
+				);
+			} // End function_exists ( 'bp_activity_add' ).
+
+			return $last_insert_id;
+
 		} else {
 			return false;
 		}

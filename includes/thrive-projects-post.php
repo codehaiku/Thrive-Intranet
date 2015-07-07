@@ -226,19 +226,16 @@ function thrive_project_content_filter($content) {
 
 	    $heading = '<div class="thrive-project-tabs">';
 	    	$heading .= '<ul id="thrive-project-tab-li">';
-	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-activity" class="thrive-project-tab-li-item-a" href="#activity">Activity</a></li>';
-	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-about" class="thrive-project-tab-li-item-a" href="#about">About</a></li>';
+	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-activity" class="thrive-project-tab-li-item-a" href="#tasks/activity">Activity</a></li>';
+	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-dashboard" class="thrive-project-tab-li-item-a" href="#tasks/dashboard">Dashboard</a></li>';
 	    		$heading .= '<li class="thrive-project-tab-li-item active"><a data-content="thrive-project-tasks" class="thrive-project-tab-li-item-a" href="#tasks">Tasks</a></li>';
-	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-add-new" class="thrive-project-tab-li-item-a" href="#tasks/add">Add New</a></li>';
+	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-add-new" id="thrive-project-add-new" class="thrive-project-tab-li-item-a" href="#tasks/add">Add New</a></li>';
 	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-edit" id="thrive-project-edit-tab" class="thrive-project-tab-li-item-a" href="#">Edit</a></li>';
 	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-settings" class="thrive-project-tab-li-item-a" href="#tasks/settings">Settings</a></li>';
 	    	$heading .= '</ul>';
 	    $heading .= '</div>';
 
 	    $body  = '<div id="thrive-project-tab-content">';
-	    	$body .= '<div class="thrive-project-tab-content-item" data-content="thrive-project-about" id="thrive-project-about-context">';
-	    		$body .= $content;
-	    	$body .= '</div>';
 	    		
 	    		ob_start();
 	    	  		if ($post->post_type == 'project') {
