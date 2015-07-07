@@ -1,10 +1,7 @@
 <?php
 /**
  * Plugin Name: Thrive - Digital Workplace
- * Description: Thrive is the best way to build your company social network on top of WordPress - The Software that we all love.
- *              With features like Events, File Sharing, Wiki, Staff Directory, you will be able to create an
- *              atmosphere for your workforce where you can easily next milestone for your company.
- *              It’s for smart people with great dreams.
+ * Description: Easily manage your projects and tasks using this plugin. Has the ability to control the user access to website as well. Perfect for Intranet/Extranet websites.
  * Version: 1.0
  * Author: Dunhakdis
  * Author URI: http://dunhakdis.me
@@ -34,8 +31,13 @@ define( 'THRIVE_PROJECT_SLUG', 'project' );
 require_once plugin_dir_path( __FILE__ ) . 'shortcodes.php';
 require_once plugin_dir_path( __FILE__ ) . 'functions.php';
 require_once plugin_dir_path( __FILE__ ) . 'locked-down-page.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/thrive-projects-post.php';
-require_once plugin_dir_path( __FILE__ ) . 'core/thrive-hooks.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/project-post-type.php';
+require_once plugin_dir_path( __FILE__ ) . 'core/enqueue.php';
+
+require_once plugin_dir_path( __FILE__ ) . 'install/table.php';
+
+// Setup the tables on activation.
+register_activation_hook( __FILE__, 'thrive_install' );
 
 // Include thrive projects transactions.
 add_action( 'init', 'thrive_register_transactions' );
@@ -50,7 +52,7 @@ add_action( 'bp_loaded', 'thrive_register_projects_component' );
  */
 function thrive_register_transactions() {
 
-	include_once plugin_dir_path( __FILE__ ) . 'transactions/actions.php';
+	include_once plugin_dir_path( __FILE__ ) . 'transactions/controller.php';
 
 	return;
 }
@@ -62,7 +64,7 @@ function thrive_register_transactions() {
 function thrive_register_projects_component() {
 
 	include_once plugin_dir_path( __FILE__ ) .
-				 '/includes/thrive-projects-component.php';
+				 '/includes/project-component.php';
 	return;
 }
 ?>

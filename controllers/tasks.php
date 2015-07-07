@@ -2,7 +2,7 @@
 /**
  * Controller for tasks
  */
-require_once(plugin_dir_path(__FILE__) . '../models/thrive-project-tasks.php');
+require_once(plugin_dir_path(__FILE__) . '../models/tasks.php');
 
 class ThriveProjectTasksController extends ThriveProjectTasksModel{
 

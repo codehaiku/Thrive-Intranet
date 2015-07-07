@@ -1,13 +1,17 @@
 <?php global $post; ?>
 <div class="thrive-project-tab-content-item" data-content="thrive-project-dashboard" id="thrive-project-dashboard-context">
+	
 	<div id="thrive-dashboard-about">
 		<h3>
 			<?php _e('About', 'thrive'); ?>
 		</h3>
 		
 		<?php echo $content; ?>
+		
 		<div class="clearfix"></div>
+
 	</div><!--#thrive-dashboard-about-->
+
 	<div id="thrive-dashboard-at-a-glance">
 		<?php 
 		// Total tasks.
@@ -45,7 +49,6 @@
 		</ul>	
 		<div class="clearfix"></div>
 	</div><!--#thrive-dashboard-at-a-glance-->
-
 </div>
 
 <div class="thrive-project-tab-content-item active" data-content="thrive-project-tasks" id="thrive-project-tasks-context">
@@ -70,6 +73,10 @@
 
 </div><!--#thrive-project-tasks-context-->
 
+<div class="thrive-project-tab-content-item" data-content="thrive-project-settings" id="thrive-project-settings-context">
+	<?php thrive_project_settings(); ?>
+</div>
+
 <div class="thrive-project-tab-content-item" data-content="thrive-project-add-new" id="thrive-project-add-new-context">
 	<?php thrive_add_task_form(); ?>
 </div>
@@ -77,6 +84,7 @@
 <div class="thrive-project-tab-content-item" id="thrive-project-edit-context">
 	<?php thrive_edit_task_form(); ?>
 </div>
+
 <script>
 var thriveProjectSettings = {
 	project_id: '<?php echo absint($post->ID);?>'

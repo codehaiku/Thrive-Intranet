@@ -45,6 +45,7 @@ jQuery(document).ready(function($){
 				$('div[data-content='+$active_content+']').addClass('active');	
 			} else {
 				$(elementID).addClass('active');
+				console.log(elementID);
 				var $active_content = $(elementID).attr('data-content');
 				$('a[data-content='+$active_content+']').parent().addClass('active');
 			}
@@ -233,6 +234,7 @@ jQuery(document).ready(function($){
 		routes: {
 			"tasks": "index",
 			"tasks/dashboard": "dashboard",
+			"tasks/settings": "settings",
 			"tasks/completed": "completed_tasks",
 			"tasks/add": "add",
 			"tasks/edit/:id": "edit",
@@ -255,6 +257,9 @@ jQuery(document).ready(function($){
 		},
 		dashboard: function() {
 			this.view.switchView(null, '#thrive-project-dashboard-context');
+		},
+		settings: function() {
+			this.view.switchView(null, '#thrive-project-settings-context');
 		},
 		add: function() {
 			this.view.switchView(null, '#thrive-project-add-new-context');

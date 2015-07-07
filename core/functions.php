@@ -38,7 +38,7 @@ function thrive_include_dir() {
  */
 function thrive_task_priority_select($default = 1, $select_name = 'thrive_task_priority', $select_id = 'thrive-task-priority-select') {
 
-	require_once(plugin_dir_path(__FILE__) . '../controllers/thrive-project-tasks.php');
+	require_once(plugin_dir_path(__FILE__) . '../controllers/tasks.php');
 	
 	$thrive_tasks = new ThriveProjectTasksController();
 
@@ -60,7 +60,7 @@ function thrive_task_priority_select($default = 1, $select_name = 'thrive_task_p
 
 function thrive_count_tasks($project_id, $type = 'all') {
 
-	require_once(plugin_dir_path(__FILE__) . '../controllers/thrive-project-tasks.php');
+	require_once(plugin_dir_path(__FILE__) . '../controllers/tasks.php');
 	
 	$thrive_tasks = new ThriveProjectTasksModel();
 
@@ -91,8 +91,6 @@ function thrive_task_filters() {
  * @param  integer $limit limits the number of task displayed
  * @return void if $echo is set to true other wise returns the constructed markup for tasks
  */
-
-
 function thrive_render_task($args = array()) {
 	
 	$defaults = array(
@@ -118,7 +116,7 @@ function thrive_render_task($args = array()) {
 
 	if ($echo === 'no') { ob_start(); }
 
-	require_once(plugin_dir_path(__FILE__) . '../controllers/thrive-project-tasks.php');
+	require_once(plugin_dir_path(__FILE__) . '../controllers/tasks.php');
 
 	$thrive_tasks = new ThriveProjectTasksController();
 	$tasks = $thrive_tasks->renderTasks($args);
@@ -238,7 +236,7 @@ function thrive_the_tasks($args) {
 
 	ob_start();
 
-	require_once(plugin_dir_path(__FILE__) . '../controllers/thrive-project-tasks.php');
+	require_once(plugin_dir_path(__FILE__) . '../controllers/tasks.php');
 
 	$defaults = array(
 			'project_id' => 0,
@@ -313,6 +311,12 @@ function thrive_the_tasks($args) {
 			</li>
 		<?php } ?>
 		</ul>
+	<?php } else { ?>
+		<div class="error" id="message">
+			<p>
+				<?php _e('No tasks found. If you\'re trying to find a task, kindly try different keywords and/or filters.', 'thrive'); ?>
+			</p>
+		</div>
 	<?php } ?>
 
 <?php
@@ -324,24 +328,28 @@ $currpage   = intval($stats['current_page']);
 $min_page	= intval($stats['min_page']);
 $max_page   = intval($stats['max_page']);
 
-echo '<div class="tablenav"><div class="tablenav-pages">';
-echo '<span class="displaying-num">'.sprintf(_n('%s task', '%s tasks', $total, 'thrive'),$total).'</span>';
-		
-if ($total_page >= 1) {
-	echo '<span id="thrive-task-paging" class="pagination-links">';
-		echo '<a class="first-page disabled" title="'.__('Go to the first page', 'thrive').'" href="#tasks/page/'.$min_page.'">«</a>';
-		echo '<a class="prev-page disabled" title="'.__('Go to the previous page', 'thrive').'" href="#">‹</a>';
-			echo '<span class="paging-input"><label for="thrive-task-current-page-selector" class="screen-reader-text">'.__('Select Page', 'thrive').'</label>';
-			echo '<input readonly class="current-page" id="thrive-task-current-page-selector" type="text" maxlength="'.strlen($total_page).'" size="'.strlen($total_page).'"value="'.intval($currpage).'">';
-			echo ' of <span class="total-pages">'.$total_page.'</span></span>';
+if ( 0 !== $total ) {
 
-			echo '<a class="next-page" title="'.__('Go to the next page', 'thrive').'" href="#">›</a>';
-			echo '<a class="last-page" title="'.__('Go to the last page', 'trive').'" href="#tasks/page/'.$max_page.'">»</a></span>';
-		echo '</span>';
-}
-?>
-</div><!--.tablenav-->
-</div><!--.tablenav-pages -->
+	echo '<div class="tablenav"><div class="tablenav-pages">';
+	echo '<span class="displaying-num">'.sprintf(_n('%s task', '%s tasks', $total, 'thrive'),$total).'</span>';
+			
+	if ($total_page >= 1) {
+		echo '<span id="thrive-task-paging" class="pagination-links">';
+			echo '<a class="first-page disabled" title="'.__('Go to the first page', 'thrive').'" href="#tasks/page/'.$min_page.'">«</a>';
+			echo '<a class="prev-page disabled" title="'.__('Go to the previous page', 'thrive').'" href="#">‹</a>';
+				echo '<span class="paging-input"><label for="thrive-task-current-page-selector" class="screen-reader-text">'.__('Select Page', 'thrive').'</label>';
+				echo '<input readonly class="current-page" id="thrive-task-current-page-selector" type="text" maxlength="'.strlen($total_page).'" size="'.strlen($total_page).'"value="'.intval($currpage).'">';
+				echo ' of <span class="total-pages">'.$total_page.'</span></span>';
+
+				echo '<a class="next-page" title="'.__('Go to the next page', 'thrive').'" href="#">›</a>';
+				echo '<a class="last-page" title="'.__('Go to the last page', 'trive').'" href="#tasks/page/'.$max_page.'">»</a></span>';
+			echo '</span>';
+	}
+
+	echo '</div><!--.tablenav--></div><!--.tablenav-pages -->';
+
+	?>
+<?php } // End if ( 0 !== $total ). ?>
 </div><!--#thrive-project-tasks-->
 <?php
 return ob_get_clean();
@@ -552,5 +560,13 @@ function thrive_get_tasks_comments($ticket_id = 0) {
 	$results = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}thrive_comments WHERE ticket_id = $ticket_id", "ARRAY_A");
 	
 	return $results;
+}
+
+function thrive_project_settings() {
+	
+	include plugin_dir_path(__FILE__) . '../templates/thrive-single-project-settings.php';
+	
+	return;
+
 }
 ?>

@@ -13,7 +13,7 @@ header('Content-Type: application/json');
 
 add_action( 'wp_ajax_thrive_transactions_request', 'thrive_transactions_callblack' );
 
-require_once(plugin_dir_path(__FILE__) . '../controllers/thrive-project-tasks.php');
+require_once(plugin_dir_path(__FILE__) . '../controllers/tasks.php');
 
 /**
  * Executes the method or function requested by the client
@@ -239,8 +239,8 @@ function thrive_transaction_renew_task () {
 
 function thrive_transaction_add_comment_to_ticket() {
 
-	require_once plugin_dir_path(__FILE__) . '../models/thrive-comments.php';
-	require_once plugin_dir_path(__FILE__) . '../models/thrive-project-tasks.php';
+	require_once plugin_dir_path(__FILE__) . '../models/comments.php';
+	require_once plugin_dir_path(__FILE__) . '../models/tasks.php';
 
 	$comment   = new ThriveComments();
 	$task      = new ThriveProjectTasksModel();
@@ -299,7 +299,7 @@ function thrive_transaction_add_comment_to_ticket() {
 
 function thrive_transaction_delete_comment() {
 
-	require_once plugin_dir_path(__FILE__) . '../models/thrive-comments.php';
+	require_once plugin_dir_path(__FILE__) . '../models/comments.php';
 
 	$comment_id = absint(filter_input(INPUT_POST, 'comment_id', FILTER_VALIDATE_INT));
 	

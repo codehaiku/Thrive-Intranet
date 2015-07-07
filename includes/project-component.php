@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) die();
 /**
  * Include our core functions
  */
-require_once(plugin_dir_path(__FILE__) . '../core/thrive-functions.php');
+require_once(plugin_dir_path(__FILE__) . '../core/functions.php');
 
 /**
  * BP_Projects_Component
@@ -83,7 +83,7 @@ class BP_Projects_Component extends BP_Component {
     public function includes()
     {
         $includes = array(
-            'thrive-projects-screens.php'
+            'project-screens.php'
         );
 
         parent::includes($includes);

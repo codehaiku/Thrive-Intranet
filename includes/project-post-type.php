@@ -1,20 +1,5 @@
 <?php
 
-/**
- * Register our project admin styling
- */
-add_action('admin_head', 'thrive_admin_css');
-add_action('admin_print_scripts', 'thrive_register_backbone');
-
-function thrive_register_backbone() {
-	wp_enqueue_script('backbone');
-	wp_enqueue_script('thrive-intranet', plugin_dir_url(__FILE__) . '../assets/js/thrive-intranet.js', array('jquery', 'backbone'), $ver = 1.0, $in_footer = true);
-}
-
-function thrive_admin_css() {
-	wp_enqueue_style('thrive_admin_style', plugin_dir_url(__FILE__) . '../assets/css/style.css');
-}
-
 add_action( 'init', 'thrive_projects_register_post_type' );
 
 /**
@@ -219,34 +204,40 @@ function thrive_project_content_filter($content) {
     
     global $post;
 
-    require_once(plugin_dir_path(__FILE__) . '../core/thrive-functions.php');
+    require_once(plugin_dir_path(__FILE__) . '../core/functions.php');
 
     $container = '<div id="thrive-project">';
     $container_end = '</div><!--#thrive-project-->';
 
-	    $heading = '<div class="thrive-project-tabs">';
-	    	$heading .= '<ul id="thrive-project-tab-li">';
-	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-activity" class="thrive-project-tab-li-item-a" href="#tasks/activity">Activity</a></li>';
-	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-dashboard" class="thrive-project-tab-li-item-a" href="#tasks/dashboard">Dashboard</a></li>';
-	    		$heading .= '<li class="thrive-project-tab-li-item active"><a data-content="thrive-project-tasks" class="thrive-project-tab-li-item-a" href="#tasks">Tasks</a></li>';
-	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-add-new" id="thrive-project-add-new" class="thrive-project-tab-li-item-a" href="#tasks/add">Add New</a></li>';
-	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-edit" id="thrive-project-edit-tab" class="thrive-project-tab-li-item-a" href="#">Edit</a></li>';
-	    		$heading .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-settings" class="thrive-project-tab-li-item-a" href="#tasks/settings">Settings</a></li>';
-	    	$heading .= '</ul>';
-	    $heading .= '</div>';
+    	ob_start();
+    		include_once thrive_template_dir(). '/thrive-single-project-heading.php';
+    	$heading = ob_get_clean();
 
-	    $body  = '<div id="thrive-project-tab-content">';
+	    $project_tabs = '<div class="thrive-project-tabs">';
+	    	$project_tabs .= '<ul id="thrive-project-tab-li">';
+	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-activity" class="thrive-project-tab-li-item-a" href="#tasks/activity">Activity</a></li>';
+	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-dashboard" class="thrive-project-tab-li-item-a" href="#tasks/dashboard">Dashboard</a></li>';
+	    		$project_tabs .= '<li class="thrive-project-tab-li-item active"><a data-content="thrive-project-tasks" class="thrive-project-tab-li-item-a" href="#tasks">Tasks</a></li>';
+	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-add-new" id="thrive-project-add-new" class="thrive-project-tab-li-item-a" href="#tasks/add">Add New</a></li>';
+	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-edit" id="thrive-project-edit-tab" class="thrive-project-tab-li-item-a" href="#">Edit</a></li>';
+	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-settings" class="thrive-project-tab-li-item-a" href="#tasks/settings">Settings</a></li>';
+	    	$project_tabs .= '</ul>';
+	    $project_tabs .= '</div>';
+
+	    $tab_content  = '<div id="thrive-project-tab-content">';
 	    		
-	    		ob_start();
+	    			ob_start();
+
 	    	  		if ($post->post_type == 'project') {
 			    		include_once thrive_template_dir(). '/thrive-single-project.php';
 			    	}
-			    $project_contents = ob_get_clean();
+
+			    	$project_contents = ob_get_clean();
 			
-			$body .= $project_contents;
+		$tab_content .= $project_contents;
 
-	    $body .= '</div>';
+	    $tab_content .= '</div><!--#thrive-project-tab-content-->';
 
-    return  $container . $heading . $body .  $container_end;
+    return  $container . $heading . $project_tabs . $tab_content .  $container_end;
 }
 ?>
