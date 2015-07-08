@@ -75,7 +75,7 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 
 	}
 
-	public function renewTask($task_id) {
+	public function renewTask($task_id = 0) {
 		
 		parent::prepare();
 

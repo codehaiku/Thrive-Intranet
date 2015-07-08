@@ -30,7 +30,7 @@ define( 'THRIVE_PROJECT_SLUG', 'project' );
 	
 require_once plugin_dir_path( __FILE__ ) . 'shortcodes.php';
 require_once plugin_dir_path( __FILE__ ) . 'functions.php';
-require_once plugin_dir_path( __FILE__ ) . 'locked-down-page.php';
+require_once plugin_dir_path( __FILE__ ) . 'private.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/project-post-type.php';
 require_once plugin_dir_path( __FILE__ ) . 'core/enqueue.php';
 

@@ -1,4 +1,4 @@
-<?php
+	<?php
 
 /**
  * Fires at the top of the members directory template file.

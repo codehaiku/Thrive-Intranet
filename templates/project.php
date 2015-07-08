@@ -1,4 +1,11 @@
 <?php global $post; ?>
+
+<div id="thrive-preloader">
+	<div class="la-ball-clip-rotate la-sm">
+	    <div></div>
+	</div>
+</div>
+
 <div class="thrive-project-tab-content-item" data-content="thrive-project-dashboard" id="thrive-project-dashboard-context">
 	
 	<div id="thrive-dashboard-about">
@@ -53,12 +60,6 @@
 
 <div class="thrive-project-tab-content-item active" data-content="thrive-project-tasks" id="thrive-project-tasks-context">
 	
-	<div id="thrive-preloader">
-		<div class="la-ball-clip-rotate la-sm">
-		    <div></div>
-		</div>
-	</div>
-
 	<?php
 		$args = array(
 				'project_id' => $post->ID, 

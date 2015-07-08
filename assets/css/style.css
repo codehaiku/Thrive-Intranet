@@ -222,6 +222,32 @@
 .hide {
     display: none;
 }
+
+#thrive-project .html-active .switch-html, 
+#thrive-project .tmce-active .switch-tmce,
+#thrive-project .mce-toolbar .mce-btn button, 
+#thrive-project .qt-dfw,
+#thrive-project .wp-core-ui .quicktags-toolbar input.button.button-small,
+#thrive-project .wp-switch-editor{
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#thrive-project .html-active .switch-html:hover, 
+#thrive-project .tmce-active .switch-tmce:hover,
+#thrive-project .mce-toolbar .mce-btn button:hover, 
+#thrive-project .qt-dfw:hover,
+#thrive-project .wp-core-ui .quicktags-toolbar input.button.button-small:hover,
+#thrive-project .wp-switch-editor:hover {
+    background: #f7f7f7;
+    color: #333;
+}
+
+#thrive-project .wp-editor-area,
+#thrive-project div.mce-panel {
+    border: 1px solid #f7f7f7;
+}
+
 #thrive-preloader{
 	display: none;
 	position: absolute;
@@ -471,7 +497,7 @@
 }
 
 .single-project #thrive-project-tasks ul li.details h3 {
-    margin-bottom: 0;
+    margin: 0;
 }
 
 .single-project #thrive-project-tasks ul li.last-user-update {

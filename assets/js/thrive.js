@@ -557,5 +557,64 @@ jQuery(document).ready(function($){
 
 	 		}
 	 	});	
-	});
+	}); // End Delete Task
+
+
+	// Update Project
+	$('body').on('click', '#thriveUpdateProjectBtn', function(){
+		
+		var element = $(this);
+
+		var __http_params = {
+			action: 'thrive_transactions_request',
+			method: 'thrive_transactions_update_project',
+			id: parseInt( $('#thrive-project-id').val() ), 
+			title: $('#thrive-project-name').val(),
+			content: tinymce.editors.thriveProjectContent.getContent(),
+			group_id: parseInt( $('#thrive-project-assigned-group').val() )
+		};
+
+		element.attr('disabled', true).text('Updating ...');
+
+		ThriveProjectView.progress(true);
+
+		$('.thrive-project-updated').remove();
+
+		$.ajax({
+			url: ajaxurl,
+			data: __http_params,
+			method: 'post',
+			success: function( response ) {
+
+				var response = JSON.parse( response );
+
+					if ( response.message === 'success' ) {
+						
+						ThriveProjectView.progress(false);
+
+						element.attr('disabled', false).text('Update Project');
+
+						element.parent().parent().prepend(
+								'<div id="message" class="thrive-project-updated success updated">' +
+								'<p>Project details successfully updated.</p>' +
+								'</div>'
+							)
+
+						setTimeout(function(){
+								$('.thrive-project-updated').fadeOut();
+							}, 3000);
+
+					} else {
+						alert('save failure');
+					}
+
+				return;	
+			},
+			error: function() {
+				alert('connection failure');
+
+				return;
+			}
+		});
+	}); // Project Update End.
 }); // end jQuery(document).ready();

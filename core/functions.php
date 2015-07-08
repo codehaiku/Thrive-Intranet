@@ -69,15 +69,15 @@ function thrive_count_tasks($project_id, $type = 'all') {
 }
 
 function thrive_add_task_form() {
-	include plugin_dir_path(__FILE__) . '../templates/add-task.php';
+	include plugin_dir_path(__FILE__) . '../templates/task-add.php';
 }
 
 function thrive_edit_task_form() {
-	include plugin_dir_path(__FILE__) . '../templates/edit-task.php';
+	include plugin_dir_path(__FILE__) . '../templates/task-edit.php';
 }
 
 function thrive_task_filters() {
-	include plugin_dir_path(__FILE__) . '../templates/filter.php';
+	include plugin_dir_path(__FILE__) . '../templates/task-filter.php';
 }
 /**
  * thrive_render_task($echo = true, $page = 1, $limit = 10)
@@ -564,9 +564,38 @@ function thrive_get_tasks_comments($ticket_id = 0) {
 
 function thrive_project_settings() {
 	
-	include plugin_dir_path(__FILE__) . '../templates/thrive-single-project-settings.php';
+	include plugin_dir_path(__FILE__) . '../templates/project-settings.php';
 	
 	return;
+}
+
+function thrive_get_current_user_groups() {
+	
+	global $wpdb;
+
+	$current_user_id = intval(get_current_user_id());
+
+	if ( 0 === $current_user_id ) {
+		return array();
+	}
+	
+	$bp_groups = $wpdb->prefix . 'bp_groups';
+	$bp_group_members = $wpdb->prefix . 'bp_groups_members';
+
+	$stmt = sprintf( "SELECT {$bp_group_members}.group_id, {$bp_groups}.name 
+			FROM {$bp_group_members }
+			INNER JOIN {$bp_groups}
+			ON {$bp_groups}.id = {$bp_group_members}.group_id 
+			WHERE user_id = %d
+			ORDER BY {$bp_groups}.name asc", $current_user_id );
+
+	$results = $wpdb->get_results( $stmt, 'ARRAY_A' );
+
+	if ( $results ) {
+		return $results;
+	}
+
+	return array();
 
 }
 ?>

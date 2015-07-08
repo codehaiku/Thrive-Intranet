@@ -9,7 +9,12 @@
 // check if access directly
 if (!defined('ABSPATH'))  {die();}
 
-header('Content-Type: application/json');
+if (!defined('WP_TESTS_DOMAIN')) {
+	header('Content-Type: application/json');
+} else {
+	// Hide warnings when running tests
+	@header('Content-Type: application/json');
+}
 
 add_action( 'wp_ajax_thrive_transactions_request', 'thrive_transactions_callblack' );
 
@@ -37,7 +42,9 @@ function thrive_transactions_callblack() {
 		'thrive_transaction_renew_task',
 		// Comments callback functions.
 		'thrive_transaction_add_comment_to_ticket',
-		'thrive_transaction_delete_comment'
+		'thrive_transaction_delete_comment',
+		// Project callback functions.
+		'thrive_transactions_update_project'
 	);
 
 	if (function_exists($method)) {
@@ -79,10 +86,12 @@ function thrive_transaction_add_ticket() {
 				)
 		));
 	} else {
-		thrive_api_message(array(
+		thrive_api_message( array(
 			'message' => 'fail',
-			'response' => __('There was an error trying to add this task. Title and Description fields are required or there was an unexpected error.',' thrive')
-		));
+			'response' => __('There was an error trying to add this task. 
+				Title and Description fields are required or there was 
+				an unexpected error.',' thrive')
+		) );
 	}	
 
 	return;
@@ -326,5 +335,35 @@ function thrive_transaction_delete_comment() {
 	}
 
 	return;
+}
+
+function thrive_transactions_update_project() {
+
+	require_once plugin_dir_path(__FILE__) . '../models/project.php';
+
+	$project = new ThriveProject();
+
+	$project_id = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+	$project_title = filter_input( INPUT_POST, 'title', FILTER_SANITIZE_STRING );
+	$project_content = filter_input( INPUT_POST, 'content', FILTER_SANITIZE_STRING );
+	$project_group_id = filter_input( INPUT_POST, 'group_id', FILTER_VALIDATE_INT );
+
+	$project->set_id( $project_id );
+	$project->set_title( $project_title );
+	$project->set_content( $project_content );
+	$project->set_group_id( $project_group_id );
+
+	if ( $project->save() ) {
+		thrive_api_message( array(
+				'message' => 'success',
+				'project_id' => $project->get_id()
+			) );
+	} else {
+
+		thrive_api_message( array(
+				'message' => 'failure',
+				'project_id' => 0
+			) );
+	}
 }
 ?>

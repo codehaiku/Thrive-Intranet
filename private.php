@@ -23,7 +23,8 @@ if (!defined('ABSPATH')) die();
 // check if publitize is enabled inside theme option
 // redirect all pages to login page except for selected page
 $thrive_publitize_web = intval(get_option('thrive_is_public'));
-if($thrive_publitize_web !== 1) {
+
+if ( $thrive_publitize_web !== 1 ) {
 	add_action('wp', 'thrive_redirect_pages_except');
 }
 

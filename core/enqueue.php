@@ -5,6 +5,9 @@ add_action( 'admin_print_scripts',   'thrive_admin_scripts' );
 add_action( 'wp_enqueue_scripts',    'thrive_register_scripts' );
 add_action( 'wp_footer', 			 'thrive_register_config' );
 
+// Disable login modals introduced in WordPress 3.6
+remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load');
+
 function thrive_admin_stylesheet() {
 	wp_enqueue_style( 'thrive-admin-style', plugin_dir_url(__FILE__) . '../assets/css/admin.css' );
 }

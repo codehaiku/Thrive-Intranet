@@ -8,11 +8,12 @@
 	</div><br/>
 	
 	<div class="thrive-form-field">
-		<?php $args = array(
-			'teeny' => true,
-			'editor_height' => 250
-
-		); ?>
+		<?php 
+			$args = array(
+				'teeny' => true,
+				'editor_height' => 250
+			); 
+		?>
 		<?php echo wp_editor($content = null, $editor_id = "thriveTaskEditDescription", $args); ?>
 		<br><span class="description"><?php _e('In few words, explain what this task is all about', 'thrive'); ?></span>
 	</div><br/>

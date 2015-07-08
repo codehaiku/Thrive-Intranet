@@ -10,11 +10,11 @@ add_action( 'init', 'thrive_projects_register_post_type' );
 function thrive_projects_register_post_type() {
 
 	$labels = array(
-		'name'               => _x( 'Projects', 'post type general name', 'thrive' ),
-		'singular_name'      => _x( 'Project', 'post type singular name', 'thrive' ),
-		'menu_name'          => _x( 'Projects', 'admin menu', 'thrive' ),
-		'name_admin_bar'     => _x( 'Project', 'add new on admin bar', 'thrive' ),
-		'add_new'            => _x( 'Add New', 'project', 'thrive' ),
+		'name'               => __( 'Projects', 'post type general name', 'thrive' ),
+		'singular_name'      => __( 'Project', 'post type singular name', 'thrive' ),
+		'menu_name'          => __( 'Projects', 'admin menu', 'thrive' ),
+		'name_admin_bar'     => __( 'Project', 'add new on admin bar', 'thrive' ),
+		'add_new'            => __( 'Add New', 'project', 'thrive' ),
 		'add_new_item'       => __( 'Add New Project', 'thrive' ),
 		'new_item'           => __( 'New Project', 'thrive' ),
 		'edit_item'          => __( 'Edit Project', 'thrive' ),
@@ -55,23 +55,6 @@ function thrive_project_meta_box() {
 
     wp_enqueue_script('jquery-ui-datepicker');
 
-   /** add_meta_box(
-		'thrive_contributors_metabox', 
-		__('Contributors', 'thrive'), 
-		'thrive_contributors_metabox_content',
-		'project',
-		'advanced',
-		'high'
-	);
-
-	add_meta_box(
-		'thrive_milestones_metabox', 
-		__('Milestones', 'thrive'), 
-		'thrive_milestones_metabox_content',
-		'project',
-		'advanced',
-		'high'
-	); **/
 
 	add_meta_box(
 		'thrive_tasks_metabox', 
@@ -81,65 +64,6 @@ function thrive_project_meta_box() {
 		'advanced',
 		'high'
 	);
-}
-
-function thrive_contributors_metabox_content() {
-	?>
-	<div id="thrive-contributors">
-		Assign a group for this project
-	</div>
-	<?php
-}
-
-function thrive_milestones_metabox_content() {
-	?>
-	<div id="thrive-milestones-tabs" class="thrive-tabs">
-		<div class="thrive-tabs-tabs">
-			<ul>
-			    <li><a href="#thrive-milestones-list">All Milestones</a></li>
-			    <li><a href="#thrive-milestones-add">New Milestone</a></li>
-			</ul>
-		</div>
-		<div class="thrive-tabs-content">
-			<div id="thrive-milestones-list" class="thrive-tab-item-content active">
-				<ul>
-					<li>General Milestone <a href="#">View</a> | <a href="#">Edit</a></li>
-				</ul>
-			</div>
-			<div id="thrive-milestones-add" class="thrive-tab-item-content">
-				<div class="form-wrap">
-					<div class="thrive-form-field">
-						<input placeholder="Milestone Name (e.g. Version 2.3.76)" type="text" id="title" name="title" class="widefat"/>
-						<br><span class="description"><?php _e('Give your new milestone a new name. Maximum 160 characters', 'thrive'); ?></span>
-					</div><br/>
-				
-					<div class="thrive-form-field">
-						<textarea class="widefat" rows="5" cols="100" id="description" placeholder="Description"></textarea>
-						<br><span class="description"><?php _e('In few words, explain what this milestone is all about', 'thrive'); ?></span>
-					</div><br/>
-
-					<div class="thrive-form-field">
-						<label for="thrive-milestone">Deadline:</label>
-						<input placeholder="Tentative Date" type="text" name="date" id="thrive-date-picker" />
-					</div>
-
-					<div class="thrive-form-field">
-						<button class="button button-primary button-large" style="float:right">
-							<?php _e('Save Milestone', 'dunhakdis'); ?>
-						</button>
-						<div style="clear:both"></div>
-					</div>
-				</div>
-			</div>	
-		</div>
-		<div class="thrive-clear"></div>
-	</div>
-	<script>
-	jQuery(document).ready(function($){
-		$( "#thrive-date-picker" ).datepicker();
-	});
-	</script>
-	<?php
 }
 
 function thrive_tasks_metabox_content() {
@@ -210,7 +134,7 @@ function thrive_project_content_filter($content) {
     $container_end = '</div><!--#thrive-project-->';
 
     	ob_start();
-    		include_once thrive_template_dir(). '/thrive-single-project-heading.php';
+    		include_once thrive_template_dir(). '/project-heading.php';
     	$heading = ob_get_clean();
 
 	    $project_tabs = '<div class="thrive-project-tabs">';
@@ -229,7 +153,7 @@ function thrive_project_content_filter($content) {
 	    			ob_start();
 
 	    	  		if ($post->post_type == 'project') {
-			    		include_once thrive_template_dir(). '/thrive-single-project.php';
+			    		include_once thrive_template_dir(). '/project.php';
 			    	}
 
 			    	$project_contents = ob_get_clean();

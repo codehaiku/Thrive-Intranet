@@ -19,8 +19,6 @@
  */
 if (!defined('ABSPATH')) die();
 
-// Disable login modals introduced in WordPress 3.6
-remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load');
 // redirect the user when he/she visit wp-admin or wp-login.php
 add_action('init', 'thrive_redirect_login');
 // redirect the user after successful logged in attempt
@@ -36,27 +34,38 @@ add_action('wp_login_failed', 'thrive_redirect_login_handle_failure');
  */
 function thrive_redirect_login() {
 
+	// Bypass login if specified
+	$no_redirect = filter_input( INPUT_GET, 'no_redirect', FILTER_VALIDATE_BOOLEAN );
+
+	if ( $no_redirect ) {
+			return;
+		}
+
  	// Store for checking if this page equals wp-login.php
- 	$curr_paged = basename($_SERVER['REQUEST_URI']);
+ 	$curr_paged = basename( $_SERVER['REQUEST_URI'] );
 
  	// Set the default to our login page
  	$redirect_page = thrive_get_redirect_page_url();
- 	
 
  	// if user visits wp-admin or wp-login.php, redirect them
- 	if (strstr($curr_paged, 'wp-login.php')) {
- 		if (isset($_GET['interim-login'])) {
+ 	if ( strstr( $curr_paged, 'wp-login.php' ) ) {
+
+ 		if ( isset( $_GET[ 'interim-login' ] ) ) {
  			return;
  		}
+ 		
  		// check if there is an action present
  		// action might represent user trying to log out
- 	 	if (isset($_GET['action'])) {
+ 	 	
+ 	 	if ( isset( $_GET['action'] ) ) {
+ 	 		
  	 		$action = $_GET['action'];
 
- 	 		if ("logout" === $action) {
+ 	 		if ( "logout" === $action ) {
  	 			return;
  	 		}
  	 	}
+
  		wp_safe_redirect($redirect_page);
  	}
 
@@ -73,20 +82,20 @@ function thrive_redirect_login() {
  * @param  object $user        'login_redirect' filter callback argument
  * @return string              The final redirection url
  */
-function thrive_redirect_user_after_logged_in($redirect_to, $request, $user) {
+function thrive_redirect_user_after_logged_in( $redirect_to, $request, $user ) {
 	
 	global $user;
 
-	if (empty($user)) { 
+	if ( empty( $user ) ) { 
 		return $redirect_to;
 	}
 
 	// check if buddypress is active
-	if (function_exists('bp_core_get_user_domain')) {
-		return apply_filters('thrive_login_redirect', bp_core_get_user_domain($user->ID));
+	if ( function_exists( 'bp_core_get_user_domain' ) ) {
+		return apply_filters( 'thrive_login_redirect', bp_core_get_user_domain( $user->ID ) );
 	// otherwise, throw the user into homepage	
 	} else {
-		return apply_filters('thrive_login_redirect', home_url());
+		return apply_filters( 'thrive_login_redirect', home_url() );
 	}
 	// double edge sword
 	return $redirect_to;
@@ -124,16 +133,27 @@ function thrive_redirect_login_handle_failure( $user ) {
  */
 function thrive_get_redirect_page_url() {
 
-	$login_page_id = intval(get_option('thrive_login_page'));
+	$login_page_id = intval( get_option( 'thrive_login_page' ) );
 
-	if ($login_page_id === 0)  { return; }
+	if ( $login_page_id === 0 )  { 
+		return;
+	}
 	
-	$login_post = get_post($login_page_id);
-	$slug = $login_post->post_name;
+	$login_post = get_post( $login_page_id );
 
-	$login_page_name = apply_filters('thrive_login_page_slug', $slug);
- 	$redirect_page = esc_url(site_url() . '/' . esc_attr($login_page_name));
+	if ( !empty( $login_post ) ) {
 
- 	return $redirect_page;
+		$slug = $login_post->post_name;
+
+		$login_page_name = apply_filters( 'thrive_login_page_slug', $slug );
+
+ 		$redirect_page = esc_url( site_url() . '/' . esc_attr( $login_page_name ) );
+
+ 		return $redirect_page;
+
+ 	}
+
+ 	return false;
+ 	
 }
 ?>

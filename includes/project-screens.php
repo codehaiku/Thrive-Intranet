@@ -8,33 +8,42 @@
  * @return [type]                 [description]
  */
 
-if (!defined('ABSPATH')) die();
+if ( ! defined( 'ABSPATH' ) ) die();
 
 function bp_projects_load_template_filter( $found_template, $templates ) {
  
-    //Only filter the template location when we're on the bp-plugin component pages.
-    if (!bp_is_current_component( 'projects' ))
-        return $found_template;
+    // Only filter the template location when we're on the bp-plugin component pages.
     
-    if (!bp_projects_is_bp_default())
+    if ( ! bp_is_current_component( 'projects' ) ) {
         return $found_template;
+    }
+    
+    if ( !bp_projects_is_bp_default() ) {
+        return $found_template;
+    }
 
-    foreach ((array) $templates as $template) 
-    {
+    foreach ( ( array ) $templates as $template ) {
 
-        if (file_exists(STYLESHEETPATH . '/' . $template)) {
+        if ( file_exists( STYLESHEETPATH . '/' . $template ) ) {
+
             $filtered_templates[] = STYLESHEETPATH . '/' . $template;
-        } else if (file_exists(TEMPLATEPATH . '/' . $template)) {
+
+        } else if ( file_exists( TEMPLATEPATH . '/' . $template ) ) {
+
             $filtered_templates[] = TEMPLATEPATH . '/' . $template;
+
         } else {
+
             $filtered_templates[] = thrive_template_dir() . '/' . $template;
+
         }
            
     }
  
     $found_template = $filtered_templates[0];
  
-    return apply_filters('bp_projects_load_template_filter', $found_template);
+    return apply_filters( 'bp_projects_load_template_filter', $found_template );
+
 }
  
 add_filter( 'bp_located_template', 'bp_projects_load_template_filter', 10, 2 );
@@ -58,18 +67,25 @@ function bp_projects_is_bp_default() {
 
 /**
  * [bp_projects_screen_index description]
- * @return [type] [description]
+ * @return void
  */
 function bp_projects_screen_index() {
-    // i first check i'm on my plugin directory area...
-    if ( !bp_displayed_user_id() && bp_is_current_component( 'projects' ) && !bp_current_action() ) {
+
+    // Check if on current project directory page.
+    if ( !bp_displayed_user_id() && bp_is_current_component( 'projects' ) && !bp_current_action() ) 
+    {
+        
         bp_update_is_directory( true, 'projects' );
-        //... before using bp_core_load_template to ask BuddyPress
+        
+        // ... before using bp_core_load_template to ask BuddyPress
         // to load the template bp-plugin (which is located in
         // BP_PLUGIN_DIR . '/templates/bp-plugin.php)
-        bp_core_load_template( apply_filters( 'bp_projects_screen_index', 'projects' ) );
+        
+        bp_core_load_template( apply_filters( 'bp_projects_screen_index', 'project-loop' ) );
+
     }
 }
+
 add_action( 'bp_screens', 'bp_projects_screen_index' );
 
 
@@ -79,6 +95,7 @@ add_action( 'bp_screens', 'bp_projects_screen_index' );
  * @return [type]            [description]
  */
 function bp_projects_add_template_stack( $templates ) {
+
     // if we're on a page of our plugin and the theme is not BP Default, then we
     // add our path to the template path array
     if ( bp_is_current_component( 'projects' ) && !bp_projects_is_bp_default() ) {
@@ -96,10 +113,12 @@ add_filter( 'bp_get_template_stack', 'bp_projects_add_template_stack', 10, 1 );
  * @return [type]            [description]
  */
 function bp_projects_locate_template( $template = false ) {
-    if( empty( $template ) )
+
+    if ( empty( $template ) ) {
         return false;
+    }
  
-    if( bp_projects_is_bp_default() ) {
+    if ( bp_projects_is_bp_default() ) {
         locate_template( array(  $template . '.php' ), true );
     } else {
         bp_get_template_part( $template );
@@ -109,7 +128,7 @@ function bp_projects_locate_template( $template = false ) {
 
 function bp_projects_main_screen_function(){
  
-    bp_core_load_template( apply_filters( 'bp_projects_main_screen_function', 'thrive-projects-dashboard' ) );
+    bp_core_load_template( apply_filters( 'bp_projects_main_screen_function', 'project-dashboard' ) );
  
     //if BP Default is not used, we filter bp_get_template_part
     if (!bp_projects_is_bp_default()) {
@@ -118,22 +137,26 @@ function bp_projects_main_screen_function(){
 }
  
 function bp_projects_user_template_part( $templates, $slug, $name ) {
-    if( $slug != 'members/single/plugins' )
+
+    if( $slug != 'members/single/plugins' ) {
+        
         return $templates;
+
+    }
  
-    return array( 'thrive-projects-dashboard.php' );
+    return array( 'project-dashboard.php' );
 }
  
 function bp_projects_menu_header() {
-    _e( 'Menu Header' );
+    _e( 'Menu Header', 'thrive' );
 }
  
 function bp_projects_title() {
-    _e( 'Plugin title' );
+    _e( 'Plugin title', 'thrive' );
 }
  
 function bp_projects_content() {
-    _e( 'Plugin content');
+    _e( 'Plugin content', 'thrive' );
 }
 /**
  * {}{}{}{}{}{} =======================
@@ -176,11 +199,14 @@ class BP_Projects_Theme_Compat {
             'comment_status' => 'closed'
         ) );
     }
+
     /**
      * Filter the_content with bp-plugin index template part
      */
     public function directory_content() {
-        bp_buffer_template_part( 'projects' );
+
+        bp_buffer_template_part( 'project-loop' );
+
     }
 }
  

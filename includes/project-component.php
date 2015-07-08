@@ -86,7 +86,7 @@ class BP_Projects_Component extends BP_Component {
             'project-screens.php'
         );
 
-        parent::includes($includes);
+        parent::includes( $includes );
 
         return;
     }
@@ -108,7 +108,7 @@ class BP_Projects_Component extends BP_Component {
 
         $globals = array(
             'slug' => BP_PROJECTS_SLUG,
-            'root_slug' => isset($bp->pages->{$this->id}->slug) ? $bp->pages->{$this->id}->slug : BP_PROJECTS_SLUG,
+            'root_slug' => isset( $bp->pages->{$this->id}->slug ) ? $bp->pages->{$this->id}->slug : BP_PROJECTS_SLUG,
             'has_directory' => true,
             'directory_title' => __('Projects', 'component directory title', 'thrive') ,
             'search_string' => __('Search Projects...', 'buddypress')
@@ -142,7 +142,6 @@ class BP_Projects_Component extends BP_Component {
             'slug'            => 'projects-subnav',
             'parent_url'      => 'link to the parent url',
             'parent_slug'     => 'projects',
-            /* sub nav screen function callback */
             'screen_function' => 'bp_projects_main_screen_function',
             'position'        => 10,
         );
