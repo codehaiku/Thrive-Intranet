@@ -347,19 +347,29 @@ function thrive_transactions_update_project() {
 	$project_title = filter_input( INPUT_POST, 'title', FILTER_SANITIZE_STRING );
 	$project_content = filter_input( INPUT_POST, 'content', FILTER_SANITIZE_STRING );
 	$project_group_id = filter_input( INPUT_POST, 'group_id', FILTER_VALIDATE_INT );
+	$no_json = filter_input( INPUT_POST, 'no_json', FILTER_SANITIZE_STRING );
 
-	$project->set_id( $project_id );
+	if ( !empty( $project_id ) ) {
+		$project->set_id( $project_id );
+	}
+
 	$project->set_title( $project_title );
 	$project->set_content( $project_content );
 	$project->set_group_id( $project_group_id );
 
 	if ( $project->save() ) {
+		
+		if ( $no_json === 'yes' ) {
+
+			wp_safe_redirect( get_permalink( $project->get_id() ) );
+
+		}
+
 		thrive_api_message( array(
 				'message' => 'success',
 				'project_id' => $project->get_id()
-			) );
+			));
 	} else {
-
 		thrive_api_message( array(
 				'message' => 'failure',
 				'project_id' => 0

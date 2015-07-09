@@ -15,11 +15,15 @@ function bp_projects_load_template_filter( $found_template, $templates ) {
     // Only filter the template location when we're on the bp-plugin component pages.
     
     if ( ! bp_is_current_component( 'projects' ) ) {
+
         return $found_template;
+
     }
     
     if ( !bp_projects_is_bp_default() ) {
+
         return $found_template;
+
     }
 
     foreach ( ( array ) $templates as $template ) {
@@ -57,9 +61,13 @@ function bp_projects_is_bp_default() {
    // if active theme is BP Default or a child theme, then we return true
    // If the Buddypress version  is < 1.7, then return true too
     if (current_theme_supports('buddypress') || in_array( 'bp-default', array( get_stylesheet(), get_template() ) )  || ( defined( 'BP_VERSION' ) && version_compare( BP_VERSION, '1.7', '<' ) )) {
+        
         return true;
+
     } else {
-        return false;        
+
+        return false;
+
     }
 
     return false;
@@ -119,32 +127,59 @@ function bp_projects_locate_template( $template = false ) {
     }
  
     if ( bp_projects_is_bp_default() ) {
+
         locate_template( array(  $template . '.php' ), true );
+
     } else {
+
         bp_get_template_part( $template );
+
     }
 }
 
 
 function bp_projects_main_screen_function(){
  
+    add_action('bp_template_title', 'bp_projects_title');
+    add_action('bp_template_content', 'bp_projects_content');
+
     bp_core_load_template( apply_filters( 'bp_projects_main_screen_function', 'project-dashboard' ) );
- 
-    //if BP Default is not used, we filter bp_get_template_part
-    if (!bp_projects_is_bp_default()) {
+    
+
+    // if BP Default is not used, we filter bp_get_template_part
+    if ( ! bp_projects_is_bp_default() ) {
+
         add_filter('bp_get_template_part', 'bp_projects_user_template_part', 10, 3 );
+
     }
 }
  
+function bp_projects_main_screen_function_new_project() {
+
+    add_action('bp_template_title', 'bp_projects_add_new_title');
+    add_action('bp_template_content', 'bp_projects_add_new_content');
+
+    bp_core_load_template( apply_filters( 'bp_projects_main_screen_function_new_project', 'project-dashboard-new-project' ) );
+
+      // if BP Default is not used, we filter bp_get_template_part
+    if ( ! bp_projects_is_bp_default() ) {
+
+        add_filter('bp_get_template_part', 'bp_projects_user_template_part', 10, 3 );
+
+    }
+
+}
+
 function bp_projects_user_template_part( $templates, $slug, $name ) {
 
     if( $slug != 'members/single/plugins' ) {
-        
+         
         return $templates;
 
     }
  
     return array( 'project-dashboard.php' );
+
 }
  
 function bp_projects_menu_header() {
@@ -152,14 +187,35 @@ function bp_projects_menu_header() {
 }
  
 function bp_projects_title() {
-    _e( 'Plugin title', 'thrive' );
+    _e( 'Projects', 'thrive' );
 }
  
+
 function bp_projects_content() {
-    _e( 'Plugin content', 'thrive' );
+    
+    echo '<div id="thrive-intranet-projects">';
+
+            $args = array(
+                    'posts_per_page' => 5
+                );
+
+            thrive_project_loop( $args );
+
+    echo '</div>';
+
+    return;
 }
+
+function bp_projects_add_new_title() {
+    _e( 'New Project', 'thrive' );
+}
+
+function bp_projects_add_new_content() {
+   thrive_new_project_form();
+}
+
 /**
- * {}{}{}{}{}{} =======================
+ * BP Projects Theme Compatability
  */
 class BP_Projects_Theme_Compat {
     /**
@@ -189,7 +245,7 @@ class BP_Projects_Theme_Compat {
     public function directory_dummy_post() {
         bp_theme_compat_reset_post( array(
             'ID'             => 0,
-            'post_title'     => 'BP Project Directory',
+            'post_title'     => 'Projects Directory',
             'post_author'    => 0,
             'post_date'      => 0,
             'post_content'   => '',

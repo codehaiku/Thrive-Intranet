@@ -133,16 +133,26 @@ class BP_Projects_Component extends BP_Component {
             'position' => 80,
             /* main nav screen function callback */
             'screen_function' => 'bp_projects_main_screen_function',
-            'default_subnav_slug' => 'bp-projects-subnav'
+            'default_subnav_slug' => 'all'
         );
  
         // Add a few subnav items under the main tab
         $sub_nav[] = array(
-            'name'            =>  __( 'Projects' ),
-            'slug'            => 'projects-subnav',
-            'parent_url'      => 'link to the parent url',
+            'name'            =>  __( 'My Projects' ),
+            'slug'            => 'all',
+            'parent_url'      => bp_loggedin_user_domain() . '' . $this->id . '/',
             'parent_slug'     => 'projects',
             'screen_function' => 'bp_projects_main_screen_function',
+            'position'        => 10,
+        );
+
+        // Edit subnav
+        $sub_nav[] = array(
+            'name'            =>  __( 'New Project' ),
+            'slug'            => 'new',
+            'parent_url'      => bp_loggedin_user_domain() . '' . $this->id . '/',
+            'parent_slug'     => 'projects',
+            'screen_function' => 'bp_projects_main_screen_function_new_project',
             'position'        => 10,
         );
  

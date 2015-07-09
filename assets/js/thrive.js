@@ -255,6 +255,7 @@ jQuery(document).ready(function($){
 			this.view.search = '';
 			this.view.render();
 		},
+		
 		dashboard: function() {
 			this.view.switchView(null, '#thrive-project-dashboard-context');
 		},

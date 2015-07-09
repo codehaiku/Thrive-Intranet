@@ -6,7 +6,7 @@
 	</div>
 </div>
 
-<div class="thrive-project-tab-content-item" data-content="thrive-project-dashboard" id="thrive-project-dashboard-context">
+<div class="active thrive-project-tab-content-item" data-content="thrive-project-dashboard" id="thrive-project-dashboard-context">
 	
 	<div id="thrive-dashboard-about">
 		<h3>
@@ -58,7 +58,7 @@
 	</div><!--#thrive-dashboard-at-a-glance-->
 </div>
 
-<div class="thrive-project-tab-content-item active" data-content="thrive-project-tasks" id="thrive-project-tasks-context">
+<div class="thrive-project-tab-content-item" data-content="thrive-project-tasks" id="thrive-project-tasks-context">
 	
 	<?php
 		$args = array(

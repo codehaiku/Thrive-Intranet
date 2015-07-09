@@ -697,6 +697,7 @@
 
     #thrive-project .group-avatar img {
         border-radius: 50%;
+        max-width: 100%;
     }
 
 #thrive-project .group-details {
@@ -709,4 +710,124 @@
     display: inline-block;
     width: 100%;
     margin-bottom: 20px;
+}
+
+/**
+ * Projects Archive
+ */
+
+#thrive-intranet-projects ul#thrive-projects-lists,
+#thrive-intranet-projects ul#thrive-projects-lists li,
+#thrive-intranet-projects ul.thrive-project-meta-stats {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+#thrive-intranet-projects ul#thrive-projects-lists li.type-project {
+    margin-bottom: 25px;
+    padding: 25px;
+    background: #fff;
+    border-radius: 5px;
+    border: 1px solid #eee;
+}
+
+#thrive-intranet-projects ul#thrive-projects-lists li.type-project .thrive-project-title h3 {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 25px;
+}
+
+#thrive-intranet-projects ul#thrive-projects-lists li.type-project img.avatar {
+    border-radius: 50%;
+    max-width: 32px;
+    height: auto;
+}
+
+#thrive-intranet-projects ul.thrive-project-meta-stats {
+    display: inline-block;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+#thrive-intranet-projects ul.thrive-project-meta-stats li {
+    float: left;
+}
+
+#thrive-intranet-projects ul.thrive-project-meta-stats li a {
+    display: block;
+    padding: 10px;
+    position: relative;
+    color: #00796B;
+}
+
+#thrive-intranet-projects ul.thrive-project-meta-stats li a .after {
+    content: " ";
+    position: absolute;
+    height: 2.5px;
+    width: 100%;
+    top: 0;
+    background-color: #69F0AE;
+    border-right: 2px solid #00E676;
+    left: 0;
+}
+
+#thrive-intranet-projects ul.thrive-project-meta-stats li span.total-tasks {
+    padding: 7px 15px;
+    display: block;
+    background-color: #00897B;
+    border: 3px solid #00796B;
+    color: #FFF;
+}
+
+#thrive-intranet-projects ul.thrive-project-meta-stats li:first-child a {
+    padding-left: 0;
+}
+
+/**
+ * Modal
+ */
+
+#thrive-new-project-modal {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.25);
+    display: none;
+}
+
+#thrive-new-project-modal #thrive-modal-content {
+    padding: 25px;
+    background: #fff;
+    box-shadow: 0 1.5px 1px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.12);
+    width: 100%;
+    max-width: 500px;
+    margin: 30px auto;
+    position: relative;
+    top: 200px;
+    opacity: 0;
+    transition: all 0.25s ease-in-out;
+    -moz-transition: all 0.25s ease-in-out;
+    -webkit-transition: all 0.675s ease-in-out;
+}
+
+#thrive-new-project-modal #thrive-modal-content.active {
+    opacity: 1;
+    top: 25px;
+}
+
+#thrive-modal-heading {
+    background-color: #03A9F4;
+    margin: -25px -25px 25px -25px;
+    padding: 15px 25px;
+    color: #fff;
+}
+
+#thrive-modal-heading  #thrive-modal-close,
+#thrive-modal-heading  h5{
+    margin: 0;
+    padding: 0;
 }

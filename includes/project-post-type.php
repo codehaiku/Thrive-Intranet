@@ -40,7 +40,7 @@ function thrive_projects_register_post_type() {
 		'hierarchical'       => false,
 		'menu_position'      => null,
 		'register_meta_box_cb'      => 'thrive_project_meta_box',
-		'supports'           => array( 'title', 'editor', 'thumbnail' )
+		'supports'           => array( 'title', 'editor', 'custom-fields' )
 	);
 
 	register_post_type( 'project', $args );
@@ -139,9 +139,8 @@ function thrive_project_content_filter($content) {
 
 	    $project_tabs = '<div class="thrive-project-tabs">';
 	    	$project_tabs .= '<ul id="thrive-project-tab-li">';
-	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-activity" class="thrive-project-tab-li-item-a" href="#tasks/activity">Activity</a></li>';
-	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-dashboard" class="thrive-project-tab-li-item-a" href="#tasks/dashboard">Dashboard</a></li>';
-	    		$project_tabs .= '<li class="thrive-project-tab-li-item active"><a data-content="thrive-project-tasks" class="thrive-project-tab-li-item-a" href="#tasks">Tasks</a></li>';
+	    		$project_tabs .= '<li class="thrive-project-tab-li-item active"><a data-content="thrive-project-dashboard" class="thrive-project-tab-li-item-a" href="#tasks/dashboard">Dashboard</a></li>';
+	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-tasks" class="thrive-project-tab-li-item-a" href="#tasks">Tasks</a></li>';
 	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-add-new" id="thrive-project-add-new" class="thrive-project-tab-li-item-a" href="#tasks/add">Add New</a></li>';
 	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-edit" id="thrive-project-edit-tab" class="thrive-project-tab-li-item-a" href="#">Edit</a></li>';
 	    		$project_tabs .= '<li class="thrive-project-tab-li-item"><a data-content="thrive-project-settings" class="thrive-project-tab-li-item-a" href="#tasks/settings">Settings</a></li>';

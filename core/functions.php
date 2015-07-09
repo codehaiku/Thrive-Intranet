@@ -598,4 +598,121 @@ function thrive_get_current_user_groups() {
 	return array();
 
 }
+
+function thrive_project_nav( WP_Query $object ) { 
+	// Maximum page.
+	$maximum_page = absint( $object->max_num_pages );
+	// Current page.
+	$current_page = absint( $object->query_vars['paged'] );
+	// Do no display pagination if there is only 1 project
+	if ( $maximum_page === 1 ) {
+		return;
+	}
+	?>
+	<nav>
+		<?php echo esc_html(apply_filters( 'thrive_projects_page_label', __('Page:', 'thrive') )); ?>
+		<?php for ( $page = 1; $page <= $maximum_page; $page++ ) { ?>
+			<?php $active = ''; ?>
+			<?php if ( $page === $current_page ) { ?>
+				<?php $active = 'active '; ?>
+			<?php } ?>
+		<a class="<?php echo $active;?>project-nav-link" title="<?php echo sprintf(__('Go to page %d &raquo;', 'thrive'), $page); ?>" href="?paged=<?php echo $page; ?>">
+			<?php echo $page; ?>
+		</a>
+		<?php } ?>
+	</nav>
+	<?php
+	return;
+}
+
+function thrive_new_project_form() {
+	
+	include plugin_dir_path(__FILE__) . '../templates/project-add.php';
+
+	return;
+}
+
+function thrive_project_meta( $project_id = 0 ) { ?>
+
+	<?php if ( 0 === $project_id ) { return; } ?>
+
+	<?php $tasks_total = absint( thrive_count_tasks( $project_id, $type = 'all' ) ); ?>
+	<?php $tasks_completed  = absint( thrive_count_tasks( $project_id, $type = 'completed' ) ); ?>
+	<?php $tasks_remaining = absint( $tasks_total - $tasks_completed ); ?>
+
+	<?php if ( 0 !== $tasks_total ) { ?>
+
+	<?php $tasks_progress = ( ( $tasks_completed / $tasks_total ) * 100 ); ?>
+
+	<ul class="thrive-project-meta-stats">
+		<li>
+			<span class="total-tasks">
+				<?php printf( _n('%d Task', '%d Tasks', $tasks_total, 'thrive' ), $tasks_total ); ?>
+			</span>	
+		</li>
+		<li>
+			<a class="tasks-counter progress" href="<?php echo esc_url( get_the_permalink( $project_id ) ); ?>#tasks" title="<?php _e('Visit Project', 'thrive');?>">
+				<?php printf( __('%d%% Completed', 'thrive'), $tasks_progress ); ?>
+					<span class="after" style="width: <?php echo $tasks_progress; ?>%;"></span>
+			</a>	
+		</li>
+	</ul>
+
+<?php } // end if  ?>
+<?php return; ?>
+<?php }
+
+function thrive_project_user( $user_id = 0, $post_id = 0 ) { ?>
+	
+	<?php if ( $post_id === 0 ) { return; } ?>
+	<?php if ( $user_id === 0 ) { return; } ?>
+
+	<?php // Project User ?>
+	<?php $user_profile_url = get_author_posts_url( $user_id ); ?>
+
+	<?php // Use BuddyPress profile if possible ?>
+
+	<?php if ( function_exists('bp_core_get_user_domain') ) { ?>
+		<?php $user_profile_url = bp_core_get_user_domain( $user_id ); ?>
+	<?php } ?>
+
+	<?php _e('Started by ', 'thrive'); ?>
+
+	<a href="<?php echo esc_url( $user_profile_url ); ?>" title="<?php _e('Visit User Profile', 'thrive'); ?>">
+		<?php echo get_avatar( $user_id, 32 ); ?> 
+		<?php echo esc_html( get_the_author_meta( 'display_name' ) ); ?>
+	</a>
+
+	<?php _e('under &raquo;'); ?>
+
+	<?php $group_id = absint( get_post_meta( $post_id, 'thrive_project_group_id', true ) ); ?>
+
+	<?php $group = groups_get_group( array( 'group_id' => $group_id ) ); ?>
+
+	<a href="<?php echo esc_url( bp_get_group_permalink( $group ) ); ?>" title="<?php echo esc_attr( $group->name ); ?>">
+
+		<?php echo bp_core_fetch_avatar( array( 'object' => 'group', 'item_id' => $group_id ) ) ?>
+
+		<?php echo esc_html( $group->name ); ?>
+
+	</a>	
+	<?php // End Project User ?>
+
+<?php
+return;
+}
+
+function thrive_project_loop( $args = array() ) { 
+
+	if ( !is_array( $args ) ) {
+		return;
+	}
+
+	$args['post_type'] = 'project';
+	$args['paged'] = get_query_var( 'paged' );
+
+	include plugin_dir_path( __FILE__ ) . '../templates/project-loop-content.php';
+	
+	return;
+}
 ?>

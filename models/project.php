@@ -75,6 +75,7 @@ class ThriveProject {
 
 		if ( $is_returned_ok ) {
 			// If succesfully saved the details into database
+			$this->set_id( $is_returned_ok );
 			// update the thrive_project_group_id custom field
 			update_post_meta( $is_returned_ok, 'thrive_project_group_id', $this->get_group_id() );
 

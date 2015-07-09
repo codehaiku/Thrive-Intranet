@@ -41,6 +41,12 @@ function thrive_register_scripts() {
 		);
 	}
 
+	// Project Archive JS.
+	wp_enqueue_script(
+		'thrive-archive-js', plugin_dir_url( __FILE__ ) . '../assets/js/archive.js', array('jquery', 'backbone'), 
+		1.0, true
+	);
+
 	return;
 }
 
