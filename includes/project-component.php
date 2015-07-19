@@ -176,15 +176,15 @@ class BP_Projects_Group extends BP_Group_Extension {
      */
     function __construct() {
         $args = array(
-            'slug' => 'group-extension-example-2',
-            'name' => 'Group Extension Example 2',
+            'slug' => 'projects',
+            'name' => 'Projects',
             'nav_item_position' => 105,
             'screens' => array(
                 'edit' => array(
-                    'name' => 'GE Example 2',
+                    'name' => 'Projects',
                     // Changes the text of the Submit button
                     // on the Edit page
-                    'submit_text' => 'Submit, suckaz',
+                    'submit_text' => 'Submit, submit',
                 ),
                 'create' => array(
                     'position' => 100,
@@ -195,11 +195,15 @@ class BP_Projects_Group extends BP_Group_Extension {
     }
  
     function display( $group_id = NULL ) {
+
         $group_id = bp_get_group_id();
+
         echo 'This plugin is 2x cooler!';
+
     }
  
     function settings_screen( $group_id = NULL ) {
+        
         $setting = groups_get_groupmeta( $group_id, 'group_extension_example_2_setting' );
  
         ?>

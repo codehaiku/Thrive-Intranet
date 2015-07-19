@@ -10,7 +10,7 @@ do_action( 'thrive_before_projects_directory' ); ?>
 	
 	<div id="thrive-intranet-projects">
 		
-		<a id="thrive-new-project-btn" class="alignright button" href="#">
+		<a id="thrive-new-project-btn" class="button" href="#">
 			<?php _e('New Project', 'thrive'); ?>	
 		</a>
 

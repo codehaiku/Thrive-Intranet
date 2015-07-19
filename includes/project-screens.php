@@ -245,7 +245,7 @@ class BP_Projects_Theme_Compat {
     public function directory_dummy_post() {
         bp_theme_compat_reset_post( array(
             'ID'             => 0,
-            'post_title'     => 'Projects Directory',
+            'post_title'     => apply_filters('thrive_projects_dir_title', __('Projects Directory', 'thrive')),
             'post_author'    => 0,
             'post_date'      => 0,
             'post_content'   => '',

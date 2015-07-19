@@ -96,11 +96,30 @@ class ThriveProject {
 	 */
 	public function delete() {
 
+		global $wpdb;
+
 		if ( 0 === $this->get_id() ) {
 			return false;
 		}
+
+		// check if current user can delete this post
 		
-		$is_returned_ok = wp_delete_post( $this->get_id() );
+		$is_returned_ok = false;
+
+		$post = get_post( $this->get_id() );
+
+		if ( empty( $post ) ) {
+			return false;
+		}
+
+		if ( current_user_can( 'delete_post', $this->get_id() ) || $post->post_author == get_current_user_id() ) {
+			
+			$is_returned_ok = wp_delete_post( $this->get_id() );
+
+			// delete all the task under that project
+			$wpdb->delete( $wpdb->prefix . 'thrive_tasks', array( 'project_id' => $this->get_id() ), array( '%d' ) );
+
+		}
 
 		if ( $is_returned_ok ) {
 

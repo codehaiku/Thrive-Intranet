@@ -270,7 +270,7 @@
 }
 
 #thrive-project-tab-li li a {
-	padding: 35px 20px;
+	padding: 10px 20px;
 	background: #eee;
 	border:1px solid #ddd;
 	border-right: 0;
@@ -283,7 +283,7 @@
 
 #thrive-project-tab-li li.active a {
 	background: #fff;
-	padding: 35.5px 20px;
+	padding: 10.5px 20px;
 	position: relative;
 	border-bottom: 0;
 	z-index: 2;

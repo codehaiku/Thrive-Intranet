@@ -7,18 +7,23 @@
  */
 
 // check if access directly
-if (!defined('ABSPATH'))  {die();}
+if ( ! defined( 'ABSPATH' ) )  { die(); }
 
-if (!defined('WP_TESTS_DOMAIN')) {
+// Format our page header when Unit Testing
+if ( ! defined( 'WP_TESTS_DOMAIN' ) ) {
+
 	header('Content-Type: application/json');
+
 } else {
+
 	// Hide warnings when running tests
 	@header('Content-Type: application/json');
+
 }
 
 add_action( 'wp_ajax_thrive_transactions_request', 'thrive_transactions_callblack' );
 
-require_once(plugin_dir_path(__FILE__) . '../controllers/tasks.php');
+require_once( plugin_dir_path(__FILE__) . '../controllers/tasks.php' );
 
 /**
  * Executes the method or function requested by the client
@@ -28,23 +33,27 @@ function thrive_transactions_callblack() {
 	
 	$method = filter_input(INPUT_POST, 'method', FILTER_SANITIZE_ENCODED);
 
-	if (empty($method)) {
+	if ( empty( $method ) ) {
 		// try get action
 		$method = filter_input(INPUT_GET, 'method', FILTER_SANITIZE_ENCODED);
 	}
 
 	$allowed_callbacks = array(
+		// Tickets/Tasks callbacks
 		'thrive_transaction_add_ticket',
 		'thrive_transaction_delete_ticket',
 		'thrive_transaction_fetch_task',
 		'thrive_transaction_edit_ticket',
 		'thrive_transaction_complete_task',
 		'thrive_transaction_renew_task',
+
 		// Comments callback functions.
 		'thrive_transaction_add_comment_to_ticket',
 		'thrive_transaction_delete_comment',
+
 		// Project callback functions.
-		'thrive_transactions_update_project'
+		'thrive_transactions_update_project',
+		'thrive_transactions_delete_project'
 	);
 
 	if (function_exists($method)) {
@@ -373,7 +382,49 @@ function thrive_transactions_update_project() {
 		thrive_api_message( array(
 				'message' => 'failure',
 				'project_id' => 0
-			) );
+			));
 	}
+}
+
+function thrive_transactions_delete_project() {
+
+	require_once plugin_dir_path(__FILE__) . '../models/project.php';
+
+	$project = new ThriveProject();
+
+	$project_id = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+
+	$project->set_id( absint( $project_id ) );
+
+	$redirect = home_url();
+
+	if ( $project->delete() ) {
+
+		// Get the projects page permalink
+		$bp_options_pages = get_option('bp-pages');
+
+		if ( !empty( $bp_options_pages ) && is_array( $bp_options_pages ) ) {
+
+			$project_page_id = $bp_options_pages[ 'projects' ];
+
+			if ( !empty( $project_page_id ) ) {
+				$redirect = get_permalink( $project_page_id );
+			}
+
+		}
+
+		thrive_api_message( array(
+				'message' => 'success',
+				'redirect' => $redirect
+			));
+
+	} else { 
+
+		thrive_api_message( array(
+				'message' => 'failure'
+			));
+	}
+
+	return;
 }
 ?>

@@ -612,10 +612,56 @@ jQuery(document).ready(function($){
 				return;	
 			},
 			error: function() {
-				alert('connection failure');
 
+				alert('connection failure');
 				return;
+
 			}
 		});
 	}); // Project Update End.
+
+	// Delete Project
+	$('body').on('click', '#thriveDeleteProjectBtn', function() {
+		
+
+		if ( !confirm( 'Are you sure you want to delete this project? All the tickets under this project will be deleted as well. This action is undoable.' ) ) 
+		{
+			return;
+		}
+
+		var project_id = $('#thrive-project-id').val();
+		
+		var __http_params = {
+			action: 'thrive_transactions_request',
+			method: 'thrive_transactions_delete_project',
+			    id: project_id
+		}
+
+		$( this ).text('Deleting...');
+
+		$.ajax({
+			url: ajaxurl,
+			method: 'post',
+			data: __http_params,
+			success: function( response ) {
+
+				var response = JSON.parse( response );
+
+					if ( response.message == 'success' ) {
+						
+						window.location = response.redirect;
+
+					} else {
+						console.log( '__success_callback' );
+						this.error();
+
+					}
+
+			},
+			error: function() {
+				alert('There was an error trying to delete this post. Try again later.');
+			}
+		});
+
+	});
 }); // end jQuery(document).ready();

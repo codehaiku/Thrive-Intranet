@@ -55,7 +55,7 @@ function thrive_wp_login($atts) {
   		}
   	}
   	echo $error_login_message;
-  	echo '<div class="dunhakdis-card mg-top-35 mg-bottom-35">';
+  	echo '<div class="mg-top-35 mg-bottom-35">';
   			wp_login_form( $args);
   	echo '</div>';
 

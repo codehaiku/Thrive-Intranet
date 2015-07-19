@@ -51,12 +51,16 @@
 
 	<div class="thrive-form-field">
 		<div class="alignright">
+			
 			<button id="thriveUpdateProjectBtn" type="button" class="button">
 				<?php echo _e('Update Project', 'thrive'); ?>
 			</button>
-			<button id="thriveDeleteProjectBtn" type="button" class="button button-danger">
-				<?php echo _e('Delete', 'thrive'); ?>
-			</button>
+
+			<?php if ( current_user_can( 'delete_post', $post->ID ) || $post->post_author == get_current_user_id() ) { ?>
+				<button id="thriveDeleteProjectBtn" type="button" class="button button-danger">
+					<?php echo _e('Delete', 'thrive'); ?>
+				</button>
+			<?php } ?>
 		</div>
 		<div class="clearfix"></div>
 	</div>
