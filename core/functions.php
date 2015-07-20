@@ -625,7 +625,7 @@ function thrive_project_nav( WP_Query $object ) {
 	return;
 }
 
-function thrive_new_project_form() {
+function thrive_new_project_form( $group_id = 0 ) {
 	
 	include plugin_dir_path(__FILE__) . '../templates/project-add.php';
 
@@ -644,19 +644,22 @@ function thrive_project_meta( $project_id = 0 ) { ?>
 
 	<?php $tasks_progress = ( ( $tasks_completed / $tasks_total ) * 100 ); ?>
 
-	<ul class="thrive-project-meta-stats">
-		<li>
-			<span class="total-tasks">
-				<?php printf( _n('%d Task', '%d Tasks', $tasks_total, 'thrive' ), $tasks_total ); ?>
-			</span>	
-		</li>
-		<li>
-			<a class="tasks-counter progress" href="<?php echo esc_url( get_the_permalink( $project_id ) ); ?>#tasks" title="<?php _e('Visit Project', 'thrive');?>">
-				<?php printf( __('%d%% Completed', 'thrive'), $tasks_progress ); ?>
-					<span class="after" style="width: <?php echo $tasks_progress; ?>%;"></span>
-			</a>	
-		</li>
-	</ul>
+
+	<div class="task-progress">
+		
+		<div class="task-progress-bar">
+			<div class="task-progress-percentage" style="width:<?php echo absint($tasks_progress); ?>%;">
+				<div class="task-progress-task-count-wrap">
+					<div class="task-progress-task-count">
+						<?php printf( _n('%d Task', '%d Tasks', $tasks_total, 'thrive' ), $tasks_total ); ?>
+					</div>
+				</div>
+				<div class="task-progress-percentage-label">
+					<?php echo absint($tasks_progress); ?>% <?php _e('Completed', 'thrive'); ?>
+				</div>
+			</div>
+		</div>
+	</div>
 
 <?php } // end if  ?>
 <?php return; ?>
@@ -714,5 +717,50 @@ function thrive_project_loop( $args = array() ) {
 	include plugin_dir_path( __FILE__ ) . '../templates/project-loop-content.php';
 	
 	return;
+}
+
+function thrive_new_project_modal( $group_id = 0 ) {
+	?>
+	<a id="thrive-new-project-btn" class="button" href="#">
+		<?php _e('New Project', 'thrive'); ?>	
+	</a>
+
+	<div class="clearfix"></div>
+
+
+	<div id="thrive-new-project-modal">
+
+		<div id="thrive-modal-content">
+
+			<div id="thrive-modal-heading">
+				<h5 class="alignleft">
+					<?php _e('Add New Project', 'thrive'); ?>
+				</h5>
+				<span id="thrive-modal-close" class="alignright">&times;</span>
+				<div class="clearfix"></div>
+			</div>
+
+			<div id="thrive-modal-body">
+				<?php thrive_new_project_form( $group_id ); ?>
+			</div>
+
+			<div id="thrive-modal-footer">
+				<small>
+					<?php _e("Tip: Press the <em>'escape'</em> key in your keyboard to hide this form", 'thrive'); ?>
+				</small>
+			</div>
+
+		</div>
+
+	</div>
+	<?php
+}
+
+function thrive_pre( $mixed ) {
+
+	echo '<pre>';
+		print_r( $mixed );
+	echo '</pre>';
+
 }
 ?>

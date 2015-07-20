@@ -20,17 +20,19 @@
 			</h3>
 		</div>
 
+		<div class="thrive-project-meta">
+
+			<?php thrive_project_meta( get_the_ID() ); ?>
+
+		</div>
+		
 		<div class="thrive-project-excerpt">
 
 			<?php the_excerpt(); ?>
 
 		</div>
 
-		<div class="thrive-project-meta">
-
-			<?php thrive_project_meta( get_the_ID() ); ?>
-
-		</div>
+	
 
 		<div class="thrive-project-author">
 
@@ -43,15 +45,21 @@
 
 </ul> <!--#thrive-projects-lists-->
 
+<div id="project-navigation">
+	<?php thrive_project_nav( $projects ); ?>
+</div>	
+
 <?php } else {  ?>
+
+	<div id="message" class="error">
+		<?php _e( 'There are no projects found. Why not add one?', 'thrive' ); ?>
+	</div>
 
 <?php // No Project Found. ?>
 
 <?php } // endif ?>
 
-<div id="project-navigation">
-	<?php thrive_project_nav( $projects ); ?>
-</div>	
+
 
 <?php 
 			// Reset the post data.

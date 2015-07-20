@@ -681,10 +681,12 @@
 }
 
 #thrive-dashboard-at-a-glance ul li .thrive-dashboard-at-a-glance-box {
-    border: 1px solid #EEE;
+    border: 1px solid #D5D1D1;
     margin: 20px 0 35px;
-    padding: 35px 0;
+    padding: 25px 0;
     display: block;
+    border-radius: 4px;
+    background-color: #EEE;
 }
 
 /**
@@ -743,47 +745,93 @@
     max-width: 32px;
     height: auto;
 }
-
-#thrive-intranet-projects ul.thrive-project-meta-stats {
-    display: inline-block;
-    margin-bottom: 15px;
-    width: 100%;
-}
-
-#thrive-intranet-projects ul.thrive-project-meta-stats li {
-    float: left;
-}
-
-#thrive-intranet-projects ul.thrive-project-meta-stats li a {
+.thrive-project-meta .task-progress {
     display: block;
-    padding: 10px;
+    width: 100%;
     position: relative;
-    color: #00796B;
+    margin: 40px 0 15px 0;
 }
 
-#thrive-intranet-projects ul.thrive-project-meta-stats li a .after {
-    content: " ";
+.thrive-project-meta .task-progress-task-count {
+    display: inline-block;
+    text-align: center;
     position: absolute;
-    height: 2.5px;
-    width: 100%;
-    top: 0;
-    background-color: #69F0AE;
-    border-right: 2px solid #00E676;
-    left: 0;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: #616161;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
 }
 
-#thrive-intranet-projects ul.thrive-project-meta-stats li span.total-tasks {
-    padding: 7px 15px;
-    display: block;
-    background-color: #00897B;
-    border: 3px solid #00796B;
-    color: #FFF;
+    .thrive-project-meta .task-progress-task-count {
+        position: relative;
+        background: #616161;
+        border: 1px solid #616161;
+    }
+        .thrive-project-meta .task-progress-task-count:after, .thrive-project-meta .task-progress-task-count:before {
+            top: 100%;
+            left: 50%;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+            .thrive-project-meta .task-progress-task-count:after {
+                border-color: rgba(68, 68, 68, 0);
+                border-top-color: #616161;
+                border-width: 5px;
+                margin-left: -5px;
+            }
+                .thrive-project-meta .task-progress-task-count:before {
+                    border-color: rgba(0, 0, 0, 0);
+                    border-top-color: #616161;
+                    border-width: 6px;
+                    margin-left: -6px;
+                }
+
+.thrive-project-meta .task-progress-task-count-wrap {
+    position: absolute;
+      right: 30px;
+  top: -40px;
+}
+.thrive-project-meta .task-progress-bar {
+  background: #E0E0E0;
+  border-radius: 25px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border: 1px solid #9E9E9E;
+  box-shadow: inset -2px 2px 1px #BDBDBD;
 }
 
-#thrive-intranet-projects ul.thrive-project-meta-stats li:first-child a {
-    padding-left: 0;
+.thrive-project-meta .task-progress-percentage {
+    background: repeating-linear-gradient(
+      -55deg,
+      #8BC34A,
+      #8BC34A 10px,
+      #9CCC65 10px,
+      #9CCC65 20px
+    );
+    position: relative;
+  color: #38572C;
+  border-radius: 25px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  display: inline-block;
+  margin-bottom: -6px;
+  padding: 0 5px;
+  box-shadow: 1px 0px 0px 0px #538D4D;
 }
 
+.task-progress-percentage-label {
+    float: right;
+    padding-right: 15px;
+    font-size: 12px;
+}
 /**
  * Modal
  */

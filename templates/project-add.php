@@ -26,9 +26,13 @@
 
 		</div>
 
+
 			<div class="thrive-form-field">
+
 				<label for="thrive-project-assigned-group">
+					
 					<?php _e('Assign to Group:', 'thrive'); ?>
+
 				</label>
 
 				<?php $current_user_groups = thrive_get_current_user_groups(); ?>
@@ -36,10 +40,27 @@
 				<?php if ( !empty($current_user_groups) ) { ?>
 
 					<select name="group_id" id="thrive-project-assigned-group">
+						
 						<?php foreach( $current_user_groups as $group ) { ?>
-						<option value="<?php echo absint( $group['group_id'] ); ?>">
-							<?php echo esc_html( $group['name'] ); ?>
-						</option>
+						
+							<?php $selected = ''; ?>
+
+							<?php if ( !empty( $group_id ) ) { ?>
+									
+								<?php if ( $group_id == $group['group_id'] ) { ?>
+										
+									<?php $selected = 'selected'; ?>
+
+								<?php } ?>
+
+							<?php } ?>
+
+							<option <?php echo $selected;?> value="<?php echo absint( $group['group_id'] ); ?>">
+								
+								<?php echo esc_html( $group['name'] ); ?>
+
+							</option>
+
 						<?php } ?>
 					</select>
 					

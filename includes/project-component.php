@@ -196,10 +196,29 @@ class BP_Projects_Group extends BP_Group_Extension {
  
     function display( $group_id = NULL ) {
 
-        $group_id = bp_get_group_id();
+        $group_id = bp_get_group_id(); ?>
+            
+            <h3>
+                <?php _e('Projects', 'thrive'); ?>
+            </h3>
+            
+            <div id="thrive-intranet-projects">
+                
+                <?php thrive_new_project_modal( $group_id ); ?>
 
-        echo 'This plugin is 2x cooler!';
+                <?php 
+                    $args = array(
+                        'meta_key'   => 'thrive_project_group_id',
+                        'meta_value' => absint( $group_id )
+                    ); 
+                ?>
 
+                <?php thrive_project_loop( $args ); ?>
+            </div>
+
+        <?php
+
+        return;
     }
  
     function settings_screen( $group_id = NULL ) {
@@ -216,26 +235,7 @@ class BP_Projects_Group extends BP_Group_Extension {
         groups_update_groupmeta( $group_id, 'group_extension_example_2_setting', $setting );
     }
  
-    /**
-     * create_screen() is an optional method that, when present, will
-     * be used instead of settings_screen() in the context of group
-     * creation.
-     *
-     * Similar overrides exist via the following methods:
-     *   * create_screen_save()
-     *   * edit_screen()
-     *   * edit_screen_save()
-     *   * admin_screen()
-     *   * admin_screen_save()
-     */
-    function create_screen( $group_id = NULL ) {
-        $setting = groups_get_groupmeta( $group_id, 'group_extension_example_2_setting' );
- 
-        ?>
-        Welcome to your new group! You are neat.
-        Save your plugin setting here: <input type="text" name="group_extension_example_2_setting" value="<?php echo esc_attr( $setting ) ?>" />
-        <?php
-    }
+
  
 }
 bp_register_group_extension('BP_Projects_Group');
