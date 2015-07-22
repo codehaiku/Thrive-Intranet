@@ -195,8 +195,38 @@ function bp_projects_content() {
     
     echo '<div id="thrive-intranet-projects">';
 
+            $user_groups = thrive_get_displayed_user_groups();
+            
+            $current_user_groups = thrive_get_current_user_groups();
+
+            $groups_collection = array();
+
+            if ( !empty( $user_groups ) ) {
+
+                foreach ( $user_groups as $key => $group ) {
+
+                    $groups_collection[] = $group['group_id'];
+
+                }   
+
+            }
+
+            // If there are no groups found assign negative value
+            // so that WP_Query will return empty result
+            if ( empty( $groups_collection ) ) {
+
+                $groups_collection = array( -1 );
+
+            }
+
             $args = array(
-                    'posts_per_page' => 5
+                    'meta_query' => array(
+                        array(
+                            'key'     => 'thrive_project_group_id',
+                            'value'   => $groups_collection,
+                            'compare' => 'IN',
+                        ),
+                    ),
                 );
 
             thrive_project_loop( $args );

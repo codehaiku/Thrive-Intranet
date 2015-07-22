@@ -35,6 +35,8 @@
 
 				</label>
 
+				<?php $group_id = bp_get_group_id(); ?>
+				
 				<?php $current_user_groups = thrive_get_current_user_groups(); ?>
 
 				<?php if ( !empty($current_user_groups) ) { ?>

@@ -80,7 +80,7 @@ class BP_Projects_Component extends BP_Component {
      * 
      * @return void
      */
-    public function includes()
+    public function includes( $includes = array() )
     {
         $includes = array(
             'project-screens.php'
@@ -97,7 +97,7 @@ class BP_Projects_Component extends BP_Component {
      * 
      * @return void
      */
-    public function setup_globals()
+    public function setup_globals( $args = array() )
     {
         global $bp;
 
@@ -125,7 +125,7 @@ class BP_Projects_Component extends BP_Component {
      * 
      * @return void
      */
-    function setup_nav() {
+    function setup_nav( $main_nav = array(), $sub_nav = array() ) {
 
         $main_nav = array(
             'name' => $this->name,
@@ -138,7 +138,7 @@ class BP_Projects_Component extends BP_Component {
  
         // Add a few subnav items under the main tab
         $sub_nav[] = array(
-            'name'            =>  __( 'My Projects' ),
+            'name'            =>  __( 'My Projects', 'thrive' ),
             'slug'            => 'all',
             'parent_url'      => bp_loggedin_user_domain() . '' . $this->id . '/',
             'parent_slug'     => 'projects',
@@ -148,7 +148,7 @@ class BP_Projects_Component extends BP_Component {
 
         // Edit subnav
         $sub_nav[] = array(
-            'name'            =>  __( 'New Project' ),
+            'name'            =>  __( 'New Project', 'thrive' ),
             'slug'            => 'new',
             'parent_url'      => bp_loggedin_user_domain() . '' . $this->id . '/',
             'parent_slug'     => 'projects',
@@ -163,7 +163,9 @@ class BP_Projects_Component extends BP_Component {
 } // end class
 
 function thrive_setup_project_component() {
+
     buddypress()->projects = new BP_Projects_Component;
+
 }
 
 add_action('bp_loaded', 'thrive_setup_project_component', 1);
@@ -220,22 +222,6 @@ class BP_Projects_Group extends BP_Group_Extension {
 
         return;
     }
- 
-    function settings_screen( $group_id = NULL ) {
-        
-        $setting = groups_get_groupmeta( $group_id, 'group_extension_example_2_setting' );
- 
-        ?>
-        Save your plugin setting here: <input type="text" name="group_extension_example_2_setting" value="<?php echo esc_attr( $setting ) ?>" />
-        <?php
-    }
- 
-    function settings_screen_save( $group_id = NULL ) {
-        $setting = isset( $_POST['group_extension_example_2_setting'] ) ? $_POST['group_extension_example_2_setting'] : '';
-        groups_update_groupmeta( $group_id, 'group_extension_example_2_setting', $setting );
-    }
- 
-
  
 }
 bp_register_group_extension('BP_Projects_Group');
