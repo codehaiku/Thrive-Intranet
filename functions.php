@@ -13,7 +13,7 @@
  * @category   ThriveHelper
  * @package    Thrive
  * @author     Dunhakdis <http://dunhakdis.me/say-hello>
- * @copyright  2015 - Dunhakdis Software Creatives
+ * @copyright  dunhakdis
  * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
  * @since      1.0
  */
@@ -21,8 +21,10 @@ if (!defined('ABSPATH')) die();
 
 // redirect the user when he/she visit wp-admin or wp-login.php
 add_action('init', 'thrive_redirect_login');
+
 // redirect the user after successful logged in attempt
 add_filter('login_redirect', 'thrive_redirect_user_after_logged_in', 10, 3);
+
 // handle failed login redirection
 add_action('wp_login_failed', 'thrive_redirect_login_handle_failure'); 
 
@@ -38,14 +40,22 @@ function thrive_redirect_login() {
 	$no_redirect = filter_input( INPUT_GET, 'no_redirect', FILTER_VALIDATE_BOOLEAN );
 
 	if ( $no_redirect ) {
-			return;
-		}
+		
+		return;
+
+ 	}
 
  	// Store for checking if this page equals wp-login.php
  	$curr_paged = basename( $_SERVER['REQUEST_URI'] );
 
  	// Set the default to our login page
  	$redirect_page = thrive_get_redirect_page_url();
+
+ 	if ( empty( $redirect_page ) ) {
+
+ 		return;
+
+ 	}
 
  	// if user visits wp-admin or wp-login.php, redirect them
  	if ( strstr( $curr_paged, 'wp-login.php' ) ) {
@@ -62,11 +72,13 @@ function thrive_redirect_login() {
  	 		$action = $_GET['action'];
 
  	 		if ( "logout" === $action ) {
+
  	 			return;
+
  	 		}
  	 	}
 
- 		wp_safe_redirect($redirect_page);
+ 		wp_safe_redirect( $redirect_page );
  	}
 
  	return;
@@ -87,15 +99,21 @@ function thrive_redirect_user_after_logged_in( $redirect_to, $request, $user ) {
 	global $user;
 
 	if ( empty( $user ) ) { 
+
 		return $redirect_to;
+
 	}
 
 	// check if buddypress is active
 	if ( function_exists( 'bp_core_get_user_domain' ) ) {
+
 		return apply_filters( 'thrive_login_redirect', bp_core_get_user_domain( $user->ID ) );
+
 	// otherwise, throw the user into homepage	
 	} else {
+
 		return apply_filters( 'thrive_login_redirect', home_url() );
+
 	}
 	// double edge sword
 	return $redirect_to;

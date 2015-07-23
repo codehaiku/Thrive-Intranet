@@ -38,9 +38,13 @@ function thrive_redirect_pages_except(){
 	
 	global $post;
 
-	$login_page_id = intval(get_option('thrive_login_page'));
+	$login_page_id = intval( get_option('thrive_login_page') );
+ 
  	$excluded_page = thrive_get_excluded_page_id_collection();
+
  	$redirect_page = thrive_get_redirect_page_url();
+
+ 	if ( empty ($redirect_page ) ) return;
 
 	// check if current page is locked down or not
  	$current_page_id = intval($post->ID);
@@ -173,11 +177,12 @@ function thrive_is_public_form() {
  */
 function thrive_login_page_form() {
 	
-	$thrive_login_page_id = intval(get_option('thrive_login_page'));
+	$thrive_login_page_id = intval( get_option( 'thrive_login_page' ) );
 
 	wp_dropdown_pages(array(
 			'name' => 'thrive_login_page',
-			'selected' => $thrive_login_page_id
+			'selected' => $thrive_login_page_id,
+			'show_option_none' => __('Select Page', 'thrive')
 		));
 
 	echo '<p class="description">'.__('Select a page to use as a login page for your website. You should add "[thrive_login]" shortcode to the selected page<br> to show the login form', 'dunhakdis').'</p>';
