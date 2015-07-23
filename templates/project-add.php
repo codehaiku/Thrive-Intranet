@@ -1,6 +1,6 @@
 <div id="thrive-project-add-new-form">
 	
-	<form action="<?php echo admin_url('admin-ajax.php'); ?>" method="post">
+	<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="post">
 
 		<input type="hidden" name="method"  value="thrive_transactions_update_project" />
 		<input type="hidden" name="action"  value="thrive_transactions_request" />
@@ -8,48 +8,49 @@
 
 		<div class="thrive-form-field">
 
-			<?php $placeholder = __('Enter the new title for this project', 'thrive'); ?>
+			<?php $placeholder = __( 'Enter the new title for this project', 'thrive' ); ?>
 			<label for="thrive-project-name">
-				<?php _e('Project Name', 'thrive'); ?>
+				<?php esc_html_e( 'Project Name', 'thrive' ); ?>
 			</label>
-			<input required placeholder="<?php echo $placeholder; ?>" type="text" name="title" id="thrive-project-name" />
+			<input required placeholder="<?php esc_attr_e( $placeholder ); ?>" type="text" name="title" id="thrive-project-name" />
 
 		</div>
 
 		<div class="thrive-form-field">
 
 			<label for="thrive-project-content">
-				<?php _e('Project Details', 'thrive'); ?>
+				<?php esc_html_e( 'Project Details', 'thrive' ); ?>
 			</label>
 
-			<textarea id="thrive-project-content" name="content" rows="5" placeholder="<?php _e('Describe what this project is all about. You can edit this later.', 'thrive');?>" required ></textarea>
+			<textarea id="thrive-project-content" name="content" rows="5" placeholder="<?php esc_html_e( 'Describe what this project is all about. You can edit this later.', 'thrive' );?>" required ></textarea>
 
 		</div>
 
+		<?php $current_user_groups = thrive_get_current_user_groups(); ?>
+		
+		<?php $group_id = bp_get_group_id(); ?>
+
+		<?php if ( ! empty( $current_user_groups ) ) { ?>
 
 			<div class="thrive-form-field">
 
 				<label for="thrive-project-assigned-group">
 					
-					<?php _e('Assign to Group:', 'thrive'); ?>
+					<?php esc_html_e( 'Assign to Group:', 'thrive' ); ?>
 
 				</label>
 
-				<?php $group_id = bp_get_group_id(); ?>
-				
-				<?php $current_user_groups = thrive_get_current_user_groups(); ?>
-
-				<?php if ( !empty($current_user_groups) ) { ?>
+				<?php if ( ! empty( $current_user_groups ) ) { ?>
 
 					<select name="group_id" id="thrive-project-assigned-group">
 						
-						<?php foreach( $current_user_groups as $group ) { ?>
+						<?php foreach ( $current_user_groups as $group ) { ?>
 						
 							<?php $selected = ''; ?>
 
-							<?php if ( !empty( $group_id ) ) { ?>
+							<?php if ( ! empty( $group_id ) ) { ?>
 									
-								<?php if ( $group_id == $group['group_id'] ) { ?>
+								<?php if ( absint( $group_id ) === absint( $group['group_id'] ) ) { ?>
 										
 									<?php $selected = 'selected'; ?>
 
@@ -57,7 +58,7 @@
 
 							<?php } ?>
 
-							<option <?php echo $selected;?> value="<?php echo absint( $group['group_id'] ); ?>">
+							<option <?php echo esc_attr_e( $selected );?> value="<?php echo esc_attr_e( absint( $group['group_id'] ) ); ?>">
 								
 								<?php echo esc_html( $group['name'] ); ?>
 
@@ -73,10 +74,24 @@
 			<div class="thrive-form-field">
 				<div class="alignright">
 					<button id="thriveSaveProjectBtn" type="submit" class="button">
-						<?php echo _e('Save Project', 'thrive'); ?>
+						<?php esc_attr_e( 'Save Project', 'thrive' ); ?>
 					</button>
 				</div>
 				<div class="clearfix"></div>
 			</div>
+
+		<?php } else { ?>
+			<div id="message" class="error">
+				<?php esc_attr_e( 'Looks like you don\'t have any groups yet. Please join or create new group to start a project.?', 'thrive' ); ?>
+			</div>
+			<div class="thrive-form-field">
+				<div class="alignright">
+					<button type="button" disabled class="button danger">
+						<?php esc_attr_e( 'Save Project', 'thrive' ); ?>
+					</button>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		<?php } ?>
 		</form>	
 	</div>
