@@ -1,4 +1,10 @@
-jQuery(document).ready(function($){
+jQuery(document).ready( function($) {
+
+		if ( typeof thriveAjaxUrl === 'undefined' ) {
+			
+			return;
+
+		}
 
 		var ajaxurl = thriveAjaxUrl;
 
