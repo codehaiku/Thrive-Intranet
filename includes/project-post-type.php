@@ -82,9 +82,7 @@ function thrive_tasks_metabox_content() {
 		</div>
 		<div class="thrive-tabs-content">
 			<div id="thrive-task-list" class="thrive-tab-item-content active">
-				<?php if (function_exists('thrive_task_filters')) { ?>
-					<?php thrive_task_filters(); ?>
-				<?php } ?>
+			
 				<?php if (function_exists('thrive_render_task')) {?>
 					<?php thrive_render_task(); ?>
 				<?php } ?>
