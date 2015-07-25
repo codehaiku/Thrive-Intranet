@@ -9,7 +9,20 @@ add_action( 'wp_footer', 			 'thrive_register_config' );
 remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load');
 
 function thrive_admin_stylesheet() {
+	
+	global $post;
+
+	if ( empty ( $post ) ) {
+		return;
+	}
+
+	if ( 'project' !== $post->post_type ) {
+		return;
+	}
+
 	wp_enqueue_style( 'thrive-admin-style', plugin_dir_url(__FILE__) . '../assets/css/admin.css' );
+
+	return;
 }
 
 function thrive_admin_scripts() {
