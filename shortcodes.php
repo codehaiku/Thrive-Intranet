@@ -18,7 +18,7 @@
  * @since      1.0
  */
 
-if (!defined('ABSPATH')) die();
+if ( !defined('ABSPATH') ) die();
 /**
  * Callback function to register 'thrive_login'
  * shortcode in order to display the login form

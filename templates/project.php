@@ -88,6 +88,7 @@
 
 <script>
 var thriveProjectSettings = {
-	project_id: '<?php echo absint($post->ID);?>'
+	project_id: '<?php echo absint($post->ID);?>',
+	nonce: '<?php echo wp_create_nonce( "thrive-transaction-request" ); ?>'
 };
 </script>

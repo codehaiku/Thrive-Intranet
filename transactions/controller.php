@@ -21,6 +21,8 @@ if ( ! defined( 'WP_TESTS_DOMAIN' ) ) {
 
 }
 
+
+
 add_action( 'wp_ajax_thrive_transactions_request', 'thrive_transactions_callblack' );
 
 require_once( plugin_dir_path(__FILE__) . '../controllers/tasks.php' );
@@ -30,7 +32,23 @@ require_once( plugin_dir_path(__FILE__) . '../controllers/tasks.php' );
  * @return void
  */
 function thrive_transactions_callblack() {
-	
+
+	// Always check for nonce before proceeding...
+	$nonce = filter_input( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING );
+
+	// If INPUT_GET is empty try input post
+	if ( empty( $nonce ) ) {
+
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_STRING );
+
+	}
+
+	if ( ! wp_verify_nonce( $nonce, 'thrive-transaction-request' ) ) {
+
+		die( __('Invalid Request. Your session has already expired. Please go back and refresh your browser. Thanks!', 'thrive') );
+
+	}
+
 	$method = filter_input(INPUT_POST, 'method', FILTER_SANITIZE_ENCODED);
 
 	if ( empty( $method ) ) {
@@ -39,6 +57,7 @@ function thrive_transactions_callblack() {
 	}
 
 	$allowed_callbacks = array(
+
 		// Tickets/Tasks callbacks
 		'thrive_transaction_add_ticket',
 		'thrive_transaction_delete_ticket',

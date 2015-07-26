@@ -8,6 +8,8 @@
 		
 		<input type="hidden" name="no_json" value="yes" />
 
+		<?php wp_nonce_field( 'thrive-transaction-request', 'nonce' ); ?>
+
 		<div class="thrive-form-field">
 
 			<?php $placeholder = __( 'Enter the new title for this project', 'thrive' ); ?>

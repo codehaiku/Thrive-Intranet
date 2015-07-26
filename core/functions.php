@@ -538,13 +538,9 @@ ob_start(); ?>
 				
 				<?php $current_user_id = get_current_user_id(); ?>
 
-				<a href="#" title="<?php _e('Edit comment content', 'thrive'); ?>" data-comment-id="<?php echo absint($args['id']); ?>" class="thrive-edit-comment">
-					<?php _e('Edit', 'thrive'); ?>
-				</a>
 				<?php // Check if current user can delete the comment ?>
 				<?php if ( $current_user_id == $args['user'] or current_user_can( 'administrator' ) ) { ?>
 					<?php // Delete link. ?>
-					<span class="thrive-comments-action-separator"> | </span>
 					<a href="#" title="<?php _e('Delete comment', 'thrive'); ?>" data-comment-id="<?php echo absint($args['id']); ?>" class="thrive-delete-comment">
 						<?php _e('Delete', 'thrive'); ?>
 					</a>
