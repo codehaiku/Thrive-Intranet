@@ -69,6 +69,22 @@ function thrive_redirect_login() {
  	 		wp_safe_redirect( $redirect_page );
  	 	}
 
+ 	 	// Redirect to error page if user left username and password blank
+ 	 	if ( !empty( $_POST ) ) {
+ 	 		if ( empty( $_POST['log'] ) && empty( $_POST['pwd'] ) && !empty( $_POST['redirect_to'] ) ) {
+ 	 			wp_safe_redirect( $redirect_page . '?login=failed&type=__blank' );
+ 	 		} elseif ( empty( $_POST['log'] ) && !empty( $_POST['pwd'] ) && !empty( $_POST['redirect_to'] ) ) {
+ 	 			// Username empty
+ 	 			wp_safe_redirect( $redirect_page . '?login=failed&type=__userempty' );
+ 	 		} elseif ( !empty( $_POST['log'] ) && empty( $_POST['pwd'] ) && !empty( $_POST['redirect_to'] ) ) {
+ 	 			// Password empty
+ 	 			wp_safe_redirect( $redirect_page . '?login=failed&type=__passempty' );
+ 	 		} else {
+ 	 			wp_safe_redirect( $redirect_page );
+ 	 		}
+ 	 		
+ 	 	}
+
  	}
 
  	return;

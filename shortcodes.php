@@ -50,8 +50,35 @@ function thrive_wp_login($atts) {
   	$error_login_message = '';
 
   	if (isset($_GET['login'])) {
+  		
   		if ('failed' === $_GET['login']) {
-  			$error_login_message = '<div id="message" class="error">'.__('Error: Invalid username and password combination', 'thrive').'</div>';
+
+  			if ( isset( $_GET['type'] ) ) {
+  				
+  				if ( $_GET['type'] === '__blank' ) {
+
+					$error_login_message = '<div id="message" class="error">'.__('Required: Username and Password cannot not be empty.', 'thrive').'</div>';	
+  				
+  				} elseif ( $_GET['type'] === '__userempty' ) {
+
+  					$error_login_message = '<div id="message" class="error">'.__('Required: Username cannot not be empty.', 'thrive').'</div>';	
+  						
+
+  				} elseif ( $_GET['type'] === '__passempty' ) {
+
+  					$error_login_message = '<div id="message" class="error">'.__('Required: Password cannot not be empty.', 'thrive').'</div>';	
+
+  				} else {
+
+					$error_login_message = '<div id="message" class="error">'.__('Error: There was an error trying to sign-in to your account. Make sure your credentials are correct.', 'thrive').'</div>';	
+
+  				}
+
+  			} else {
+
+  				$error_login_message = '<div id="message" class="error">'.__('Error: Invalid username and password combination.', 'thrive').'</div>';	
+
+  			}
   		}
   	}
   	echo $error_login_message;
