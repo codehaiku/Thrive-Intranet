@@ -25,7 +25,9 @@ if (!defined('ABSPATH')) die();
 $thrive_publitize_web = intval(get_option('thrive_is_public'));
 
 if ( $thrive_publitize_web !== 1 ) {
+
 	add_action('wp', 'thrive_redirect_pages_except');
+	
 }
 
 /**

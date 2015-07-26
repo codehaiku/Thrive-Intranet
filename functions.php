@@ -2,20 +2,6 @@
 /**
  * Includes all the file necessary for Thrive Intranet Plugin
  *
- * PHP version 5
- *
- * LICENSE: This source file is subject to version 3.01 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_01.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
- * @category   ThriveHelper
- * @package    Thrive
- * @author     Dunhakdis <http://dunhakdis.me/say-hello>
- * @copyright  dunhakdis
- * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
- * @since      1.0
  */
 if (!defined('ABSPATH')) die();
 
@@ -78,7 +64,11 @@ function thrive_redirect_login() {
  	 		}
  	 	}
 
- 		wp_safe_redirect( $redirect_page );
+ 	 	// Only redirect if there are no incoming post data.
+ 	 	if ( empty( $_POST ) ) {
+ 	 		wp_safe_redirect( $redirect_page );
+ 	 	}
+
  	}
 
  	return;
@@ -126,16 +116,27 @@ function thrive_redirect_user_after_logged_in( $redirect_to, $request, $user ) {
  * @return void
  */
 function thrive_redirect_login_handle_failure( $user ) {
-  	// check what page the login attempt is coming from
-  	$referrer = home_url() . '/login';
+
+  	// Pull the sign-in page url
+  	$sign_in_page = wp_login_url();
+  	$custom_sign_in_page = thrive_get_redirect_page_url();
+
+  	if ( !empty( $custom_sign_in_page ) ) {
+
+  		$sign_in_page = $custom_sign_in_page;
+
+  	}
+
   	// check that were not on the default login page
-	if ( !empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin') && $user!=null ) {
-		// make sure we don't already have a failed login attempt
-		if ( !strstr($referrer, '?login=failed' )) {
-			// Redirect to the login page and append a querystring of login failed
-	    	wp_safe_redirect($referrer . '?login=failed');
+	if ( !empty($sign_in_page) && !strstr($sign_in_page,'wp-login') && !strstr($sign_in_page,'wp-admin') && $user!=null ) {
+
+		// make sure we don't already have a failed login attempt.
+		if ( !strstr($sign_in_page, '?login=failed' )) {
+
+			// Redirect to the login page and append a querystring of login failed.
+	    	wp_safe_redirect($sign_in_page . '?login=failed');
 	    } else {
-	      	wp_safe_redirect($referrer);
+	      	wp_safe_redirect($sign_in_page);
 	    }
 	    return;
 	}
