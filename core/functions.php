@@ -609,10 +609,6 @@ function thrive_get_displayed_user_groups() {
 		return;
 	}
 
-	if ( empty( bp_displayed_user_id() ) ) {
-		return array();
-	}
-
 	$current_user_id = intval( bp_displayed_user_id() );
 
 	if ( 0 === $current_user_id ) {
