@@ -144,6 +144,7 @@ function thrive_transaction_fetch_task() {
 	$show_completed = filter_input( INPUT_GET, 'show_completed', FILTER_SANITIZE_STRING );
 	$callback_template = filter_input( INPUT_GET, 'template', FILTER_SANITIZE_STRING );
 	$html_template = 'thrive_render_task';
+	$template = '';
 
 	if ( ! empty( $callback_template ) && function_exists( $callback_template ) ) {
 		$html_template = $callback_template;
@@ -208,6 +209,7 @@ function thrive_transaction_edit_ticket() {
 	$priority = filter_input( INPUT_POST, 'priority', FILTER_UNSAFE_RAW );
 	$user_id = filter_input( INPUT_POST, 'user_id', FILTER_VALIDATE_INT );
 	$project_id = filter_input( INPUT_POST, 'project_id', FILTER_VALIDATE_INT );
+	$template = '';
 
 	$task = new ThriveProjectTasksController();
 
