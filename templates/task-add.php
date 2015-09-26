@@ -1,3 +1,10 @@
+<?php
+/**
+ * Adding tasks form template.
+ *
+ * @since 1.0
+ */
+?>
 <div class="form-wrap">
 	
 	<div id="thrive-add-task-message" class="thrive-notifier"></div>
@@ -10,7 +17,8 @@
 	<div class="thrive-form-field">
 		<?php $args = array(
 			'teeny' => true,
-			'editor_height' => 250
+			'editor_height' => 250,
+			'media_buttons' => false,
 		); ?>
 		
 		<?php echo wp_editor($content = null, $editor_id = "thriveTaskDescription", $args); ?>

@@ -59,7 +59,7 @@ class ThriveComments {
 	// 0 for 'In Progress'
 	// 1 for 'Completed'
 	// 2 for 'ReOpen'
-	private $allowed_status = array(0, 1, 2);
+	private $allowed_status = array( 0, 1, 2 );
 
 	/**
 	 * Prepare the object properties before using
@@ -71,7 +71,6 @@ class ThriveComments {
 		$this->model = $wpdb->prefix . 'thrive_comments';
 		$this->date_added = date( 'Y-m-d g:i:s' );
 
-		
 	}
 
 	/**
@@ -118,7 +117,7 @@ class ThriveComments {
 	 */
 	public function set_user($user_id = 0) {
 
-		$user_id = absint($user_id);
+		$user_id = absint( $user_id );
 
 		if ( 0 === $current_user_id ) {
 			throw new Exception( "Model/Comments/::user_id must not be equal to 0 'zero'" );
@@ -175,7 +174,7 @@ class ThriveComments {
 				'details' => $this->details,
 				'user' => $this->user,
 				'ticket_id' => $this->ticket_id,
-				'status' => $this->get_status()
+				'status' => $this->get_status(),
 			);
 
 		$formats = array(
@@ -188,36 +187,35 @@ class ThriveComments {
 		$insert_comments = $wpdb->insert( $table, $data, $formats ); // Db call ok.
 
 		if ( $insert_comments ) {
-			
+
 			$last_insert_id = $wpdb->insert_id;
 
 			// Add new activity. Check if buddypress is active first
-			
 			if ( function_exists( 'bp_activity_add' ) ) {
-			 		
-				$bp_user_link = "";
 
-			 	if ( function_exists( 'bp_core_get_userlink') ) {
+				$bp_user_link = '';
+
+			 	if ( function_exists( 'bp_core_get_userlink' ) ) {
 			 		$bp_user_link = bp_core_get_userlink( $this->user );
 			 	}
 
 			 	$status_label = array(
-			 			__('posted new updated in', 'thrive'),
-			 			__('completed', 'thrive'),
-			 			__('reopened', 'theive')
+			 			__( 'posted new updated in', 'thrive' ),
+			 			__( 'completed', 'thrive' ),
+			 			__( 'reopened', 'theive' ),
 			 		);
-			 	
+
 			 	$type = $status_label[$this->get_status()];
 
 			 	$action = sprintf( __( '%s %s the task: %s - ', 'thrive' ), $bp_user_link, $type, '#' . $this->ticket_id );
 
-			 	bp_activity_add( 
+			 	bp_activity_add(
 			 		array(
 						'user_id' => $this->user,
 						'action' => apply_filters( 'thrive_update_task_activity_action', $action, $this->user ),
 						'component' => 'project',
 						'content' => $this->details,
-						'type' => sanitize_title('thrive-'.$type)
+						'type' => sanitize_title( 'thrive-'.$type ),
 					)
 				);
 			} // End function_exists ( 'bp_activity_add' ).
@@ -243,8 +241,8 @@ class ThriveComments {
 	}
 
 	public function validate_status( $status ) {
-		
-		if (in_array($status, $this->allowed_status)) {
+
+		if ( in_array( $status, $this->allowed_status ) ) {
 			return true;
 		}
 
@@ -252,9 +250,9 @@ class ThriveComments {
 	}
 
 	public function get_status() {
-		
+
 		if ( in_array( $this->status, $this->allowed_status ) ) {
-			return $this->status;	
+			return $this->status;
 		}
 
 		return false;
@@ -265,7 +263,7 @@ class ThriveComments {
 	 * Fetches the comment
 	 * @param  integer $comment_id The id of the comment.
 	 * @param  integer $task_id    The id of the task.
-	 * @return array               Returns single result if ID is present, 
+	 * @return array               Returns single result if ID is present,
 	 *                             otherwise return all comments under a
 	 *                             specific task.
 	 */
@@ -274,8 +272,8 @@ class ThriveComments {
 		global $wpdb;
 
 		// Make sure $comment_id and $task_id are integer and non-negative value.
-		$comment_id = absint($comment_id);
-		$task_id = absint($task_id);
+		$comment_id = absint( $comment_id );
+		$task_id = absint( $task_id );
 
 		$results = array();
 
@@ -289,7 +287,7 @@ class ThriveComments {
 			$results = $wpdb->get_row( $stmt, 'ARRAY_A' );
 		}
 
-		if ( !empty( $results ) ) {
+		if ( ! empty( $results ) ) {
 			return $results;
 		}
 
@@ -311,11 +309,10 @@ class ThriveComments {
 		}
 
 		// Check if current user can delete the requested comment.
-
 		if ( $this->current_user_can_delete() ) {
-			
+
 			$_delete_comment = $wpdb->delete( $this->model, array( 'id' => $this->id ), array( '%d' ) );
-			
+
 		 	return $_delete_comment;
 
 		} else {

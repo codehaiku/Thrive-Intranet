@@ -18,76 +18,74 @@
  * @since      1.0
  */
 
-if ( !defined('ABSPATH') ) die();
+if ( ! defined( 'ABSPATH' ) ) { die(); }
 /**
  * Callback function to register 'thrive_login'
  * shortcode in order to display the login form
  * inside the page using 'thrive_login' shortcode
- * 
+ *
  * @param  array $atts shortcode callback attributes
  * @return string 	output_buffer
  */
 function thrive_wp_login($atts) {
-  	// begin output buffering
-  	ob_start();
+		// begin output buffering
+		ob_start();
 
 	$args = array(
 	    'echo'           => true,
 	    'form_id'        => 'loginform',
-	    'label_username' => __('Username', 'thrive'),
-	    'label_password' => __('Password', 'thrive'),
-	    'label_remember' => __('Remember Me', 'thrive'),
-	    'label_log_in'   => __('Log In', 'thrive'),
+	    'label_username' => __( 'Username', 'thrive' ),
+	    'label_password' => __( 'Password', 'thrive' ),
+	    'label_remember' => __( 'Remember Me', 'thrive' ),
+	    'label_log_in'   => __( 'Log In', 'thrive' ),
 	    'id_username'    => 'user_login',
 	    'id_password'    => 'user_pass',
 	    'id_remember'    => 'rememberme',
 	    'id_submit'      => 'wp-submit',
 	    'remember'       => true,
 	    'value_username' => '',
-	    'value_remember' => false
-	); 
-  	
-  	$error_login_message = '';
+	    'value_remember' => false,
+	);
 
-  	if (isset($_GET['login'])) {
-  		
-  		if ('failed' === $_GET['login']) {
+		$error_login_message = '';
 
-  			if ( isset( $_GET['type'] ) ) {
-  				
-  				if ( $_GET['type'] === '__blank' ) {
+	if ( isset( $_GET['login'] ) ) {
 
-					$error_login_message = '<div id="message" class="error">'.__('Required: Username and Password cannot not be empty.', 'thrive').'</div>';	
-  				
-  				} elseif ( $_GET['type'] === '__userempty' ) {
+		if ( 'failed' === $_GET['login'] ) {
 
-  					$error_login_message = '<div id="message" class="error">'.__('Required: Username cannot not be empty.', 'thrive').'</div>';	
-  						
+			if ( isset( $_GET['type'] ) ) {
 
-  				} elseif ( $_GET['type'] === '__passempty' ) {
+				if ( $_GET['type'] === '__blank' ) {
 
-  					$error_login_message = '<div id="message" class="error">'.__('Required: Password cannot not be empty.', 'thrive').'</div>';	
+					$error_login_message = '<div id="message" class="error">'.__( 'Required: Username and Password cannot not be empty.', 'thrive' ).'</div>';
 
-  				} else {
+				} elseif ( $_GET['type'] === '__userempty' ) {
 
-					$error_login_message = '<div id="message" class="error">'.__('Error: There was an error trying to sign-in to your account. Make sure your credentials are correct.', 'thrive').'</div>';	
+					$error_login_message = '<div id="message" class="error">'.__( 'Required: Username cannot not be empty.', 'thrive' ).'</div>';
 
-  				}
+				} elseif ( $_GET['type'] === '__passempty' ) {
 
-  			} else {
+					$error_login_message = '<div id="message" class="error">'.__( 'Required: Password cannot not be empty.', 'thrive' ).'</div>';
 
-  				$error_login_message = '<div id="message" class="error">'.__('Error: Invalid username and password combination.', 'thrive').'</div>';	
+				} else {
 
-  			}
-  		}
-  	}
-  	echo $error_login_message;
-  	echo '<div class="mg-top-35 mg-bottom-35">';
-  			wp_login_form( $args);
-  	echo '</div>';
+					$error_login_message = '<div id="message" class="error">'.__( 'Error: There was an error trying to sign-in to your account. Make sure your credentials are correct.', 'thrive' ).'</div>';
 
-  	// finally, collect all the buffered output
-  	return ob_get_clean();
+				}
+			} else {
+
+				$error_login_message = '<div id="message" class="error">'.__( 'Error: Invalid username and password combination.', 'thrive' ).'</div>';
+
+			}
+		}
+	}
+		echo $error_login_message;
+		echo '<div class="mg-top-35 mg-bottom-35">';
+				wp_login_form( $args );
+		echo '</div>';
+
+		// finally, collect all the buffered output
+		return ob_get_clean();
 }
 
 /**
@@ -95,9 +93,9 @@ function thrive_wp_login($atts) {
  * @return  void
  */
 function thrive_register_shortcode() {
-	add_shortcode('thrive_login', 'thrive_wp_login');
+	add_shortcode( 'thrive_login', 'thrive_wp_login' );
 	return;
 }
 
-add_action('init', 'thrive_register_shortcode');
+add_action( 'init', 'thrive_register_shortcode' );
 ?>

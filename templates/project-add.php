@@ -38,7 +38,13 @@
 
 		<?php $current_user_groups = thrive_get_current_user_groups(); ?>
 		
-		<?php $group_id = bp_get_group_id(); ?>
+		<?php $group_id = 0; ?>
+		
+		<?php if ( bp_is_group_single() ) { ?>
+			
+			<?php $group_id = bp_get_group_id(); ?>
+
+		<?php } ?>
 
 		<?php if ( ! empty( $current_user_groups ) ) { ?>
 

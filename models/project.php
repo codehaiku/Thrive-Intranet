@@ -1,52 +1,81 @@
 <?php
 class ThriveProject {
-	
+
 	protected $id = 0;
-	protected $title = "";
-	protected $content = "";
-	protected $group_id = "";
+	protected $title = '';
+	protected $content = '';
+	protected $group_id = '';
 
 	public function __construct() {
+
 		return $this;
+
 	}
 
 	public function set_id( $id = 0) {
+
 		$this->id = $id;
+		
 		return $this;
+
 	}
-	public function set_title( $title = "" ) {
+
+	public function set_title( $title = '' ) {
+
 		$this->title = $title;
+		
 		return $this;
+
 	}
-	public function set_content( $content = "" ) {
+
+	public function set_content( $content = '' ) {
+
 		$this->content = $content;
+		
 		return $this;
+
 	}
+
 	public function set_group_id( $id = 0 ) {
+
 		$this->group_id = $id;
+		
 		return $this;
+
 	}
 
 	public function get_id() {
-		return absint($this->id);
+
+		return absint( $this->id );
+
 	}
-	
+
 	public function get_title() {
+
 		return $this->title;
+
 	}
-	
+
 	public function get_content() {
+
 		return $this->content;
+
 	}
 
 	public function get_group_id() {
-		return absint($this->group_id);
+
+		return absint( $this->group_id );
+		
 	}
 
 	public function save() {
-		
+
+		$title = $this->get_title();
+
+		$content = $this->get_content();
+
 		// Return false if title and descriptions are empty.
-		if ( empty( $this->get_title() ) || empty( $this->get_content() ) ) {
+		if ( empty( $title ) || empty( $content ) ) {
 			return false;
 		}
 
@@ -60,7 +89,7 @@ class ThriveProject {
 			'post_title'   => $this->get_title(),
 			'post_content' => $this->get_content(),
 			'post_type'    => THRIVE_PROJECT_SLUG,
-			'post_status'  => 'publish'
+			'post_status'  => 'publish',
 		);
 
 		// If there is an ID set, insert the ID into $project_config array
@@ -85,12 +114,12 @@ class ThriveProject {
 
 			return false;
 
-		}	
+		}
 	}
 
 	/**
 	 * Deletes the project
-	 * 
+	 *
 	 * @uses   wp_delete_posts ...
 	 * @return boolean true if successfully deleted, otherwise false
 	 */
@@ -103,7 +132,6 @@ class ThriveProject {
 		}
 
 		// check if current user can delete this post
-		
 		$is_returned_ok = false;
 
 		$post = get_post( $this->get_id() );
@@ -113,7 +141,7 @@ class ThriveProject {
 		}
 
 		if ( current_user_can( 'delete_post', $this->get_id() ) || $post->post_author == get_current_user_id() ) {
-			
+
 			$is_returned_ok = wp_delete_post( $this->get_id() );
 
 			// delete all the task under that project

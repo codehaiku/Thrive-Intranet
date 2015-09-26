@@ -36,7 +36,7 @@
 
 		<div class="thrive-project-author">
 
-			<?php thrive_project_user( get_the_author_ID(), get_the_ID() ); ?>
+			<?php thrive_project_user( get_the_author_meta( 'ID' ), get_the_ID() ); ?>
 
 		</div>
 	</li>
@@ -46,7 +46,9 @@
 </ul> <!--#thrive-projects-lists-->
 
 <div id="project-navigation">
+
 	<?php thrive_project_nav( $projects ); ?>
+	
 </div>	
 
 <?php } else {  ?>

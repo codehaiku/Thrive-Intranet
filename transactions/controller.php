@@ -7,25 +7,23 @@
  */
 
 // check if access directly
-if ( ! defined( 'ABSPATH' ) )  { die(); }
+if ( ! defined( 'ABSPATH' ) ) {   die(); }
 
 // Format our page header when Unit Testing
 if ( ! defined( 'WP_TESTS_DOMAIN' ) ) {
 
-	header('Content-Type: application/json');
+	header( 'Content-Type: application/json' );
 
 } else {
 
 	// Hide warnings when running tests
-	@header('Content-Type: application/json');
+	@header( 'Content-Type: application/json' );
 
 }
 
-
-
 add_action( 'wp_ajax_thrive_transactions_request', 'thrive_transactions_callblack' );
 
-require_once( plugin_dir_path(__FILE__) . '../controllers/tasks.php' );
+require_once( plugin_dir_path( __FILE__ ) . '../controllers/tasks.php' );
 
 /**
  * Executes the method or function requested by the client
@@ -45,15 +43,15 @@ function thrive_transactions_callblack() {
 
 	if ( ! wp_verify_nonce( $nonce, 'thrive-transaction-request' ) ) {
 
-		die( __('Invalid Request. Your session has already expired. Please go back and refresh your browser. Thanks!', 'thrive') );
+		die( __( 'Invalid Request. Your session has already expired. Please go back and refresh your browser. Thanks!', 'thrive' ) );
 
 	}
 
-	$method = filter_input(INPUT_POST, 'method', FILTER_SANITIZE_ENCODED);
+	$method = filter_input( INPUT_POST, 'method', FILTER_SANITIZE_ENCODED );
 
 	if ( empty( $method ) ) {
 		// try get action
-		$method = filter_input(INPUT_GET, 'method', FILTER_SANITIZE_ENCODED);
+		$method = filter_input( INPUT_GET, 'method', FILTER_SANITIZE_ENCODED );
 	}
 
 	$allowed_callbacks = array(
@@ -72,85 +70,84 @@ function thrive_transactions_callblack() {
 
 		// Project callback functions.
 		'thrive_transactions_update_project',
-		'thrive_transactions_delete_project'
+		'thrive_transactions_delete_project',
 	);
 
-	if (function_exists($method)) {
-		if (in_array($method, $allowed_callbacks)) {
-			//execute the callback
+	if ( function_exists( $method ) ) {
+		if ( in_array( $method, $allowed_callbacks ) ) {
+			// execute the callback
 			$method();
 		} else {
 			thrive_api_message(array(
-				'message' => 'method is not listed in the callback'
+				'message' => 'method is not listed in the callback',
 			));
 		}
 	} else {
 		thrive_api_message(array(
-			'message' => 'method not allowed or method does not exists'
+			'message' => 'method not allowed or method does not exists',
 		));
 	}
-	
+
 	thrive_api_message(array(
-			'message' => 'transaction callback executed'
+			'message' => 'transaction callback executed',
 		));
 }
 
 function thrive_api_message($args = array()) {
-	echo json_encode($args);
+	echo json_encode( $args );
 	die();
 }
 
 function thrive_transaction_add_ticket() {
 
 	$task = new ThriveProjectTasksController();
-	
-	$task_id = $task->addTicket($_POST);
 
-	if ($task_id) {
+	$task_id = $task->addTicket( $_POST );
+
+	if ( $task_id ) {
 		thrive_api_message(array(
 			'message' => 'success',
 			'response' => array(
-					'id' => $task_id
-				)
+					'id' => $task_id,
+				),
 		));
 	} else {
 		thrive_api_message( array(
 			'message' => 'fail',
 			'response' => __('There was an error trying to add this task. 
 				Title and Description fields are required or there was 
-				an unexpected error.',' thrive')
+				an unexpected error.',' thrive'),
 		) );
-	}	
+	}
 
 	return;
 }
 
 function thrive_transaction_delete_ticket() {
 
-	$ticket_id = (int)filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+	$ticket_id = (int) filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
 
 	$ticket = new ThriveProjectTasksController();
-	
-	$ticket->deleteTicket($ticket_id);
+
+	$ticket->deleteTicket( $ticket_id );
 
 	return;
 }
 
 function thrive_transaction_fetch_task() {
 
-	$task_id = (int)filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-	$page = (int)filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
-	$project_id = (int)filter_input(INPUT_GET, 'project_id', FILTER_VALIDATE_INT);
-	$priority = (int)filter_input(INPUT_GET, 'priority', FILTER_VALIDATE_INT);
-	$search = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_URL);
-	$show_completed = filter_input(INPUT_GET, 'show_completed', FILTER_SANITIZE_STRING);
-	$callback_template = filter_input(INPUT_GET, 'template', FILTER_SANITIZE_STRING);
+	$task_id = (int) filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT );
+	$page = (int) filter_input( INPUT_GET, 'page', FILTER_VALIDATE_INT );
+	$project_id = (int) filter_input( INPUT_GET, 'project_id', FILTER_VALIDATE_INT );
+	$priority = (int) filter_input( INPUT_GET, 'priority', FILTER_VALIDATE_INT );
+	$search = filter_input( INPUT_GET, 'search', FILTER_SANITIZE_URL );
+	$show_completed = filter_input( INPUT_GET, 'show_completed', FILTER_SANITIZE_STRING );
+	$callback_template = filter_input( INPUT_GET, 'template', FILTER_SANITIZE_STRING );
 	$html_template = 'thrive_render_task';
 
-	if (!empty($callback_template) && function_exists($callback_template)) {
+	if ( ! empty( $callback_template ) && function_exists( $callback_template ) ) {
 		$html_template = $callback_template;
 	}
-
 
 	$task = new ThriveProjectTasksController();
 
@@ -166,36 +163,51 @@ function thrive_transaction_fetch_task() {
 		'echo' => 'no',
 	);
 
-	$task_collection = $task->renderTasks($args);
+	$task_collection = $task->renderTasks( $args );
 
-	if (0 === $task_id) {
+	if ( 0 === $task_id ) {
+
 		$task_id = null;
+
 		$template = $html_template($args);
+
 	} else {
-		if (!empty($callback_template)) {
+
+		if ( ! empty( $callback_template ) ) {
+
 			$template = $html_template($task_collection);
+
 		}
 	}
 
+	$stats = array();
+
+	if ( array_key_exists( 'stats', $task_collection ) ) {
+
+		$stats = $task_collection['stats'];
+
+	}
+
 	thrive_api_message(array(
-			'message' => 'success',
-			'task' => $task_collection,
-			'stats'=> $task_collection->stats,
-			'debug' => $task_id,
-			'html' => $template
-		));
+		'message' => 'success',
+		'task'    => $task_collection,
+		'stats'   => $stats,
+		'debug'   => $task_id,
+		'html'    => $template,
+	));
 
 	return;
+
 }
 
 function thrive_transaction_edit_ticket() {
 
-	$task_id = (int)filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-	$title = filter_input(INPUT_POST, 'title', FILTER_UNSAFE_RAW);
-	$description = filter_input(INPUT_POST, 'description', FILTER_UNSAFE_RAW);
-	$priority = filter_input(INPUT_POST, 'priority', FILTER_UNSAFE_RAW);
-	$user_id = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
-	$project_id = filter_input(INPUT_POST, 'project_id', FILTER_VALIDATE_INT);
+	$task_id = (int) filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+	$title = filter_input( INPUT_POST, 'title', FILTER_UNSAFE_RAW );
+	$description = filter_input( INPUT_POST, 'description', FILTER_UNSAFE_RAW );
+	$priority = filter_input( INPUT_POST, 'priority', FILTER_UNSAFE_RAW );
+	$user_id = filter_input( INPUT_POST, 'user_id', FILTER_VALIDATE_INT );
+	$project_id = filter_input( INPUT_POST, 'project_id', FILTER_VALIDATE_INT );
 
 	$task = new ThriveProjectTasksController();
 
@@ -205,111 +217,111 @@ function thrive_transaction_edit_ticket() {
 			'description' => $description,
 			'priority' => $priority,
 			'user_id' => $user_id,
-			'project_id' => $project_id
+			'project_id' => $project_id,
 		);
 
 	$json_response = array(
 		'message' => 'success',
 		'debug' => $task_id,
-		'html' => $template
+		'html' => $template,
 	);
 
-	if ($task->updateTicket($task_id, $args)) {
+	if ( $task->updateTicket( $task_id, $args ) ) {
 		$json_response['message'] = 'success';
 	} else {
 		$json_response['message'] = 'fail';
 	}
 
-	thrive_api_message($args);
+	thrive_api_message( $args );
 
 	return;
 }
 
 function thrive_transaction_complete_task() {
 
-	$task_id = (int)filter_input(INPUT_POST, 'task_id', FILTER_VALIDATE_INT);
-	$user_id = (int)filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
+	$task_id = (int) filter_input( INPUT_POST, 'task_id', FILTER_VALIDATE_INT );
+	$user_id = (int) filter_input( INPUT_POST, 'user_id', FILTER_VALIDATE_INT );
 
 	$args = array(
 			'message' => 'success',
-			'task_id' => 0
+			'task_id' => 0,
 		);
-	
+
 	$task = new ThriveProjectTasksController();
 
-	$task_id = $task->completeTask($task_id, $user_id);
+	$task_id = $task->completeTask( $task_id, $user_id );
 
-	if ($task_id) {
+	if ( $task_id ) {
 		$args['message'] = 'success';
 		$args['task_id'] = $task_id;
 	} else {
 		$args['message'] = 'fail';
 	}
-	
-	thrive_api_message($args);
-	
+
+	thrive_api_message( $args );
+
 	return;
 }
 
 function thrive_transaction_renew_task () {
 
-	$task_id = (int)filter_input(INPUT_POST, 'task_id', FILTER_VALIDATE_INT);
-	
+	$task_id = (int) filter_input( INPUT_POST, 'task_id', FILTER_VALIDATE_INT );
+
 	$args = array(
 			'message' => 'success',
-			'task_id' => 0
+			'task_id' => 0,
 		);
 
 	$task = new ThriveProjectTasksController();
 
-	$task_id = $task->renewTask($task_id);
+	$task_id = $task->renewTask( $task_id );
 
-	if ($task_id) {
+	if ( $task_id ) {
 		$args['message'] = 'success';
 		$args['task_id'] = $task_id;
 	} else {
 		$args['message'] = 'fail';
 	}
-	
-	thrive_api_message($args);
+
+	thrive_api_message( $args );
 }
 
 function thrive_transaction_add_comment_to_ticket() {
 
-	require_once plugin_dir_path(__FILE__) . '../models/comments.php';
-	require_once plugin_dir_path(__FILE__) . '../models/tasks.php';
+	require_once plugin_dir_path( __FILE__ ) . '../models/comments.php';
+	require_once plugin_dir_path( __FILE__ ) . '../models/tasks.php';
 
 	$comment   = new ThriveComments();
 	$task      = new ThriveProjectTasksModel();
 
-	$details   = filter_input(INPUT_POST, 'details', FILTER_SANITIZE_STRING);
-	$ticket_id = filter_input(INPUT_POST, 'ticket_id', FILTER_VALIDATE_INT);
-	$priority  = filter_input(INPUT_POST, 'priority', FILTER_VALIDATE_INT);
-	$completed = filter_input(INPUT_POST, 'completed', FILTER_SANITIZE_STRING);
+	$details   = filter_input( INPUT_POST, 'details', FILTER_SANITIZE_STRING );
+	$ticket_id = filter_input( INPUT_POST, 'ticket_id', FILTER_VALIDATE_INT );
+	$priority  = filter_input( INPUT_POST, 'priority', FILTER_VALIDATE_INT );
+	$completed = filter_input( INPUT_POST, 'completed', FILTER_SANITIZE_STRING );
 
 	// Get the current user that is logged in.
 	$user_id = get_current_user_id();
 
 	// Update the priority.
-	$task->update_priority($ticket_id, $priority);
+	$task->update_priority( $ticket_id, $priority );
 
 	// Prepare the comment statuses.
 	$status = array(
 			'no'     => 0,
 			'yes'    => 1,
-			'reopen' => 2
+			'reopen' => 2,
 		);
 
 	// Update the task status
-	if ($completed === 'yes') {
-		$task->completeTask($ticket_id, $user_id);
+	if ( $completed === 'yes' ) {
+		$task->completeTask( $ticket_id, $user_id );
 	}
 		// Reopen task
-		if ($completed === 'reopen') {
-			$task->renewTask($ticket_id);
-		}
+	if ( $completed === 'reopen' ) {
+		$task->renewTask( $ticket_id );
+	}
 
-	if (empty($user_id)) {
+	if ( empty( $user_id ) ) {
 		thrive_api_message(array(
 				'message' => 'fail',
 			));
@@ -327,23 +339,23 @@ function thrive_transaction_add_comment_to_ticket() {
 
 		thrive_api_message(array(
 				'message' => 'success',
-				'result' => thrive_comments_template($added_comment)
+				'result' => thrive_comments_template( $added_comment ),
 			));
-	}                       
-	
+	}
+
 	return;
 }
 
 function thrive_transaction_delete_comment() {
 
-	require_once plugin_dir_path(__FILE__) . '../models/comments.php';
+	require_once plugin_dir_path( __FILE__ ) . '../models/comments.php';
 
-	$comment_id = absint(filter_input(INPUT_POST, 'comment_id', FILTER_VALIDATE_INT));
-	
-	if (0 === $comment_id) {	
+	$comment_id = absint( filter_input( INPUT_POST, 'comment_id', FILTER_VALIDATE_INT ) );
+
+	if ( 0 === $comment_id ) {
 		thrive_api_message(array(
 			'message'  => 'failure',
-			'response' => 'Invalid Comment ID'
+			'response' => 'Invalid Comment ID',
 		));
 	}
 
@@ -351,15 +363,15 @@ function thrive_transaction_delete_comment() {
 	$comment = new ThriveComments();
 
 	// Delete the comment and handle the result
-	if ( $comment->set_id($comment_id)->set_user(get_current_user_id())->delete() ) {
+	if ( $comment->set_id( $comment_id )->set_user( get_current_user_id() )->delete() ) {
 		thrive_api_message(array(
 			'message'  => 'success',
 		));
 	} else {
-	// Otherwise, tell the client to throw an error
+		// Otherwise, tell the client to throw an error
 		thrive_api_message(array(
-			'message' => 'failure'
-		));	
+			'message' => 'failure',
+		));
 	}
 
 	return;
@@ -367,7 +379,7 @@ function thrive_transaction_delete_comment() {
 
 function thrive_transactions_update_project() {
 
-	require_once plugin_dir_path(__FILE__) . '../models/project.php';
+	require_once plugin_dir_path( __FILE__ ) . '../models/project.php';
 
 	$project = new ThriveProject();
 
@@ -377,7 +389,7 @@ function thrive_transactions_update_project() {
 	$project_group_id = filter_input( INPUT_POST, 'group_id', FILTER_VALIDATE_INT );
 	$no_json = filter_input( INPUT_POST, 'no_json', FILTER_SANITIZE_STRING );
 
-	if ( !empty( $project_id ) ) {
+	if ( ! empty( $project_id ) ) {
 		$project->set_id( $project_id );
 	}
 
@@ -386,7 +398,7 @@ function thrive_transactions_update_project() {
 	$project->set_group_id( $project_group_id );
 
 	if ( $project->save() ) {
-		
+
 		if ( $no_json === 'yes' ) {
 
 			wp_safe_redirect( get_permalink( $project->get_id() ) );
@@ -395,19 +407,19 @@ function thrive_transactions_update_project() {
 
 		thrive_api_message( array(
 				'message' => 'success',
-				'project_id' => $project->get_id()
+				'project_id' => $project->get_id(),
 			));
 	} else {
 		thrive_api_message( array(
 				'message' => 'failure',
-				'project_id' => 0
+				'project_id' => 0,
 			));
 	}
 }
 
 function thrive_transactions_delete_project() {
 
-	require_once plugin_dir_path(__FILE__) . '../models/project.php';
+	require_once plugin_dir_path( __FILE__ ) . '../models/project.php';
 
 	$project = new ThriveProject();
 
@@ -420,27 +432,26 @@ function thrive_transactions_delete_project() {
 	if ( $project->delete() ) {
 
 		// Get the projects page permalink
-		$bp_options_pages = get_option('bp-pages');
+		$bp_options_pages = get_option( 'bp-pages' );
 
-		if ( !empty( $bp_options_pages ) && is_array( $bp_options_pages ) ) {
+		if ( ! empty( $bp_options_pages ) && is_array( $bp_options_pages ) ) {
 
 			$project_page_id = $bp_options_pages[ 'projects' ];
 
-			if ( !empty( $project_page_id ) ) {
+			if ( ! empty( $project_page_id ) ) {
 				$redirect = get_permalink( $project_page_id );
 			}
-
 		}
 
 		thrive_api_message( array(
 				'message' => 'success',
-				'redirect' => $redirect
+				'redirect' => $redirect,
 			));
 
-	} else { 
+	} else {
 
 		thrive_api_message( array(
-				'message' => 'failure'
+				'message' => 'failure',
 			));
 	}
 

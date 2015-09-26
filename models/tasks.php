@@ -1,6 +1,6 @@
 <?php
 /**
- * ThriveProjectTasksModel 
+ * ThriveProjectTasksModel
  */
 class ThriveProjectTasksModel {
 
@@ -20,13 +20,13 @@ class ThriveProjectTasksModel {
 	 * The title of the task
 	 * @var string
 	 */
-	var $title = "";
+	var $title = '';
 
 	/**
 	 * The description of the task
 	 * @var string
 	 */
-	var $description = "";
+	var $description = '';
 
 	/**
 	 * The user id
@@ -38,7 +38,7 @@ class ThriveProjectTasksModel {
 	 * The date pertaining time the task is inserted into the table
 	 * @var string
 	 */
-	var $date = "";
+	var $date = '';
 
 	/**
 	 * The milestone ID (Coming Soon)
@@ -65,14 +65,14 @@ class ThriveProjectTasksModel {
 
 		global $wpdb;
 
-		$this->model = sprintf("%sthrive_tasks", $wpdb->prefix);
+		$this->model = sprintf( '%sthrive_tasks', $wpdb->prefix );
 	}
 
 	/**
 	 * Method that calls the __construct function
-	 * in case you don't need to instantitate the same 
+	 * in case you don't need to instantitate the same
 	 * object again and again
-	 * 
+	 *
 	 * @return object self
 	 */
 	public function prepare() {
@@ -84,24 +84,24 @@ class ThriveProjectTasksModel {
 
 	/**
 	 * Sets the id of our task
-	 * @param integer $id 
+	 * @param integer $id
 	 */
 	public function setId($id = 0) {
 
 		$this->id = $id;
-		
+
 		return $this;
 
 	}
 
-	public function setTitle($title = "") {
+	public function setTitle($title = '') {
 
 		$this->title = $title;
 
 		return $this;
 	}
 
-	public function setDescription($description = "") {
+	public function setDescription($description = '') {
 
 		$this->description = $description;
 
@@ -114,12 +114,12 @@ class ThriveProjectTasksModel {
 		return $this;
 	}
 
-	public function setDate($date = "") {
+	public function setDate($date = '') {
 		$this->date = $date;
 
 		return $this;
 	}
-	
+
 	public function setMilestoneId($id = 0) {
 		$this->milestone_id = $id;
 
@@ -127,11 +127,11 @@ class ThriveProjectTasksModel {
 	}
 
 	public function setPriority($priority = 1) {
-		
-		$priority = intval($priority);
 
-		if ($priority < 1) {$priority = 1;}
-		if ($priority > 3) {$priority = 3;}
+		$priority = intval( $priority );
+
+		if ( $priority < 1 ) {$priority = 1;}
+		if ( $priority > 3 ) {$priority = 3;}
 
 		$this->priority = $priority;
 
@@ -140,9 +140,9 @@ class ThriveProjectTasksModel {
 
 	public function getPriority($priority = 1) {
 
-		$priority = abs($priority);
-		
-		if ($priority > 3 || $priority === 0) {
+		$priority = abs( $priority );
+
+		if ( $priority > 3 || $priority === 0 ) {
 			$priority = 3;
 		}
 
@@ -153,12 +153,12 @@ class ThriveProjectTasksModel {
 
 	public function getPriorityCollection() {
 		return array(
-			'1' => apply_filters('thrive_task_priority_1_label', 'Normal'),
-			'2' => apply_filters('thrive_task_priority_2_label', 'High'),
-			'3' => apply_filters('thrive_task_priority_3_label', 'Critical'),
+			'1' => apply_filters( 'thrive_task_priority_1_label', 'Normal' ),
+			'2' => apply_filters( 'thrive_task_priority_2_label', 'High' ),
+			'3' => apply_filters( 'thrive_task_priority_3_label', 'Critical' ),
 		);
 	}
-	
+
 	public function setProjectId($project_id = 0) {
 
 		$this->project_id = $project_id;
@@ -169,9 +169,8 @@ class ThriveProjectTasksModel {
 
 	public function completeTask($task_id = 0, $user_id = 0) {
 
+		if ( empty( $task_id ) || empty( $user_id ) ) {
 
-		if (empty($task_id) || empty($user_id)) {
-			
 			return false;
 
 		} else {
@@ -181,23 +180,22 @@ class ThriveProjectTasksModel {
 			$task = array(
 					'completed_by' => $user_id,
 				);
-			
-			$task_format = array('%d');
+
+			$task_format = array( '%d' );
 
 			$updated_task = array(
-					'id' => $task_id
+					'id' => $task_id,
 				);
 
-			$updated_task_format = array('%d');
+			$updated_task_format = array( '%d' );
 
-			$updated_task_query = $wpdb->update($this->model, $task, $updated_task, $task_format, $updated_task_format);
-			
-			if ($updated_task_query === 1) {
+			$updated_task_query = $wpdb->update( $this->model, $task, $updated_task, $task_format, $updated_task_format );
+
+			if ( $updated_task_query === 1 ) {
 				return $task_id;
 			} else {
 				return false;
 			}
-
 		}
 
 		return false;
@@ -207,19 +205,18 @@ class ThriveProjectTasksModel {
 
 		$user_unassigned = 0;
 
-
-		if (empty($task_id)) {
+		if ( empty( $task_id ) ) {
 			return false;
 		} else {
 			global $wpdb;
 			$task = array(
 					'completed_by' => $user_unassigned,
 				);
-			$task_format  = array('%d');
-			$updated_task = array('id'=> $task_id);
-			$updated_task_format = array('%d');
-			$updated_task_query = $wpdb->update($this->model, $task, $updated_task, $task_format, $updated_task_format);
-			if ($updated_task_query === 1) {
+			$task_format  = array( '%d' );
+			$updated_task = array( 'id' => $task_id );
+			$updated_task_format = array( '%d' );
+			$updated_task_query = $wpdb->update( $this->model, $task, $updated_task, $task_format, $updated_task_format );
+			if ( $updated_task_query === 1 ) {
 				return $task_id;
 			} else {
 				return false;
@@ -248,11 +245,11 @@ class ThriveProjectTasksModel {
 			'orderby' => 'date_created',
 			'order' => 'asc',
 			'show_completed' => 'no',
-			'echo' => true
+			'echo' => true,
 		);
 
-		foreach ($defaults as $option => $value) {
-			if (!empty($args[$option])) {
+		foreach ( $defaults as $option => $value ) {
+			if ( ! empty( $args[$option] ) ) {
 				$$option = $args[$option];
 			} else {
 				$$option = $value;
@@ -260,158 +257,160 @@ class ThriveProjectTasksModel {
 		}
 
 		// project id should be specified
-		// when not editing 
-		
-		if ($id === 0) {
-			if ($project_id === 0) {
+		// when not editing
+		if ( $id === 0 ) {
+			if ( $project_id === 0 ) {
 				return array();
 			}
 		}
 
-
-		if ($id === 0) {
+		if ( $id === 0 ) {
 
 			$funnels = array();
 
 			// where claused
 			$filters = '';
-				$allowed_priority = array('1','2','3');
-				if ($priority != -1 && in_array($priority, $allowed_priority)) {
-					$funnels[] = array(
-							'column'  => 'priority',
-							'operand' => '=',
-							'value'   => $priority,
-							'format'  => 'raw'
-						);
-				}
+				$allowed_priority = array( '1','2','3' );
+			if ( $priority != -1 && in_array( $priority, $allowed_priority ) ) {
+				$funnels[] = array(
+						'column'  => 'priority',
+						'operand' => '=',
+						'value'   => $priority,
+						'format'  => 'raw',
+					);
+			}
 			// search
-			if (!empty($search)) {
+			if ( ! empty( $search ) ) {
 				$funnels[] = array(
 						'column'  => 'title',
 						'operand' => 'like',
 						'value'   => '%'.$search.'%',
-						'format'  => 'string'
+						'format'  => 'string',
 					);
-			}	
+			}
 
 			// show only tasks that are not completed
-			if ("no" === $show_completed) {
+			if ( 'no' === $show_completed ) {
 				$funnels[] = array(
 					'column'  => 'completed_by',
 					'operand' => '=',
 					'value'   => '0',
-					'format'  => 'raw'
+					'format'  => 'raw',
 				);
 			} else {
 				$funnels[] = array(
 					'column'  => 'completed_by',
 					'operand' => '<>',
 					'value'   => '0',
-					'format'  => 'raw'
+					'format'  => 'raw',
 				);
 			}
 
 			// always specify the project id
-			if ($project_id !== 0) {
+			if ( $project_id !== 0 ) {
 				$funnels[] = array(
 					'column' => 'project_id',
 					'operand' => '=',
 					'value' => $project_id,
-					'format' => 'raw'
+					'format' => 'raw',
 				);
 			}
 
-			if (!empty($funnels)) {
+			if ( ! empty( $funnels ) ) {
 				$filters .= 'WHERE ';
 			}
 
 			$count = 0;
 
-			foreach ($funnels as $funnel) {
-				
+			foreach ( $funnels as $funnel ) {
+
 				$count++;
-				
-				if ($funnel['format'] == 'string') {
+
+				if ( $funnel['format'] == 'string' ) {
 					$funnel['value'] = "'".$funnel['value']."'";
 				}
 
 				$filters .= "{$funnel['column']} {$funnel['operand']}  {$funnel['value']} AND ";
 
 			}
-			//echo $filters;
-
-			$filters = substr($filters, 0, strlen($filters) - 4);
+			// echo $filters;
+			$filters = substr( $filters, 0, strlen( $filters ) - 4 );
 
 			// limit claused
 			$limit = THRIVE_PROJECT_LIMIT;
 
 			// total number of task per page
-			$perpage = ceil($limit);
-			
+			$perpage = ceil( $limit );
+
 			// set the current page to 1
-			$currpage = ceil($page); if ($currpage <= 0) {$currpage = 1;}
+			$currpage = ceil( $page );
+			if ( $currpage <= 0 ) {$currpage = 1;}
 
 			// initiate the row offset to zero
 			$offset  = 0;
 
 			// get total number of rows in the table
-			$row_count_stmt = "SELECT COUNT(*) as count from {$this->model} {$filters}";			
-				$row = $wpdb->get_row($row_count_stmt, OBJECT);
-					$row_count = intval($row->count);
+			$row_count_stmt = "SELECT COUNT(*) as count from {$this->model} {$filters}";
+				$row = $wpdb->get_row( $row_count_stmt, OBJECT );
+					$row_count = intval( $row->count );
 
 			// control the offset
-			if ($currpage !== 0) {
-			    $offset = $perpage * ($currpage-1);
+			if ( $currpage !== 0 ) {
+			    $offset = $perpage * ($currpage -1);
 			}
 
 			// controls the maximum number of page
 			// if user throws a page more than
 			// the result has, set it to the highest
-			// number of page 
-			if ($offset >= $row_count) {
+			// number of page
+			if ( $offset >= $row_count ) {
 				$offset = $row_count - $perpage;
+			}
+
+			if ( $offset < 0 ) {
+				$offset = 0;
 			}
 
 			// minimum page is always equal to 1
 			$min_page = 1;
 
 			// maximum page is the total number of page, hence ceil(total/perpage)
-			$max_page = ceil($row_count/$limit);
+			$max_page = ceil( $row_count / $limit );
 
 			$stmt = "SELECT * FROM {$this->model} {$filters} ORDER BY {$orderby} {$order}, id desc LIMIT {$perpage} OFFSET {$offset}";
 
-			$results = $wpdb->get_results($stmt, OBJECT);
-			
-			if (!empty($results)) {
-				
+			$results = $wpdb->get_results( $stmt, OBJECT );
+
+			if ( ! empty( $results ) ) {
+
 				$stats = array();
-					
+
 					$total     = $stats['total'] 		= $row_count;
 					$perpage   = $stats['perpage'] 		= $perpage;
-					$totalpage = $stats['total_page'] 	= ceil($total/$perpage);
+					$totalpage = $stats['total_page'] 	= ceil( $total / $perpage );
 					$currpage  = $stats['current_page'] = $currpage;
 					$min_page  = $stats['min_page'] 	= $min_page;
 					$max_page  = $stats['max_page'] 	= $max_page;
 
 				return array(
 						'stats' => $stats,
-						'results' => (object)$results
+						'results' => (object) $results,
 					);
 			}
 		}
 
-		if ($id !== 0) {
+		if ( $id !== 0 ) {
 
-			$stmt = sprintf("SELECT * FROM {$this->model} WHERE id = {$id} order by priority desc, date_created desc");
+			$stmt = sprintf( "SELECT * FROM {$this->model} WHERE id = {$id} order by priority desc, date_created desc" );
 
-			$result = $wpdb->get_row($stmt);
-			
-			if (!empty($result)) {
-				
+			$result = $wpdb->get_row( $stmt );
+
+			if ( ! empty( $result ) ) {
+
 				$allowed_html = array(
 					    'a' => array(
 					        'href' => array(),
-					        'title' => array()
+					        'title' => array(),
 					    ),
 					    'br' => array(),
 					    'em' => array(),
@@ -426,12 +425,12 @@ class ThriveProjectTasksModel {
 					    'blockquote' => array(),
 					    'hr' => array(),
 					    'p' => array(
-					    		'style' => array()
+					    		'style' => array(),
 					    	),
 					);
 
-				$result->title = stripslashes($result->title);
-				$result->description = stripslashes(wp_kses($result->description, $allowed_html));
+				$result->title = stripslashes( $result->title );
+				$result->description = stripslashes( wp_kses( $result->description, $allowed_html ) );
 			}
 
 			return $result;
@@ -459,58 +458,58 @@ class ThriveProjectTasksModel {
 				'%d',
 				'%d',
 				'%d',
-				'%d'
+				'%d',
 			);
 
-		if (!empty($this->id)) {
+		if ( ! empty( $this->id ) ) {
 
-			return ($wpdb->update($this->model, $args, array('id'=>$this->id), $format, array('%d')) === 0);
-			
+			return ($wpdb->update( $this->model, $args, array( 'id' => $this->id ), $format, array( '%d' ) ) === 0);
+
 		} else {
 
-			 if ($wpdb->insert($this->model, $args, $format) ) {
+			if ( $wpdb->insert( $this->model, $args, $format ) ) {
 
 			 	$last_insert_id = $wpdb->insert_id;
 
 			 	// Add new activity. Check if buddypress is active first
 			 	if ( function_exists( 'bp_activity_add' ) ) {
-			 		
-			 		$bp_user_link = "";
 
-			 		if ( function_exists( 'bp_core_get_userlink') ) {
+			 		$bp_user_link = '';
+
+			 		if ( function_exists( 'bp_core_get_userlink' ) ) {
 			 			$bp_user_link = bp_core_get_userlink( $this->user_id );
 			 		}
 
 			 		$thrive_project_post = get_post( $this->project_id, OBJECT );
 
-			 		$thrive_project_name = "";
+			 		$thrive_project_name = '';
 
 			 		$permalink = get_permalink( $this->project_id );
 
-			 		if ( !empty( $thrive_project_post ) ) {
-			 			$thrive_project_name = sprintf('<a href="%s" title="%s">%s<a/>', $permalink, $thrive_project_post->post_title, $thrive_project_post->post_title);
+			 		if ( ! empty( $thrive_project_post ) ) {
+			 			$thrive_project_name = sprintf( '<a href="%s" title="%s">%s<a/>', $permalink, $thrive_project_post->post_title, $thrive_project_post->post_title );
 			 		}
 
 			 		$action = sprintf( __( '%s added new task under %s', 'thrive' ), $bp_user_link, $thrive_project_name );
 
-			 		bp_activity_add( 
+			 		bp_activity_add(
 			 			array(
 							'user_id' => $this->user_id,
 							'action' => apply_filters( 'thrive_new_task_activity_action', $action, $this->user_id ),
 							'component' => 'project',
-							'content' => apply_filters( 'thrive_new_task_activity_descriptioin', sprintf('<a href="%s" title="%s">#%d - %s</a>', $permalink . '#tasks/view/' . $last_insert_id, $this->title, $last_insert_id, $this->title ) ),
-							'type' => 'thrive_new_task'
+							'content' => apply_filters( 'thrive_new_task_activity_descriptioin', sprintf( '<a href="%s" title="%s">#%d - %s</a>', $permalink . '#tasks/view/' . $last_insert_id, $this->title, $last_insert_id, $this->title ) ),
+							'type' => 'thrive_new_task',
 						)
 					);
 			 	}
 
 			 	return $last_insert_id;
 
-			 } else {
+			} else {
 
 			 	return false;
 
-			 }
+			}
 		}
 	}
 
@@ -518,27 +517,27 @@ class ThriveProjectTasksModel {
 
 		global $wpdb;
 
-		if ($project_id === 0) {
+		if ( $project_id === 0 ) {
 			return 0;
 		}
 
-		$where = sprintf("WHERE project_id = %d", $project_id);
+		$where = sprintf( 'WHERE project_id = %d', $project_id );
 
-		if ($type == 'completed') {
-			$where .= " AND completed_by <> 0";
+		if ( $type == 'completed' ) {
+			$where .= ' AND completed_by <> 0';
 		}
 
-		if ($type == 'open') {
-			$where .= " AND completed_by = 0";
+		if ( $type == 'open' ) {
+			$where .= ' AND completed_by = 0';
 		}
 
 		$this->prepare();
 
 		$row_count = 0;
 
-		$row_count_stmt = "SELECT COUNT(*) as count from {$this->model} {$where}";			
-			$row = $wpdb->get_row($row_count_stmt, OBJECT);
-				$row_count = intval($row->count);
+		$row_count_stmt = "SELECT COUNT(*) as count from {$this->model} {$where}";
+			$row = $wpdb->get_row( $row_count_stmt, OBJECT );
+				$row_count = intval( $row->count );
 
 		return $row_count;
 	}
@@ -547,16 +546,16 @@ class ThriveProjectTasksModel {
 
 		global $wpdb;
 
-		if ($task_id === 0) {
+		if ( $task_id === 0 ) {
 			return false;
 		}
 
-		$this->setPriority($new_priority);
+		$this->setPriority( $new_priority );
 
 		$wpdb->update(
-			$this->model, 
+			$this->model,
 			array( 'priority' => $this->priority ), // integer (number)
-			array( 'id' => $task_id ), 
+			array( 'id' => $task_id ),
 			array( '%d' ), // Integer Format for priority.
 			array( '%d' )  // Integer Format for ID.
 		);
@@ -567,17 +566,18 @@ class ThriveProjectTasksModel {
 
 	/**
 	 * Deletes the task
+	 *
 	 * @php todo should return the task id if successfal otherwise return false
-	 * @return 
+	 * @return
 	 */
 	public function delete() {
-		
+
 		global $wpdb;
 
-		if (0 === $this->id) {
+		if ( 0 === $this->id ) {
 			echo 'Model Error: ticket ID is ' . $this->id;
 		} else {
-			$wpdb->delete($this->model, array('id'=>$this->id), array('%d'));
+			$wpdb->delete( $this->model, array( 'id' => $this->id ), array( '%d' ) );
 		}
 
 		return $this;
