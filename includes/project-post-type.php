@@ -4,7 +4,7 @@ add_action( 'init', 'thrive_projects_register_post_type' );
 
 /**
  * Register 'Projects' component post type
- * 
+ *
  * @return void
  */
 function thrive_projects_register_post_type() {
@@ -23,7 +23,7 @@ function thrive_projects_register_post_type() {
 		'search_items'       => __( 'Search Projects', 'thrive' ),
 		'parent_item_colon'  => __( 'Parent Projects:', 'thrive' ),
 		'not_found'          => __( 'No projects found.', 'thrive' ),
-		'not_found_in_trash' => __( 'No projects found in Trash.', 'thrive' )
+		'not_found_in_trash' => __( 'No projects found in Trash.', 'thrive' ),
 	);
 
 	$args = array(
@@ -40,7 +40,7 @@ function thrive_projects_register_post_type() {
 		'hierarchical'       => false,
 		'menu_position'      => null,
 		'register_meta_box_cb'      => 'thrive_project_meta_box',
-		'supports'           => array( 'title', 'editor', 'custom-fields' )
+		'supports'           => array( 'title', 'editor', 'custom-fields' ),
 	);
 
 	register_post_type( 'project', $args );
@@ -49,28 +49,28 @@ function thrive_projects_register_post_type() {
 }
 
 
-add_action('add_meta_boxes_post' ,'thrive_project_meta_box');
+add_action( 'add_meta_boxes_post' ,'thrive_project_meta_box' );
 
 function thrive_project_meta_box() {
 
-    wp_enqueue_script('jquery-ui-datepicker');
+	wp_enqueue_script( 'jquery-ui-datepicker' );
 
 	add_meta_box(
-		'thrive_tasks_metabox', 
-		__( 'Tasks', 'thrive' ), 
+		'thrive_tasks_metabox',
+		__( 'Tasks', 'thrive' ),
 		'thrive_tasks_metabox_content',
 		'project',
 		'advanced',
 		'high'
 	);
-	
+
 }
 
 function thrive_tasks_metabox_content() {
 	?>
 	<div id="thrive-tasks" class="thrive-tabs">
 		<div id="thrive-action-preloader" class="active">
-			<span><?php _e('Loading', 'thrive'); ?> &hellip;</span>
+			<span><?php _e( 'Loading', 'thrive' ); ?> &hellip;</span>
 		</div> 
 		<div class="thrive-tabs-tabs">
 			<ul>
@@ -83,7 +83,7 @@ function thrive_tasks_metabox_content() {
 		<div class="thrive-tabs-content">
 			<div id="thrive-task-list" class="thrive-tab-item-content active">
 			
-				<?php if (function_exists('thrive_render_task')) {?>
+				<?php if ( function_exists( 'thrive_render_task' ) ) {?>
 					<?php thrive_render_task(); ?>
 				<?php } ?>
 			</div>
@@ -100,7 +100,7 @@ function thrive_tasks_metabox_content() {
 	</div>
 	<script>
 		<?php global $post; ?>
-		var thriveAjaxUrl = '<?php echo admin_url('admin-ajax.php'); ?>';
+		var thriveAjaxUrl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
 		var thriveTaskConfig = {
 			currentProjectId: '<?php echo $post->ID; ?>',
 			currentUserId: '<?php echo get_current_user_id(); ?>',
@@ -110,30 +110,36 @@ function thrive_tasks_metabox_content() {
 }
 
 
-add_action('wp', 'thrive_register_project_content_filter');
+add_action( 'wp', 'thrive_filter_single_project' );
 
-function thrive_register_project_content_filter() {
-	
+function thrive_filter_single_project() {
+
 	global $post;
 
-	if (is_singular('project')) {
+	if ( is_singular( 'project' ) ) {
+
 		add_filter( 'the_content', 'thrive_project_content_filter' );
+
 	}
 
 	return;
 }
-function thrive_project_content_filter($content) {
-    
-    global $post;
 
-    require_once(plugin_dir_path(__FILE__) . '../core/functions.php');
+function thrive_project_content_filter( $content ) {
 
-    $container = '<div id="thrive-project">';
-    $container_end = '</div><!--#thrive-project-->';
+	global $post;
 
-    	ob_start();
-    		include_once thrive_template_dir(). '/project-heading.php';
-    	$heading = ob_get_clean();
+	require_once( plugin_dir_path( __FILE__ ) . '../core/functions.php' );
+
+	$container = '<div id="thrive-project">';
+
+	$container_end = '</div><!--#thrive-project-->';
+
+		ob_start();
+		
+		include_once thrive_template_dir(). '/project-heading.php';
+		
+		$heading = ob_get_clean();
 
 	    $project_tabs = '<div class="thrive-project-tabs">';
 	    	$project_tabs .= '<ul id="thrive-project-tab-li">';
@@ -146,19 +152,19 @@ function thrive_project_content_filter($content) {
 	    $project_tabs .= '</div>';
 
 	    $tab_content  = '<div id="thrive-project-tab-content">';
-	    		
+
 	    			ob_start();
 
-	    	  		if ($post->post_type == 'project') {
-			    		include_once thrive_template_dir(). '/project.php';
-			    	}
+	if ( $post->post_type == 'project' ) {
+		include_once thrive_template_dir(). '/project.php';
+	}
 
 			    	$project_contents = ob_get_clean();
-			
+
 		$tab_content .= $project_contents;
 
 	    $tab_content .= '</div><!--#thrive-project-tab-content-->';
 
-    return  $container . $heading . $project_tabs . $tab_content .  $container_end;
+	return  $container . $heading . $project_tabs . $tab_content .  $container_end;
 }
 ?>

@@ -185,7 +185,7 @@ add_action( 'bp_loaded', 'thrive_setup_project_component', 1 );
 /**
  * Extends the BP_Group_Extension to create new 'Project' component.
  */
-if ( !class_exists( 'BP_Group_Extension' ) ) return;
+if ( ! class_exists( 'BP_Group_Extension' ) ) { return; }
 
 class Thrive_Projects_Group extends BP_Group_Extension {
 

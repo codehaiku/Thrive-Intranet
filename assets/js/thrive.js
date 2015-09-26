@@ -609,28 +609,43 @@ jQuery(document).ready(function($) {
 
                 var response = JSON.parse(response);
 
-                if (response.message === 'success') {
+                ThriveProjectView.progress(false);
 
-                    ThriveProjectView.progress(false);
+                element.attr('disabled', false).text('Update Project');
 
-                    element.attr('disabled', false).text('Update Project');
+                if ( response.message === 'success' ) {
+
+                    // Update the project title.
+                    $('article .entry-header > .entry-title').text( $('#thrive-project-name').val() );
 
                     element.parent().parent().prepend(
                         '<div id="message" class="thrive-project-updated success updated">' +
-                        '<p>Project details successfully updated.</p>' +
+                            '<p>Project details successfully updated.</p>' +
                         '</div>'
-                    )
-
-                    setTimeout(function() {
-                        $('.thrive-project-updated').fadeOut();
-                    }, 3000);
+                    );
 
                 } else {
-                    alert('save failure');
+
+                    element.parent().parent().prepend(
+                        '<div id="message" class="thrive-project-updated success updated">' +
+                            '<p>There was an error saving the project. All fields are required.</p>' +
+                        '</div>'
+                    );
+
                 }
 
+                ThriveProjectView.progress(false);
+
+                setTimeout(function() {
+
+                    $('.thrive-project-updated').fadeOut();
+                
+                }, 3000);
+
                 return;
+
             },
+
             error: function() {
 
                 alert('connection failure');
