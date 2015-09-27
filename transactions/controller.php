@@ -214,27 +214,42 @@ function thrive_transaction_edit_ticket() {
 	$task = new ThriveProjectTasksController();
 
 	$args = array(
-			'title' => $title,
-			'id' => $task_id,
-			'description' => $description,
-			'priority' => $priority,
-			'user_id' => $user_id,
-			'project_id' => $project_id,
-		);
+		'title' => $title,
+		'id' => $task_id,
+		'description' => $description,
+		'priority' => $priority,
+		'user_id' => $user_id,
+		'project_id' => $project_id,
+	);
 
 	$json_response = array(
 		'message' => 'success',
+		'type' => 'valid',
 		'debug' => $task_id,
 		'html' => $template,
 	);
 
+	$json_response = array_merge( $json_response, $args );
+
 	if ( $task->updateTicket( $task_id, $args ) ) {
+		
 		$json_response['message'] = 'success';
+	
 	} else {
+
+		$json_response['type'] = 'required';
+
+		if ( !empty( $title ) && !empty( $description ) ) {
+
+			$json_response['type'] = 'no_changes';
+
+		}
+
 		$json_response['message'] = 'fail';
+
 	}
 
-	thrive_api_message( $args );
+	thrive_api_message( $json_response );
 
 	return;
 }

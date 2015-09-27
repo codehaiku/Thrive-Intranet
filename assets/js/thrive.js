@@ -392,17 +392,27 @@ jQuery(document).ready(function($) {
                 priority: $('#thrive-task-edit-select-id').val(),
                 nonce: thriveProjectSettings.nonce
             },
+
             method: 'post',
+
             success: function(message) {
 
                 var response = JSON.parse(message);
 
-                var thriveUpdatedTaskMessage = "<p>Task successfully updated <a href='#tasks/view/" + response.id + "'>&#65515; View</a></p>";
+                var message = "<p>Task successfully updated <a href='#tasks/view/" + response.id + "'>&#65515; View</a></p>";
 
-                $('#thrive-edit-task-message').html(thriveUpdatedTaskMessage).show();
+                if ( 'fail' === response.message && 'no_changes' !== response.type ) {
+                    
+                    message = "<p>There was an error updating the task. All fields are required.</a></p>";
+                
+                }
+
+                $('#thrive-edit-task-message').html(message).show();
 
                 element.attr('disabled', false);
+                
                 element.text('Update Task');
+
             },
             error: function() {
                 console.log('An Error Occured [thrive.js]#311')

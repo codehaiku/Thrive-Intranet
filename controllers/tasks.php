@@ -26,7 +26,7 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 			if ( ! empty ( $value ) ) {
 
 				$args[ $key ] = $value;
-				
+
 			}
 
 		}
@@ -65,7 +65,7 @@ class ThriveProjectTasksController extends ThriveProjectTasksModel{
 		$this->setPriority( $args['priority'] );
 		$this->setUser( $args['user_id'] );
 		$this->setProjectId( $args['project_id'] );
-
+		
 		return $this->prepare()->save();
 
 	}

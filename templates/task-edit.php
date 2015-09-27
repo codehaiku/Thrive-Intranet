@@ -11,7 +11,8 @@
 		<?php 
 			$args = array(
 				'teeny' => true,
-				'editor_height' => 250
+				'editor_height' => 250,
+				'media_buttons' => false
 			); 
 		?>
 		<?php echo wp_editor($content = null, $editor_id = "thriveTaskEditDescription", $args); ?>

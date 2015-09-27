@@ -452,6 +452,14 @@ class ThriveProjectTasksModel {
 				'priority' => $this->priority,
 			);
 
+		if ( empty( $this->title ) ) {
+			return false;
+		}
+
+		if ( empty( $this->description ) ) {
+			return false;
+		}
+
 		$format = array(
 				'%s',
 				'%s',
