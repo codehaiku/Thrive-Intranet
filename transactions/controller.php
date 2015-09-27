@@ -9,6 +9,14 @@
 // check if access directly
 if ( ! defined( 'ABSPATH' ) ) {   die(); }
 
+$action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+
+if ( 'thrive_transactions_request' !== $action ) {
+	
+	return;
+
+}
+
 // Format our page header when Unit Testing
 if ( ! defined( 'WP_TESTS_DOMAIN' ) ) {
 
