@@ -11,7 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {   die(); }
 
 $action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
 
-if ( 'thrive_transactions_request' !== $action ) {
+// Try getting post request if $action is empty when getting request via 'get' method.
+if ( empty( $action ) ) {
+	
+	$action = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_STRING );
+
+}
+
+if ( 'thrive_transactions_request' !== $action && '') {
 	
 	return;
 

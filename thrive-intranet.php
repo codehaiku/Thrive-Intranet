@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Thrive - Digital Workplace
- * Description: Easily manage your projects and tasks using this plugin. Has the ability to control the user access to website as well. Perfect for Intranet/Extranet websites.
+ * Plugin Name: Thrive - Intranet
+ * Description: A helper plugin for 'Thrive WordPress Theme'. Contains all the functions for project management, private pages access, etc.
  * Version: 1.0
  * Author: Dunhakdis
  * Author URI: http://dunhakdis.me

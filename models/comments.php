@@ -119,7 +119,7 @@ class ThriveComments {
 
 		$user_id = absint( $user_id );
 
-		if ( 0 === $current_user_id ) {
+		if ( 0 === $user_id ) {
 			throw new Exception( "Model/Comments/::user_id must not be equal to 0 'zero'" );
 		}
 
