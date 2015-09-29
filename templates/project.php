@@ -1,17 +1,20 @@
 <?php global $post; ?>
 
 <div id="thrive-preloader">
+	
 	<div class="la-ball-clip-rotate la-sm">
+	    
 	    <div></div>
+	
 	</div>
+
 </div>
 
 <div class="active thrive-project-tab-content-item" data-content="thrive-project-dashboard" id="thrive-project-dashboard-context">
 	
 	<div id="thrive-dashboard-about">
-		<h3>
-			<?php _e('About', 'thrive'); ?>
-		</h3>
+
+		<h3><?php _e('About', 'thrive'); ?></h3>
 		
 		<?php echo $content; ?>
 		
@@ -36,25 +39,48 @@
 		<ul>
 			<li>
 				<div class="thrive-dashboard-at-a-glance-box">
-					<h4><?php printf('%d', $total); ?></h4>
+					
+					<h4 class="thrive-total-tasks">
+						<span id="thrive-total-tasks-count">
+							<?php printf('%d', $total); ?>
+						</span>
+					</h4>
+
 					<p><?php _e('Total Tasks', 'thrive'); ?></p>
+
 				</div>
 			</li>
+			
 			<li>
 				<a href="#tasks" class="thrive-dashboard-at-a-glance-box">
-					<h4><?php printf('%d', $remaining); ?></h4>
-					<p><?php _e('Tasks Left', 'thrive'); ?></p>
+					
+					<h4 class="thrive-remaining-tasks-count">
+						<?php printf('%d', $remaining); ?>
+					</h4>
+
+					<p><?php _e('Task(s) remaining', 'thrive'); ?></p>
+
 				</a>
 			</li>
+
 			<li>
 				<a href="#tasks/completed" class="thrive-dashboard-at-a-glance-box">
-					<h4><?php printf('%d', $completed); ?></h4>
-					<p><?php _e('Tasks Completed', 'thrive'); ?></p>
+
+					<h4>
+						<span id="task-progress-completed-count" class="task-progress-completed">
+							<?php printf('%d', $completed); ?>
+						</span>
+					</h4>
+
+					<p><?php _e('Task(s) Completed', 'thrive'); ?></p>
+
 				</a>
 			</li>
 			
-		</ul>	
+		</ul>
+
 		<div class="clearfix"></div>
+		
 	</div><!--#thrive-dashboard-at-a-glance-->
 </div>
 

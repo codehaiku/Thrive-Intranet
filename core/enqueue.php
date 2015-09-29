@@ -53,7 +53,7 @@ function thrive_register_scripts() {
 	// Front-end JS.
 	if ( is_singular( THRIVE_PROJECT_SLUG ) ) {
 		wp_enqueue_script(
-			'thrive-js', plugin_dir_url( __FILE__ ) . '../assets/js/thrive.js', array( 'jquery', 'backbone' ),
+			'thrive-js', plugin_dir_url( __FILE__ ) . '../assets/js/thrive.min.js', array( 'jquery', 'backbone' ),
 			1.0, true
 		);
 	}

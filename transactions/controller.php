@@ -18,7 +18,7 @@ if ( empty( $action ) ) {
 
 }
 
-if ( 'thrive_transactions_request' !== $action && '') {
+if ( 'thrive_transactions_request' !== $action ) {
 	
 	return;
 

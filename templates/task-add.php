@@ -17,7 +17,7 @@
 	<div class="thrive-form-field">
 		<?php $args = array(
 			'teeny' => true,
-			'editor_height' => 250,
+			'editor_height' => 100,
 			'media_buttons' => false,
 		); ?>
 		

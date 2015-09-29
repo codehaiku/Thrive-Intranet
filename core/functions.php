@@ -701,11 +701,17 @@ function thrive_project_meta( $project_id = 0 ) {
 			<div class="task-progress-percentage" style="width:<?php echo absint( $tasks_progress ); ?>%;">
 				<div class="task-progress-task-count-wrap">
 					<div class="task-progress-task-count">
-						<?php printf( _n( '%d Task', '%d Tasks', $tasks_total, 'thrive' ), $tasks_total ); ?>
+						<?php 
+							printf( _n( '%s Task', '%s Tasks', $tasks_total, 'thrive' ), '<span class="thrive-total-tasks">'. $tasks_total .'</span>' ); 
+						?>
 					</div>
 				</div>
 				<div class="task-progress-percentage-label">
-					<?php echo absint( $tasks_progress ); ?>% <?php _e( 'Completed', 'thrive' ); ?>
+					<span>
+						<?php echo absint( $tasks_progress ); ?>% 
+					</span>
+					<?php _e( 'Completed', 'thrive' ); ?>
+
 				</div>
 			</div>
 		</div>
@@ -835,7 +841,7 @@ function thrive_settings_display_editor() {
 	
 	$args = array(
 		'teeny' => true,
-		'editor_height' => 250,
+		'editor_height' => 100,
 		'media_buttons' => false,
 	); 
 		
