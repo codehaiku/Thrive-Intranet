@@ -1,4 +1,5 @@
-var ThriveProjectRoute = Backbone.Router.extend({
+var __ThriveProjectRoute = Backbone.Router.extend({
+    
     routes: {
         "tasks": "index",
         "tasks/dashboard": "dashboard",
@@ -61,7 +62,7 @@ var ThriveProjectRoute = Backbone.Router.extend({
     }
 });
 
-var ThriveProjectRoute = new ThriveProjectRoute();
+var ThriveProjectRoute = new __ThriveProjectRoute();
 
 ThriveProjectRoute.on('route', function(route) {
     if ('view_task' === route) {

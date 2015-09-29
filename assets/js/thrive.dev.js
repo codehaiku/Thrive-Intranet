@@ -1,21 +1,23 @@
 jQuery(document).ready(function($) {
 
-   var ThriveProjectModel = Backbone.View.extend({
-       id: 0,
-       project_id: thriveProjectSettings.project_id,
-       page: 1,
-       priority: -1,
-       current_page: 1,
-       max_page: 1,
-       min_page: 1,
-       total: 0,
-       show_completed: 'no',
-       total_pages: 0,
-   });
+	'use strict'
 
-   var ThriveProjectModel = new ThriveProjectModel();
+var __ThriveProjectModel = Backbone.View.extend({
+    id: 0,
+    project_id: thriveProjectSettings.project_id,
+    page: 1,
+    priority: -1,
+    current_page: 1,
+    max_page: 1,
+    min_page: 1,
+    total: 0,
+    show_completed: 'no',
+    total_pages: 0,
+});
 
-var ThriveProjectView = Backbone.View.extend({
+var ThriveProjectModel = new __ThriveProjectModel();
+
+var __ThriveProjectView = Backbone.View.extend({
 
     el: 'body',
     model: ThriveProjectModel,
@@ -37,17 +39,24 @@ var ThriveProjectView = Backbone.View.extend({
         $('.thrive-project-tab-li-item').removeClass('active');
         $('.thrive-project-tab-content-item').removeClass('active');
 
+        var $active_content = "";
+
         if (e) {
+            
             var $element = $(e.currentTarget);
-            var $active_content = $element.attr('data-content');
-            //activate selected tab
+            
+            $active_content = $element.attr('data-content');
+            
+            // Activate selected tab.
             $element.parent().addClass('active');
+
             $('div[data-content=' + $active_content + ']').addClass('active');
+
         } else {
 
             $(elementID).addClass('active');
 
-            var $active_content = $(elementID).attr('data-content');
+            $active_content = $(elementID).attr('data-content');
 
             $('a[data-content=' + $active_content + ']').parent().addClass('active');
         }
@@ -62,12 +71,15 @@ var ThriveProjectView = Backbone.View.extend({
     },
 
     searchTasks: function() {
+        
         var keywords = $('#thrive-task-search-field').val();
-        if (keywords.length == 0) {
+
+        if ( 0 === keywords.length ) {
             location.href = '#tasks';
         } else {
             location.href = '#tasks/search/' + encodeURI(keywords);
         }
+
     },
 
     filter: function(e) {
@@ -105,9 +117,11 @@ var ThriveProjectView = Backbone.View.extend({
         var __this = this;
         this.template = 'thrive_ticket_single';
         // load the task
-        this.renderTask(function(response) {
-            __this.progress(false);
-            var response = JSON.parse(response);
+        this.renderTask(function( httpResponse ) {
+
+            __this.progress( false );
+            var response = JSON.parse( httpResponse );
+
             if (response.html) {
                 $('#thrive-project-tasks').html(response.html);
             }
@@ -125,15 +139,18 @@ var ThriveProjectView = Backbone.View.extend({
         $('#thrive-project-edit-context').addClass('active');
 
         $('#thriveTaskId').attr('disabled', true).val('loading...');
-        $('#thriveTaskEditTitle').attr('disabled', true).val('loading...');;
+        $('#thriveTaskEditTitle').attr('disabled', true).val('loading...');
         $("#thrive-task-edit-select-id").attr('disabled', true);
 
         this.model.id = task_id;
 
         // Render the task.
-        this.renderTask(function(response) {
+        this.renderTask(function(httpResponse) {
+
             __this.progress(false);
-            var response = JSON.parse(response);
+
+            var response = JSON.parse(httpResponse);
+
             if (response.task) {
                 var task = response.task;
                 $('#thriveTaskId').val(task.id).removeAttr("disabled");
@@ -157,8 +174,8 @@ var ThriveProjectView = Backbone.View.extend({
                 template: this.template,
                 nonce: thriveProjectSettings.nonce
             },
-            success: function(response) {
-                __callback(response);
+            success: function( httpResponse ) {
+                __callback( httpResponse );
             }
         });
     },
@@ -183,11 +200,11 @@ var ThriveProjectView = Backbone.View.extend({
                 show_completed: this.model.show_completed,
                 nonce: thriveProjectSettings.nonce
             },
-            success: function(response) {
+            success: function( httpResponse ) {
 
                 __this.progress(false);
 
-                var response = JSON.parse(response);
+                var response = JSON.parse( httpResponse );
 
                 if (response.message == 'success') {
                     if (response.task.stats) {
@@ -216,17 +233,18 @@ var ThriveProjectView = Backbone.View.extend({
 
     progress: function(isShow) {
 
-        if (isShow) {
-            var __display = 'block';
-            var __opacity = 0.25;
-        } else {
-            var __display = 'none';
-            var __opacity = 1;
+        var __display = 'none';
+        var __opacity = 1;
+
+        if ( isShow ) {
+            __display = 'block';
+            __opacity = 0.25;
         }
 
         $('#thrive-preloader').css({
             display: __display
         });
+
         $('#thrive-project-tasks').css({
             opacity: __opacity
         });
@@ -240,13 +258,19 @@ var ThriveProjectView = Backbone.View.extend({
         $( '.thrive-remaining-tasks-count' ).text( stats.remaining );
         $( '.task-progress-completed' ).text( stats.completed );
         $( '.task-progress-percentage-label > span' ).text( stats.progress );
+
+        // Update the progress bar css width.
+        $( '.task-progress-percentage' ).css({
+            width: Math.ceil( ( ( stats.completed / stats.total ) * 100 ) ) + '%'
+        });
         
     }
 });
 
-var ThriveProjectView = new ThriveProjectView();
+var ThriveProjectView = new __ThriveProjectView();
 
-var ThriveProjectRoute = Backbone.Router.extend({
+var __ThriveProjectRoute = Backbone.Router.extend({
+    
     routes: {
         "tasks": "index",
         "tasks/dashboard": "dashboard",
@@ -309,7 +333,7 @@ var ThriveProjectRoute = Backbone.Router.extend({
     }
 });
 
-var ThriveProjectRoute = new ThriveProjectRoute();
+var ThriveProjectRoute = new __ThriveProjectRoute();
 
 ThriveProjectRoute.on('route', function(route) {
     if ('view_task' === route) {
@@ -418,9 +442,9 @@ $('#thrive-edit-btn').click(function(e) {
 
         method: 'post',
 
-        success: function(message) {
+        success: function( httpResponse ) {
 
-            var response = JSON.parse(message);
+            var response = JSON.parse( httpResponse );
 
             var message = "<p>Task successfully updated <a href='#tasks/view/" + response.id + "'>&#65515; View</a></p>";
 
@@ -436,11 +460,16 @@ $('#thrive-edit-btn').click(function(e) {
 
             element.text('Update Task');
 
+            return;
+
         },
+        
         error: function() {
 
-            console.log('An Error Occured [thrive.js]#311')
+            // Todo: Better handling of http errors and timeouts.
+            console.log('An Error Occured [thrive.js]#311');
 
+            return;
         }
     });
 }); // end $('#thrive-edit-btn').click()
@@ -461,11 +490,13 @@ $('#thrive-edit-btn').click(function(e) {
     var task_project_id = parseInt( ThriveProjectModel.project_id );
 
     var __http_params = {
+
        action: 'thrive_transactions_request',
        method: 'thrive_transaction_delete_ticket',
        id: task_id,
        project_id: task_project_id,
        nonce: thriveProjectSettings.nonce
+
    };
 
    ThriveProjectView.progress(true);
@@ -473,12 +504,13 @@ $('#thrive-edit-btn').click(function(e) {
    $element.text('Deleting ...');
 
    $.ajax({
+
        url: ajaxurl,
        data: __http_params,
        method: 'post',
-       success: function( response ) {
+       success: function( httpResponse ) {
             
-            var response = JSON.parse( response );
+            var response = JSON.parse( httpResponse );
            
             ThriveProjectView.progress(false);
 
@@ -536,11 +568,11 @@ $('#thrive-edit-btn').click(function(e) {
           url: ajaxurl,
           data: __http_params,
           method: 'post',
-          success: function(response) {
+          success: function( httpResponse ) {
 
-              var response = JSON.parse(response);
+              var response = JSON.parse( httpResponse );
 
-              ThriveProjectView.progress(false);
+              ThriveProjectView.progress( false );
 
               $('#task-comment-content').val('');
               $('#task-lists').append(response.result);
@@ -615,18 +647,22 @@ $('body').on('click', 'a.thrive-delete-comment', function(e) {
         url: ajaxurl,
         data: __http_params,
         method: 'post',
-        success: function(response) {
+        success: function( httpResponse ) {
 
             ThriveProjectView.progress(false);
 
-            var response = JSON.parse(response);
+            var response = JSON.parse( httpResponse );
 
             if (response.message == 'success') {
+
                 $element.parent().parent().parent().parent().fadeOut(function() {
                     $(this).remove();
                 });
+
             } else {
+
                 this.error();
+                
             }
         },
         error: function() {
@@ -661,9 +697,9 @@ $('body').on('click', '#thriveUpdateProjectBtn', function() {
         url: ajaxurl,
         data: __http_params,
         method: 'post',
-        success: function(response) {
+        success: function( httpResponse ) {
 
-            var response = JSON.parse(response);
+            var response = JSON.parse( httpResponse );
 
             ThriveProjectView.progress(false);
 
@@ -714,7 +750,7 @@ $('body').on('click', '#thriveUpdateProjectBtn', function() {
  $('body').on('click', '#thriveDeleteProjectBtn', function() {
 
 
-     if (!confirm('Are you sure you want to delete this project? All the tickets under this project will be deleted as well. This action cannot be undone.')) {
+     if ( !confirm('Are you sure you want to delete this project? All the tickets under this project will be deleted as well. This action cannot be undone.')) {
          return;
      }
 
@@ -725,17 +761,21 @@ $('body').on('click', '#thriveUpdateProjectBtn', function() {
          method: 'thrive_transactions_delete_project',
          id: project_id,
          nonce: thriveProjectSettings.nonce
-     }
+     };
 
      $(this).text('Deleting...');
 
      $.ajax({
+         
          url: ajaxurl,
+         
          method: 'post',
+         
          data: __http_params,
-         success: function(response) {
 
-             var response = JSON.parse(response);
+         success: function( httpResponse ) {
+
+             var response = JSON.parse( httpResponse );
 
              if (response.message == 'success') {
 
@@ -743,13 +783,19 @@ $('body').on('click', '#thriveUpdateProjectBtn', function() {
 
              } else {
                  console.log('__success_callback');
+
                  this.error();
 
              }
 
+             return;
+
          },
+
          error: function() {
-             alert('There was an error trying to delete this post. Try again later.');
+
+            alert('There was an error trying to delete this post. Try again later.');
+
          }
      });
 

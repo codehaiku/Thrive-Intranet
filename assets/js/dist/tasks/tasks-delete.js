@@ -14,11 +14,13 @@
     var task_project_id = parseInt( ThriveProjectModel.project_id );
 
     var __http_params = {
+
        action: 'thrive_transactions_request',
        method: 'thrive_transaction_delete_ticket',
        id: task_id,
        project_id: task_project_id,
        nonce: thriveProjectSettings.nonce
+
    };
 
    ThriveProjectView.progress(true);
@@ -26,12 +28,13 @@
    $element.text('Deleting ...');
 
    $.ajax({
+
        url: ajaxurl,
        data: __http_params,
        method: 'post',
-       success: function( response ) {
+       success: function( httpResponse ) {
             
-            var response = JSON.parse( response );
+            var response = JSON.parse( httpResponse );
            
             ThriveProjectView.progress(false);
 

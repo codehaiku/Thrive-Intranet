@@ -1,7 +1,7 @@
  $('body').on('click', '#thriveDeleteProjectBtn', function() {
 
 
-     if (!confirm('Are you sure you want to delete this project? All the tickets under this project will be deleted as well. This action cannot be undone.')) {
+     if ( !confirm('Are you sure you want to delete this project? All the tickets under this project will be deleted as well. This action cannot be undone.')) {
          return;
      }
 
@@ -12,17 +12,21 @@
          method: 'thrive_transactions_delete_project',
          id: project_id,
          nonce: thriveProjectSettings.nonce
-     }
+     };
 
      $(this).text('Deleting...');
 
      $.ajax({
+         
          url: ajaxurl,
+         
          method: 'post',
+         
          data: __http_params,
-         success: function(response) {
 
-             var response = JSON.parse(response);
+         success: function( httpResponse ) {
+
+             var response = JSON.parse( httpResponse );
 
              if (response.message == 'success') {
 
@@ -30,13 +34,19 @@
 
              } else {
                  console.log('__success_callback');
+
                  this.error();
 
              }
 
+             return;
+
          },
+
          error: function() {
-             alert('There was an error trying to delete this post. Try again later.');
+
+            alert('There was an error trying to delete this post. Try again later.');
+
          }
      });
 

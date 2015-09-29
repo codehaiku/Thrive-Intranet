@@ -29,18 +29,22 @@ $('body').on('click', 'a.thrive-delete-comment', function(e) {
         url: ajaxurl,
         data: __http_params,
         method: 'post',
-        success: function(response) {
+        success: function( httpResponse ) {
 
             ThriveProjectView.progress(false);
 
-            var response = JSON.parse(response);
+            var response = JSON.parse( httpResponse );
 
             if (response.message == 'success') {
+
                 $element.parent().parent().parent().parent().fadeOut(function() {
                     $(this).remove();
                 });
+
             } else {
+
                 this.error();
+                
             }
         },
         error: function() {

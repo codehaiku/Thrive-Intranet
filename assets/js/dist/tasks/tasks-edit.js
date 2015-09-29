@@ -24,9 +24,9 @@ $('#thrive-edit-btn').click(function(e) {
 
         method: 'post',
 
-        success: function(message) {
+        success: function( httpResponse ) {
 
-            var response = JSON.parse(message);
+            var response = JSON.parse( httpResponse );
 
             var message = "<p>Task successfully updated <a href='#tasks/view/" + response.id + "'>&#65515; View</a></p>";
 
@@ -42,11 +42,16 @@ $('#thrive-edit-btn').click(function(e) {
 
             element.text('Update Task');
 
+            return;
+
         },
+        
         error: function() {
 
-            console.log('An Error Occured [thrive.js]#311')
+            // Todo: Better handling of http errors and timeouts.
+            console.log('An Error Occured [thrive.js]#311');
 
+            return;
         }
     });
 }); // end $('#thrive-edit-btn').click()

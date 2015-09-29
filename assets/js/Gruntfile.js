@@ -76,6 +76,10 @@ grunt.initConfig({
                 indentSize: 4
             }
         }
+    },
+
+    jshint: {
+        all: ['thrive.dev.js']
     }
 
 });
@@ -91,6 +95,9 @@ grunt.loadNpmTasks('grunt-contrib-concat');
 
 // Load the plugin that provides the "jsbeautifier" task.
 grunt.loadNpmTasks('grunt-jsbeautifier');
+
+// Load 'JSHint' plugin
+grunt.loadNpmTasks('grunt-contrib-jshint');
 
 // Default task(s).
 grunt.registerTask('default', ['watch']);

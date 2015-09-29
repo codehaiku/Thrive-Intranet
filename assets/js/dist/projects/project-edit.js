@@ -23,9 +23,9 @@ $('body').on('click', '#thriveUpdateProjectBtn', function() {
         url: ajaxurl,
         data: __http_params,
         method: 'post',
-        success: function(response) {
+        success: function( httpResponse ) {
 
-            var response = JSON.parse(response);
+            var response = JSON.parse( httpResponse );
 
             ThriveProjectView.progress(false);
 
