@@ -120,12 +120,15 @@ function thrive_transaction_add_ticket() {
 	$task_id = $task->addTicket( $_POST );
 
 	if ( $task_id ) {
-		thrive_api_message(array(
+		
+		thrive_api_message( array(
 			'message' => 'success',
 			'response' => array(
 					'id' => $task_id,
 				),
+			'stats' => $task->getTaskStatistics( (int) $_POST['project_id'] )
 		));
+
 	} else {
 		thrive_api_message( array(
 			'message' => 'fail',
@@ -142,9 +145,24 @@ function thrive_transaction_delete_ticket() {
 
 	$ticket_id = (int) filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
 
-	$ticket = new ThriveProjectTasksController();
+	$project_id = (int) filter_input( INPUT_POST, 'project_id', FILTER_VALIDATE_INT );;
 
-	$ticket->deleteTicket( $ticket_id );
+	$task = new ThriveProjectTasksController();
+
+	$deleteTicket = $task->deleteTicket( $ticket_id );
+
+	if ( $deleteTicket ) {
+
+		thrive_api_message(
+				array(
+						'message' => 'success',
+						'response' => array(
+								'id' => $ticket_id
+							),
+						'stats' => $task->getTaskStatistics( $project_id )
+					)
+			);
+	}
 
 	return;
 }
@@ -326,10 +344,11 @@ function thrive_transaction_add_comment_to_ticket() {
 	$comment   = new ThriveComments();
 	$task      = new ThriveProjectTasksModel();
 
-	$details   = filter_input( INPUT_POST, 'details', FILTER_SANITIZE_STRING );
-	$ticket_id = filter_input( INPUT_POST, 'ticket_id', FILTER_VALIDATE_INT );
-	$priority  = filter_input( INPUT_POST, 'priority', FILTER_VALIDATE_INT );
-	$completed = filter_input( INPUT_POST, 'completed', FILTER_SANITIZE_STRING );
+	$details    = filter_input( INPUT_POST, 'details', FILTER_SANITIZE_STRING );
+	$ticket_id  = filter_input( INPUT_POST, 'ticket_id', FILTER_VALIDATE_INT );
+	$priority   = filter_input( INPUT_POST, 'priority', FILTER_VALIDATE_INT );
+	$completed  = filter_input( INPUT_POST, 'completed', FILTER_SANITIZE_STRING );
+	$project_id = filter_input( INPUT_POST, 'project_id', FILTER_SANITIZE_STRING );;
 
 	// Get the current user that is logged in.
 	$user_id = get_current_user_id();
@@ -371,6 +390,7 @@ function thrive_transaction_add_comment_to_ticket() {
 
 		thrive_api_message(array(
 				'message' => 'success',
+				'stats' => $task->getTaskStatistics( $project_id ),
 				'result' => thrive_comments_template( $added_comment ),
 			));
 	}

@@ -692,7 +692,7 @@ function thrive_project_meta( $project_id = 0 ) {
 
 	<?php if ( 0 !== $tasks_total ) { ?>
 
-	<?php $tasks_progress = ( ( $tasks_completed / $tasks_total ) * 100 ); ?>
+	<?php $tasks_progress = ceil( ( $tasks_completed / $tasks_total ) * 100 ); ?>
 
 
 	<div class="task-progress">
@@ -709,9 +709,8 @@ function thrive_project_meta( $project_id = 0 ) {
 				<div class="task-progress-percentage-label">
 					<span>
 						<?php echo absint( $tasks_progress ); ?>% 
+						<?php _e( 'Completed', 'thrive' ); ?>
 					</span>
-					<?php _e( 'Completed', 'thrive' ); ?>
-
 				</div>
 			</div>
 		</div>

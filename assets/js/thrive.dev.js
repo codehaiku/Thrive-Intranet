@@ -232,6 +232,15 @@ var ThriveProjectView = Backbone.View.extend({
         });
 
         return;
+    },
+
+    updateStats: function( stats ) {
+
+        $( '.thrive-total-tasks' ).text( stats.total );
+        $( '.thrive-remaining-tasks-count' ).text( stats.remaining );
+        $( '.task-progress-completed' ).text( stats.completed );
+        $( '.task-progress-percentage-label > span' ).text( stats.progress );
+        
     }
 });
 
@@ -344,7 +353,9 @@ $('#thrive-submit-btn').click(function(e) {
             // Remaining tasks view
             var remaining_tasks = parseInt( $('.thrive-remaining-tasks-count').text().trim() );
 
-            message = JSON.parse(message);
+            message = JSON.parse( message );
+
+           // console.log( message ); 
 
             if ( message.message === 'success' ) {
 
@@ -356,11 +367,7 @@ $('#thrive-submit-btn').click(function(e) {
 
                 $('#thriveTaskTitle').val('');
                 
-                // Update the total tasks count for all views.
-                $('.thrive-total-tasks').text( total_tasks + 1 );
-
-                // Update the total tasks remaining count for all views.
-                $('.thrive-remaining-tasks-count').text( remaining_tasks + 1 );
+                ThriveProjectView.updateStats( message.stats );
 
                 location.href = "#tasks/view/" + message.response.id;
 
@@ -441,45 +448,58 @@ $('#thrive-edit-btn').click(function(e) {
  // Delete Task Single
  $('body').on('click', '#thrive-delete-btn', function() {
 
-     var _delete_confirm = confirm("Are you sure you want to delete this task? This action is irreversible");
+    var _delete_confirm = confirm("Are you sure you want to delete this task? This action is irreversible");
 
-     if (!_delete_confirm) {
-         return;
-     }
+    if (!_delete_confirm) {
+       return;
+    }
 
-     var $element = $(this);
+    var $element = $(this);
 
-     var task_id = parseInt(ThriveProjectModel.id);
+    var task_id = parseInt( ThriveProjectModel.id );
 
-     var __http_params = {
-         action: 'thrive_transactions_request',
-         method: 'thrive_transaction_delete_ticket',
-         id: task_id,
-         nonce: thriveProjectSettings.nonce
-     };
+    var task_project_id = parseInt( ThriveProjectModel.project_id );
 
-     ThriveProjectView.progress(true);
+    var __http_params = {
+       action: 'thrive_transactions_request',
+       method: 'thrive_transaction_delete_ticket',
+       id: task_id,
+       project_id: task_project_id,
+       nonce: thriveProjectSettings.nonce
+   };
 
-     $element.text('Deleting ...');
+   ThriveProjectView.progress(true);
 
-     $.ajax({
-         url: ajaxurl,
-         data: __http_params,
-         method: 'post',
-         success: function(response) {
-             ThriveProjectView.progress(false);
-             location.href = "#tasks";
-             ThriveProjectView.switchView(null, '#thrive-project-tasks-context');
-             $element.text('Delete');
-         },
-         error: function() {
-             ThriveProjectView.progress(false);
-             location.href = "#tasks";
-             ThriveProjectView.switchView(null, '#thrive-project-tasks-context');
-             $element.text('Delete');
+   $element.text('Deleting ...');
 
-         }
-     });
+   $.ajax({
+       url: ajaxurl,
+       data: __http_params,
+       method: 'post',
+       success: function( response ) {
+            
+            var response = JSON.parse( response );
+           
+            ThriveProjectView.progress(false);
+
+            ThriveProjectView.updateStats( response.stats );
+
+            location.href = "#tasks";
+
+            ThriveProjectView.switchView(null, '#thrive-project-tasks-context');
+
+            $element.text('Delete');
+
+       },
+
+       error: function() {
+           ThriveProjectView.progress(false);
+           location.href = "#tasks";
+           ThriveProjectView.switchView(null, '#thrive-project-tasks-context');
+           $element.text('Delete');
+
+       }
+   });
  }); // End Delete Task
 
   $('body').on('click', '#updateTaskBtn', function() {
@@ -487,7 +507,8 @@ $('#thrive-edit-btn').click(function(e) {
       var comment_ticket = ThriveProjectModel.id,
           comment_details = $('#task-comment-content').val(),
           task_priority = $('#thrive-task-priority-update-select').val(),
-          comment_completed = $('input[name=task_commment_completed]:checked').val();
+          comment_completed = $('input[name=task_commment_completed]:checked').val(),
+          task_project_id = parseInt( ThriveProjectModel.project_id );
 
       if (0 === comment_ticket) {
           return;
@@ -507,6 +528,7 @@ $('#thrive-edit-btn').click(function(e) {
           priority: task_priority,
           details: comment_details,
           completed: comment_completed,
+          project_id: task_project_id,
           nonce: thriveProjectSettings.nonce
       };
 
@@ -523,11 +545,7 @@ $('#thrive-edit-btn').click(function(e) {
               $('#task-comment-content').val('');
               $('#task-lists').append(response.result);
 
-              // Completed no. of tasks view.
-              var completed_tasks = parseInt( $('#task-progress-completed-count').text().trim() );
-              var total_tasks = parseInt( $('#thrive-total-tasks-count').text().trim() );
-              var remaining_task = parseInt( $('.thrive-remaining-tasks-count').text().trim() );
-
+            
               if ("yes" === comment_completed) {
 
                   // disable old radios
@@ -539,17 +557,6 @@ $('#thrive-edit-btn').click(function(e) {
                   $('#ticketStatusReOpenUpdate').attr('disabled', false);
                   $('#thrive-comment-completed-radio').removeClass('hide');
 
-                 
-
-                  // Update the total completed tasks count for all views.
-                  $('.task-progress-completed').text( completed_tasks + 1 );
-
-                  var percentage = Math.floor( ( (completed_tasks + 1) / total_tasks ) * 100 );
-
-                  $('.task-progress-percentage').css( 'width', percentage + '%' );
-                  $('.task-progress-percentage-label span').text( percentage + '%' );
-
-                  $('.thrive-remaining-tasks-count').text( remaining_task - 1 );
               }
 
               if ( "reopen" === comment_completed ) {
@@ -563,17 +570,11 @@ $('#thrive-edit-btn').click(function(e) {
                   $('#ticketStatusReOpenUpdate').attr('disabled', true);
                   $('#thrive-comment-completed-radio').addClass('hide');
 
-                  // Update the total completed tasks count for all views.
-                  $('.task-progress-completed').text( completed_tasks - 1 );
-
-                  var percentage = Math.floor( ( (completed_tasks - 1) / total_tasks ) * 100 );
-
-                  $('.task-progress-percentage').css( 'width', percentage + '%' );
-                  $('.task-progress-percentage-label span').text( percentage + '%' );
-
-                  $('.thrive-remaining-tasks-count').text( remaining_task + 1 );
-
               }
+
+             // console.log(response.stats);
+
+              ThriveProjectView.updateStats( response.stats );
               
           },
           error: function() {

@@ -590,4 +590,31 @@ class ThriveProjectTasksModel {
 
 		return $this;
 	}
+
+	public function getTaskStatistics( $project_id = 0 ) {
+
+		if ( 0 === $project_id ) {
+
+			return array();
+
+		}
+
+		$task_total = $this->getCount( $project_id, 'all' );
+
+		$task_total_completed = $this->getCount( $project_id, 'completed' );
+
+		$task_total_open = $this->getCount( $project_id, 'open' );
+
+		$task_progress = ceil( ( $task_total_completed / $task_total ) * 100 ) . "%";
+
+		$stats =  array(
+				'total' 	=> $task_total,
+				'completed' => $task_total_completed,
+				'remaining' => $task_total_open,
+				'progress'  => sprintf( __('%s Completed', 'thrive'), $task_progress )
+			); 
+		
+
+		return $stats;
+	}
 }

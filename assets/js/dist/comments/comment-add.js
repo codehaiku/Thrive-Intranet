@@ -3,7 +3,8 @@
       var comment_ticket = ThriveProjectModel.id,
           comment_details = $('#task-comment-content').val(),
           task_priority = $('#thrive-task-priority-update-select').val(),
-          comment_completed = $('input[name=task_commment_completed]:checked').val();
+          comment_completed = $('input[name=task_commment_completed]:checked').val(),
+          task_project_id = parseInt( ThriveProjectModel.project_id );
 
       if (0 === comment_ticket) {
           return;
@@ -23,6 +24,7 @@
           priority: task_priority,
           details: comment_details,
           completed: comment_completed,
+          project_id: task_project_id,
           nonce: thriveProjectSettings.nonce
       };
 
@@ -39,11 +41,7 @@
               $('#task-comment-content').val('');
               $('#task-lists').append(response.result);
 
-              // Completed no. of tasks view.
-              var completed_tasks = parseInt( $('#task-progress-completed-count').text().trim() );
-              var total_tasks = parseInt( $('#thrive-total-tasks-count').text().trim() );
-              var remaining_task = parseInt( $('.thrive-remaining-tasks-count').text().trim() );
-
+            
               if ("yes" === comment_completed) {
 
                   // disable old radios
@@ -55,17 +53,6 @@
                   $('#ticketStatusReOpenUpdate').attr('disabled', false);
                   $('#thrive-comment-completed-radio').removeClass('hide');
 
-                 
-
-                  // Update the total completed tasks count for all views.
-                  $('.task-progress-completed').text( completed_tasks + 1 );
-
-                  var percentage = Math.floor( ( (completed_tasks + 1) / total_tasks ) * 100 );
-
-                  $('.task-progress-percentage').css( 'width', percentage + '%' );
-                  $('.task-progress-percentage-label span').text( percentage + '%' );
-
-                  $('.thrive-remaining-tasks-count').text( remaining_task - 1 );
               }
 
               if ( "reopen" === comment_completed ) {
@@ -79,17 +66,11 @@
                   $('#ticketStatusReOpenUpdate').attr('disabled', true);
                   $('#thrive-comment-completed-radio').addClass('hide');
 
-                  // Update the total completed tasks count for all views.
-                  $('.task-progress-completed').text( completed_tasks - 1 );
-
-                  var percentage = Math.floor( ( (completed_tasks - 1) / total_tasks ) * 100 );
-
-                  $('.task-progress-percentage').css( 'width', percentage + '%' );
-                  $('.task-progress-percentage-label span').text( percentage + '%' );
-
-                  $('.thrive-remaining-tasks-count').text( remaining_task + 1 );
-
               }
+
+             // console.log(response.stats);
+
+              ThriveProjectView.updateStats( response.stats );
               
           },
           error: function() {

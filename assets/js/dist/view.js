@@ -215,6 +215,15 @@ var ThriveProjectView = Backbone.View.extend({
         });
 
         return;
+    },
+
+    updateStats: function( stats ) {
+
+        $( '.thrive-total-tasks' ).text( stats.total );
+        $( '.thrive-remaining-tasks-count' ).text( stats.remaining );
+        $( '.task-progress-completed' ).text( stats.completed );
+        $( '.task-progress-percentage-label > span' ).text( stats.progress );
+        
     }
 });
 

@@ -40,13 +40,15 @@
 			<li>
 				<div class="thrive-dashboard-at-a-glance-box">
 					
-					<h4 class="thrive-total-tasks">
-						<span id="thrive-total-tasks-count">
+					<h4>
+						<span id="thrive-total-tasks-count" class="thrive-total-tasks">
 							<?php printf('%d', $total); ?>
 						</span>
 					</h4>
 
-					<p><?php _e('Total Tasks', 'thrive'); ?></p>
+					<p>
+						<?php _e('Total Tasks', 'thrive'); ?>
+					</p>
 
 				</div>
 			</li>
@@ -54,8 +56,10 @@
 			<li>
 				<a href="#tasks" class="thrive-dashboard-at-a-glance-box">
 					
-					<h4 class="thrive-remaining-tasks-count">
-						<?php printf('%d', $remaining); ?>
+					<h4>
+						<span id="thrive-remaining-tasks-count" class="thrive-remaining-tasks-count">
+							<?php printf('%d', $remaining); ?>
+						</span>
 					</h4>
 
 					<p><?php _e('Task(s) remaining', 'thrive'); ?></p>

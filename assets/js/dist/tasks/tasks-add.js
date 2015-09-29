@@ -30,7 +30,9 @@ $('#thrive-submit-btn').click(function(e) {
             // Remaining tasks view
             var remaining_tasks = parseInt( $('.thrive-remaining-tasks-count').text().trim() );
 
-            message = JSON.parse(message);
+            message = JSON.parse( message );
+
+           // console.log( message ); 
 
             if ( message.message === 'success' ) {
 
@@ -42,11 +44,7 @@ $('#thrive-submit-btn').click(function(e) {
 
                 $('#thriveTaskTitle').val('');
                 
-                // Update the total tasks count for all views.
-                $('.thrive-total-tasks').text( total_tasks + 1 );
-
-                // Update the total tasks remaining count for all views.
-                $('.thrive-remaining-tasks-count').text( remaining_tasks + 1 );
+                ThriveProjectView.updateStats( message.stats );
 
                 location.href = "#tasks/view/" + message.response.id;
 
