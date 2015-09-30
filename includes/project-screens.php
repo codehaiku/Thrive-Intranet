@@ -137,16 +137,18 @@ function bp_projects_locate_template( $template = false ) {
 function bp_projects_main_screen_function() {
 
 	add_action( 'bp_template_title', 'bp_projects_title' );
+	
 	add_action( 'bp_template_content', 'bp_projects_content' );
 
 	bp_core_load_template( apply_filters( 'bp_projects_main_screen_function', 'project-dashboard' ) );
 
+	/*
 	// if BP Default is not used, we filter bp_get_template_part
 	if ( ! bp_projects_is_bp_default() ) {
 
 		add_filter( 'bp_get_template_part', 'bp_projects_user_template_part', 10, 3 );
 
-	}
+	}*/
 }
 
 function bp_projects_main_screen_function_new_project() {
@@ -155,13 +157,13 @@ function bp_projects_main_screen_function_new_project() {
 	add_action( 'bp_template_content', 'bp_projects_add_new_content' );
 
 	bp_core_load_template( apply_filters( 'bp_projects_main_screen_function_new_project', 'project-dashboard-new-project' ) );
-
-	  // if BP Default is not used, we filter bp_get_template_part
+	/*
+	// if BP Default is not used, we filter bp_get_template_part
 	if ( ! bp_projects_is_bp_default() ) {
 
 		add_filter( 'bp_get_template_part', 'bp_projects_user_template_part', 10, 3 );
 
-	}
+	}*/
 
 }
 
