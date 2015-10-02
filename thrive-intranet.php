@@ -8,7 +8,7 @@
  * Text Domain: thrive
  * License: GPL2
  *
- * Includes all the file necessary for Thrive Intranet Plugin
+ * Includes all the file necessary for Thrive Intranet Plugin.
  *
  * PHP version 5
  *
