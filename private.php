@@ -18,6 +18,7 @@
  * @since      1.0
  */
 
+
 if ( ! defined( 'ABSPATH' ) ) { die(); }
 
 // check if publitize is enabled inside theme option
@@ -54,12 +55,19 @@ function thrive_redirect_pages_except() {
 		$current_page_id = intval( $post->ID );
 
 	if ( ! is_user_logged_in() ) {
+
 		if ( $current_page_id !== $login_page_id ) {
+
 			if ( ! in_array( $current_page_id, $excluded_page ) ) {
+
 				wp_safe_redirect( $redirect_page );
+
 				die();
+
 			}
+
 		}
+		
 	}
 
 	return;

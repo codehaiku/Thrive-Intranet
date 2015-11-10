@@ -24,6 +24,15 @@ function thrive_redirect_login() {
 	// Bypass login if specified
 	$no_redirect = filter_input( INPUT_GET, 'no_redirect', FILTER_VALIDATE_BOOLEAN );
 
+	// Bypass lost password 
+	$is_lost_password = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+
+	if ( $is_lost_password ) {
+
+		return;
+		
+	}
+
 	if ( $no_redirect ) {
 
 		return;
@@ -42,7 +51,7 @@ function thrive_redirect_login() {
 
 	}
 
-		// if user visits wp-admin or wp-login.php, redirect them
+	// if user visits wp-admin or wp-login.php, redirect them
 	if ( strstr( $curr_paged, 'wp-login.php' ) ) {
 
 		if ( isset( $_GET[ 'interim-login' ] ) ) {
@@ -107,16 +116,19 @@ function thrive_redirect_user_after_logged_in( $redirect_to, $request, $user ) {
 
 	}
 
-	// check if buddypress is active
-	if ( function_exists( 'bp_core_get_user_domain' ) ) {
+	if ( isset( $user->ID ) ) {
 
-		return apply_filters( 'thrive_login_redirect', bp_core_get_user_domain( $user->ID ) );
+		// check if buddypress is active
+		if ( function_exists( 'bp_core_get_user_domain' ) ) {
 
-		// otherwise, throw the user into homepage
-	} else {
+			return apply_filters( 'thrive_login_redirect', bp_core_get_user_domain( $user->ID ) );
 
-		return apply_filters( 'thrive_login_redirect', home_url() );
+			// otherwise, throw the user into homepage
+		} else {
 
+			return apply_filters( 'thrive_login_redirect', home_url() );
+
+		}
 	}
 	// double edge sword
 	return $redirect_to;

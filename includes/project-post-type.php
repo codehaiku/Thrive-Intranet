@@ -123,6 +123,7 @@ function thrive_filter_single_project() {
 	}
 
 	return;
+	
 }
 
 function thrive_project_content_filter( $content ) {
@@ -137,7 +138,7 @@ function thrive_project_content_filter( $content ) {
 
 		ob_start();
 		
-		include_once thrive_template_dir(). '/project-heading.php';
+		include thrive_template_dir(). '/project-heading.php';
 		
 		$heading = ob_get_clean();
 
@@ -153,13 +154,13 @@ function thrive_project_content_filter( $content ) {
 
 	    $tab_content  = '<div id="thrive-project-tab-content">';
 
-	    			ob_start();
+		ob_start();
 
-	if ( $post->post_type == 'project' ) {
-		include_once thrive_template_dir(). '/project.php';
-	}
+		if ( $post->post_type == 'project' ) {
+			include thrive_template_dir(). '/project.php';
+		} 
 
-			    	$project_contents = ob_get_clean();
+    	$project_contents = ob_get_clean();
 
 		$tab_content .= $project_contents;
 

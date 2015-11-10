@@ -28,8 +28,9 @@ if ( ! defined( 'ABSPATH' ) ) { die(); }
  * @return string 	output_buffer
  */
 function thrive_wp_login($atts) {
-		// begin output buffering
-		ob_start();
+
+	// begin output buffering
+	ob_start();
 
 	$args = array(
 	    'echo'           => true,
@@ -47,7 +48,7 @@ function thrive_wp_login($atts) {
 	    'value_remember' => false,
 	);
 
-		$error_login_message = '';
+	$error_login_message = '';
 
 	if ( isset( $_GET['login'] ) ) {
 
@@ -86,6 +87,14 @@ function thrive_wp_login($atts) {
 
 		// finally, collect all the buffered output
 		return ob_get_clean();
+}
+
+add_action( 'login_form_middle', 'thrive_add_lost_password_link' );
+
+function thrive_add_lost_password_link() {
+
+	return '<p class="thrive-login-lost-password"><a href="'.esc_url( wp_lostpassword_url( $redirect = "" ) ).'">' . __('Forgot Password', 'thrive') . '</a></p>';
+
 }
 
 /**

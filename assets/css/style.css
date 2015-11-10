@@ -880,3 +880,9 @@
     margin: 0;
     padding: 0;
 }
+
+.thrive-login-lost-password {
+    display: block;
+    float: right;
+    margin: 0;
+}
