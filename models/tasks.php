@@ -450,6 +450,7 @@ class ThriveProjectTasksModel {
 				'milestone_id' => $this->milestone_id,
 				'project_id' => $this->project_id,
 				'priority' => $this->priority,
+				'date_created' => date("Y-m-d H:i:s")
 			);
 
 		if ( empty( $this->title ) ) {

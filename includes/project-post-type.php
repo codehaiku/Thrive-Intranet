@@ -52,6 +52,8 @@ function thrive_projects_register_post_type() {
 add_action( 'add_meta_boxes_post' ,'thrive_project_meta_box' );
 
 function thrive_project_meta_box() {
+	
+	wp_enqueue_script( 'jquery-ui-datepicker' );
 
 	add_meta_box(
 		'thrive_tasks_metabox',

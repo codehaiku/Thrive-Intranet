@@ -1,6 +1,8 @@
 jQuery(document).ready( function($) {
 	
 	'use strict';
+	$(window).load(function(){
+
 
 		if ( typeof thriveAjaxUrl === 'undefined' ) {
 			
@@ -181,14 +183,20 @@ jQuery(document).ready( function($) {
 				$('#thrive-add-task').addClass('active');
 			},
 			
-			renderEditForm: function(task_id) {
+			renderEditForm: function( task_id ) {
+
+				var thriveTinyMceEditor = tinyMCE.get("thriveTaskEditDescription");
+
+				if ( thriveTinyMceEditor ) {
+					thriveTinyMceEditor.setContent('');
+				}
 
 				$('#thrive-edit-task-list').removeClass('hidden');
 				$('.thrive-tab-item-content').removeClass('active');
 				$('#thrive-edit-task').addClass('active');
 				$('#thriveTaskEditTitle').val('').attr('disabled', true).val('loading...');
 				$('#thrive-task-edit-select-id').attr('disabled', true);
-				console.log(tinyMCE.editors);
+
 				$('#thriveTaskId').val(task_id);
 
 				$.ajax({
@@ -210,8 +218,8 @@ jQuery(document).ready( function($) {
 							$('#thriveTaskEditTitle').val(response.task.title).removeAttr('disabled');
 							$('#thrive-task-edit-select-id').val(response.task.priority).removeAttr('disabled');
 
-							if ( tinyMCE.editors.thriveTaskEditDescription ) {
-								tinyMCE.editors.thriveTaskEditDescription.setContent( response.task.description );
+							if ( thriveTinyMceEditor ) {
+								thriveTinyMceEditor.setContent( response.task.description );
 							} else {
 								console.log('There was an error loading tinyMCE');
 							}
@@ -611,4 +619,5 @@ jQuery(document).ready( function($) {
 		$('#thrive-task-search-field').keypress(function(e){
 		    if ( e.which == 13 ) e.preventDefault();
 		}); 
-	});
+	});//Window Onload.
+});//document Ready

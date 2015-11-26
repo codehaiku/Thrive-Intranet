@@ -186,9 +186,15 @@ function thrive_render_task($args = array()) {
 			$row_actions .= '</div>';
 
 			echo '<tr class="'.$classes.'">';
+				
 				echo '<td><strong><a class="row-title" href="#tasks/edit/'.intval( $task->id ).'">'. stripslashes( esc_html( $task->title ) ).'</a></strong>'.$row_actions.'</td>';
 				echo '<td>'.esc_html( $priority_label ).'</h3></td>';
-				echo '<td>'.esc_html( date( 'Y/m/d', strtotime( $task->date_created ) ) ).'</h3></td>';
+
+				if ( "0000-00-00 00:00:00" !== $task->date_created ) {
+					echo '<td>'.esc_html( date( 'M d, o @H:i', strtotime( $task->date_created ) ) ).'</h3></td>';
+				} else {
+					echo '<td>'.__('N/A','thrive').'</td>';
+				}
 
 			echo '</tr>';
 		}
