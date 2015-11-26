@@ -56,9 +56,13 @@ function thrive_transactions_callblack() {
 
 	}
 
-	if ( ! wp_verify_nonce( $nonce, 'thrive-transaction-request' ) ) {
+	if ( ! wp_verify_nonce( $nonce, 'thrive-transaction-request' ) ) 
+	{
 
-		die( __( 'Invalid Request. Your session has already expired. Please go back and refresh your browser. Thanks!', 'thrive' ) );
+		die( 
+			__( 'Invalid Request. Your session has already expired (invalid nonce). 
+				Please go back and refresh your browser. Thanks!', 'thrive' ) 
+		);
 
 	}
 

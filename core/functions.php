@@ -223,6 +223,15 @@ function thrive_render_task($args = array()) {
 
 	echo '</div><!--#thrive-task-list-canvas-->';
 
+	?>
+	<script>
+	var thriveProjectSettings = {
+		project_id: '<?php echo absint($post->ID);?>',
+		nonce: '<?php echo wp_create_nonce( "thrive-transaction-request" ); ?>'
+	};
+	</script>
+	<?php
+
 	if ( $echo === 'no' ) {
 		return ob_get_clean();
 	} else {

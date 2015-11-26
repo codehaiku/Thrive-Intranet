@@ -53,8 +53,6 @@ add_action( 'add_meta_boxes_post' ,'thrive_project_meta_box' );
 
 function thrive_project_meta_box() {
 
-	wp_enqueue_script( 'jquery-ui-datepicker' );
-
 	add_meta_box(
 		'thrive_tasks_metabox',
 		__( 'Tasks', 'thrive' ),
@@ -82,7 +80,6 @@ function thrive_tasks_metabox_content() {
 		</div>
 		<div class="thrive-tabs-content">
 			<div id="thrive-task-list" class="thrive-tab-item-content active">
-			
 				<?php if ( function_exists( 'thrive_render_task' ) ) {?>
 					<?php thrive_render_task(); ?>
 				<?php } ?>

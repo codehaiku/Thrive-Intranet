@@ -27,11 +27,16 @@ function thrive_admin_stylesheet() {
 
 function thrive_admin_scripts() {
 
-	wp_enqueue_script( 'backbone' );
+	global $post;
 
-	wp_enqueue_script( 'thrive-admin', plugin_dir_url( __FILE__ ) . '../assets/js/admin.js',
+	if ( "project" === $post->post_type ) {
 
-	array( 'jquery', 'backbone' ), $ver = 1.0, $in_footer = true );
+		wp_enqueue_script( 'backbone' );
+		wp_enqueue_script( 'thrive-admin', plugin_dir_url( __FILE__ ) . '../assets/js/admin.js', array( 'jquery', 'backbone' ), $ver = 1.0, $in_footer = true );
+		// Deregister the culprit.
+		wp_deregister_script( 'vc_accordion_script' );
+		
+	}
 
 	return;
 
