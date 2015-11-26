@@ -2,6 +2,8 @@ jQuery(document).ready(function($) {
 
 	'use strict'
 
+	$(window).load( function() { 
+
 var __ThriveProjectModel = Backbone.View.extend({
     id: 0,
     project_id: thriveProjectSettings.project_id,
@@ -305,6 +307,10 @@ var __ThriveProjectRoute = Backbone.Router.extend({
     add: function() {
         this.view.switchView(null, '#thrive-project-add-new-context');
         $('#thrive-project-add-new').css('display', 'block');
+        
+        if ( tinymce.editors.thriveTaskDescription ) {
+            tinymce.editors.thriveTaskDescription.setContent('');
+        }
     },
     completed_tasks: function() {
 
@@ -314,7 +320,14 @@ var __ThriveProjectRoute = Backbone.Router.extend({
         this.view.render();
     },
     edit: function(task_id) {
+        
         this.view.showEditForm(task_id);
+
+        $('#thrive-edit-task-message').html('');
+
+        if ( tinymce.editors.thriveTaskEditDescription ) {
+            tinymce.editors.thriveTaskEditDescription.setContent('');
+        }
     },
     next: function(page) {
         this.model.page = page;
@@ -350,6 +363,7 @@ $('#thrive-submit-btn').click(function(e) {
     e.preventDefault();
 
     var element = $(this);
+
     element.attr('disabled', true);
     element.text('Loading ...');
 
@@ -398,11 +412,9 @@ $('#thrive-submit-btn').click(function(e) {
 
             } else {
 
-                $('#thrive-add-task-message').text(message.response).show().addClass('error');
+                $('#thrive-add-task-message').html('<p class="error">'+message.response+'</p>').show().addClass('error');
 
-                setTimeout(function() {
-                    $('#thrive-add-task-message').text('').hide().removeClass('error');
-                }, 3000);
+              
 
                 element.text('Save Task');
                 
@@ -446,11 +458,11 @@ $('#thrive-edit-btn').click(function(e) {
 
             var response = JSON.parse( httpResponse );
 
-            var message = "<p>Task successfully updated <a href='#tasks/view/" + response.id + "'>&#65515; View</a></p>";
+            var message = "<p class='success'>Task successfully updated <a href='#tasks/view/" + response.id + "'>&#65515; View</a></p>";
 
             if ('fail' === response.message && 'no_changes' !== response.type) {
 
-                message = "<p>There was an error updating the task. All fields are required.</a></p>";
+                message = "<p class='error'>There was an error updating the task. All fields are required.</a></p>";
 
             }
 
@@ -801,4 +813,5 @@ $('body').on('click', '#thriveUpdateProjectBtn', function() {
 
  });
 
-}); // end jQuery(document).ready();
+}); // end $(window).load();
+}); // end jQuery(document).ready(); 

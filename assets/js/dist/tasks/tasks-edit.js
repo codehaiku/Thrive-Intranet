@@ -28,11 +28,11 @@ $('#thrive-edit-btn').click(function(e) {
 
             var response = JSON.parse( httpResponse );
 
-            var message = "<p>Task successfully updated <a href='#tasks/view/" + response.id + "'>&#65515; View</a></p>";
+            var message = "<p class='success'>Task successfully updated <a href='#tasks/view/" + response.id + "'>&#65515; View</a></p>";
 
             if ('fail' === response.message && 'no_changes' !== response.type) {
 
-                message = "<p>There was an error updating the task. All fields are required.</a></p>";
+                message = "<p class='error'>There was an error updating the task. All fields are required.</a></p>";
 
             }
 

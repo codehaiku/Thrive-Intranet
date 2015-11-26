@@ -1,1 +1,2 @@
-}); // end jQuery(document).ready();
+}); // end $(window).load();
+}); // end jQuery(document).ready(); 

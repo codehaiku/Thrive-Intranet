@@ -3,6 +3,7 @@ $('#thrive-submit-btn').click(function(e) {
     e.preventDefault();
 
     var element = $(this);
+
     element.attr('disabled', true);
     element.text('Loading ...');
 
@@ -51,11 +52,9 @@ $('#thrive-submit-btn').click(function(e) {
 
             } else {
 
-                $('#thrive-add-task-message').text(message.response).show().addClass('error');
+                $('#thrive-add-task-message').html('<p class="error">'+message.response+'</p>').show().addClass('error');
 
-                setTimeout(function() {
-                    $('#thrive-add-task-message').text('').hide().removeClass('error');
-                }, 3000);
+              
 
                 element.text('Save Task');
                 

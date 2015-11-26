@@ -597,6 +597,7 @@ jQuery(document).ready( function($) {
 			add: function() {
 				this.view.switchView(null, '#thrive-task-add-tab');
 				ThriveModel.renderAddForm();
+				tinymce.editors.thriveTaskDescription.setContent('');
 			},
 
 			edit: function(id) {

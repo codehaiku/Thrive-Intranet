@@ -34,6 +34,10 @@ var __ThriveProjectRoute = Backbone.Router.extend({
     add: function() {
         this.view.switchView(null, '#thrive-project-add-new-context');
         $('#thrive-project-add-new').css('display', 'block');
+        
+        if ( tinymce.editors.thriveTaskDescription ) {
+            tinymce.editors.thriveTaskDescription.setContent('');
+        }
     },
     completed_tasks: function() {
 
@@ -43,7 +47,14 @@ var __ThriveProjectRoute = Backbone.Router.extend({
         this.view.render();
     },
     edit: function(task_id) {
+        
         this.view.showEditForm(task_id);
+
+        $('#thrive-edit-task-message').html('');
+
+        if ( tinymce.editors.thriveTaskEditDescription ) {
+            tinymce.editors.thriveTaskEditDescription.setContent('');
+        }
     },
     next: function(page) {
         this.model.page = page;

@@ -886,3 +886,33 @@
     float: right;
     margin: 0;
 }
+
+.thrive-notifier {
+    display: block;
+}
+    .thrive-notifier p {
+        background: #FFFDE7;
+        color: #000;
+        padding: 10px 15px;
+        display: block;
+    }
+        .thrive-notifier p a {
+            text-decoration: underline;
+        }
+
+        .thrive-notifier p.success {
+            background: #689F38;
+            color: #fff;
+        }
+
+            .thrive-notifier p.success a {
+                color: #fff;
+            }
+
+        .thrive-notifier p.error {
+            background: #BF360C;
+            color: rgba(255, 255, 255, 0.870588);
+        }
+            .thrive-notifier p.error a {
+                rgba(255, 255, 255, 0.870588);
+            }
