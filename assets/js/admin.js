@@ -108,9 +108,16 @@ jQuery(document).ready( function($) {
 
 			var taskDescription = "";
 
-			// Check if tinymce detected our taskDescription object.
-			if ( tinymce.editors.thriveTaskDescription ) {
-				taskDescription = tinymce.editors.thriveTaskDescription.getContent();		
+			var MCEthriveTaskDescription = tinymce.get( 'thriveTaskDescription' );
+
+			if ( MCEthriveTaskDescription ) {
+
+				taskDescription = MCEthriveTaskDescription.getContent();
+
+			} else {
+
+				taskDescription = $('#thriveTaskDescription').val();
+
 			}
 
 			$.ajax( {
@@ -185,12 +192,6 @@ jQuery(document).ready( function($) {
 			
 			renderEditForm: function( task_id ) {
 
-				var thriveTinyMceEditor = tinyMCE.get("thriveTaskEditDescription");
-
-				if ( thriveTinyMceEditor ) {
-					thriveTinyMceEditor.setContent('');
-				}
-
 				$('#thrive-edit-task-list').removeClass('hidden');
 				$('.thrive-tab-item-content').removeClass('active');
 				$('#thrive-edit-task').addClass('active');
@@ -198,6 +199,15 @@ jQuery(document).ready( function($) {
 				$('#thrive-task-edit-select-id').attr('disabled', true);
 
 				$('#thriveTaskId').val(task_id);
+
+				var initThriveTaskEditDescription = tinymce.get('thriveTaskEditDescription');
+
+				// Reset the editor
+				if ( initThriveTaskEditDescription ) {
+					initThriveTaskEditDescription.setContent('');
+				} else {
+					$('#thriveTaskEditDescription').val('');
+				}
 
 				$.ajax({
 					url: ajaxurl,
@@ -213,15 +223,17 @@ jQuery(document).ready( function($) {
 
 						var response = JSON.parse(__response);
 						
-						if (response.message === "success") {
+						if ( response.message === "success" ) {
 							
 							$('#thriveTaskEditTitle').val(response.task.title).removeAttr('disabled');
+
 							$('#thrive-task-edit-select-id').val(response.task.priority).removeAttr('disabled');
 
-							if ( thriveTinyMceEditor ) {
-								thriveTinyMceEditor.setContent( response.task.description );
+							var thriveTaskEditDescription = tinymce.get('thriveTaskEditDescription');
+							if ( thriveTaskEditDescription ) {
+								thriveTaskEditDescription.setContent( response.task.description );
 							} else {
-								console.log('There was an error loading tinyMCE');
+								$('#thriveTaskEditDescription').val( response.task.description );
 							}
 
 						}
@@ -595,9 +607,20 @@ jQuery(document).ready( function($) {
 			},
 
 			add: function() {
+				
 				this.view.switchView(null, '#thrive-task-add-tab');
 				ThriveModel.renderAddForm();
-				tinymce.editors.thriveTaskDescription.setContent('');
+				
+				var MCEthriveTaskDescription = tinymce.get( 'thriveTaskDescription' );
+
+					if ( MCEthriveTaskDescription ) {
+						MCEthriveTaskDescription.setContent('');
+					} else {
+						$('#thriveTaskDescription').text('');
+					}
+
+				return;
+
 			},
 
 			edit: function(id) {

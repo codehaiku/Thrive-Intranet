@@ -135,6 +135,14 @@ var __ThriveProjectView = Backbone.View.extend({
         this.progress(true);
         var __this = this;
 
+        var __taskEditor = tinymce.get('thriveTaskEditDescription');
+
+        if ( __taskEditor ) {
+            __taskEditor.setContent( '' );
+        } else {
+            $( '#thriveTaskEditDescription' ).val( '' );
+        }
+
         $('.thrive-project-tab-content-item').removeClass('active');
         $('.thrive-project-tab-li-item').removeClass('active');
         $('a#thrive-project-edit-tab').css('display', 'block').parent().addClass('active');
@@ -147,20 +155,33 @@ var __ThriveProjectView = Backbone.View.extend({
         this.model.id = task_id;
 
         // Render the task.
-        this.renderTask(function(httpResponse) {
+        this.renderTask( function( httpResponse ) {
 
-            __this.progress(false);
+            __this.progress( false );
 
-            var response = JSON.parse(httpResponse);
+            var response = JSON.parse( httpResponse );
 
-            if (response.task) {
+            if ( response.task ) {
+                
                 var task = response.task;
+
+                var taskEditor = tinymce.get('thriveTaskEditDescription');
+
                 $('#thriveTaskId').val(task.id).removeAttr("disabled");
                 $('#thriveTaskEditTitle').val(task.title).removeAttr("disabled");
-                tinymce.editors.thriveTaskEditDescription.setContent(task.description);
-                $("#thrive-task-edit-select-id").val(task.priority).change().removeAttr("disabled");
+                
+                if ( taskEditor ) {
+                    taskEditor.setContent( task.description );
+                } else {
+                    $( '#thriveTaskEditDescription' ).val( task.description );
+                }
+
+                $( "#thrive-task-edit-select-id" ).val( task.priority ).change().removeAttr("disabled");
+
             }
+
             return;
+            
         });
 
     },
@@ -320,14 +341,8 @@ var __ThriveProjectRoute = Backbone.Router.extend({
         this.view.render();
     },
     edit: function(task_id) {
-        
         this.view.showEditForm(task_id);
-
         $('#thrive-edit-task-message').html('');
-
-        if ( tinymce.editors.thriveTaskEditDescription ) {
-            tinymce.editors.thriveTaskEditDescription.setContent('');
-        }
     },
     next: function(page) {
         this.model.page = page;
@@ -367,18 +382,32 @@ $('#thrive-submit-btn').click(function(e) {
     element.attr('disabled', true);
     element.text('Loading ...');
 
+    var taskDescription = "";
+    var __taskEditor = tinymce.get( 'thriveTaskDescription' );
+
+    if ( __taskEditor ) {
+       taskDescription =  __taskEditor.getContent();
+    } else {
+       taskDescription = $( '#thriveTaskDescription' ).val();
+    }
+
     $.ajax({
         url: ajaxurl,
         data: {
+            
             action: 'thrive_transactions_request',
             method: 'thrive_transaction_add_ticket',
+            
+            description: taskDescription,
+            
             title: $('#thriveTaskTitle').val(),
-            description: tinymce.editors.thriveTaskDescription.getContent(),
             milestone_id: $('#thriveTaskMilestone').val(),
-            project_id: thriveTaskConfig.currentProjectId,
-            user_id: thriveTaskConfig.currentUserId,
             priority: $('#thrive-task-priority-select').val(),
-            nonce: thriveProjectSettings.nonce
+
+            nonce: thriveProjectSettings.nonce,
+
+            project_id: thriveTaskConfig.currentProjectId,
+            user_id: thriveTaskConfig.currentUserId
         },
 
         method: 'post',
@@ -437,20 +466,34 @@ $('#thrive-edit-btn').click(function(e) {
     element.attr('disabled', true);
     element.text('Loading ...');
 
+    var taskDescription = "";
+    var taskDescriptionObject = tinymce.get( 'thriveTaskEditDescription' );
+
+    if ( taskDescriptionObject ) {
+        taskDescription = taskDescriptionObject.getContent();
+    } else {
+        taskDescription = $('#thriveTaskEditDescription').val();
+    }
+
     $.ajax({
+
         url: ajaxurl,
         data: {
-            action: 'thrive_transactions_request',
-            method: 'thrive_transaction_edit_ticket',
-            title: $('#thriveTaskEditTitle').val(),
-            description: tinymce.editors.thriveTaskEditDescription.getContent(),
-            milestone_id: $('#thriveTaskMilestone').val(),
-            id: $('#thriveTaskId').val(),
+
+            description: taskDescription,
+            nonce: thriveProjectSettings.nonce,
             project_id: thriveTaskConfig.currentProjectId,
             user_id: thriveTaskConfig.currentUserId,
-            priority: $('#thrive-task-edit-select-id').val(),
-            nonce: thriveProjectSettings.nonce
-        },
+
+            action: 'thrive_transactions_request',
+            method: 'thrive_transaction_edit_ticket',
+
+            title: $('#thriveTaskEditTitle').val(),
+            milestone_id: $('#thriveTaskMilestone').val(),
+            id: $('#thriveTaskId').val(),
+            priority: $('select[name="thrive-task-edit-priority"]').val()
+
+        }, 
 
         method: 'post',
 
@@ -465,7 +508,7 @@ $('#thrive-edit-btn').click(function(e) {
                 message = "<p class='error'>There was an error updating the task. All fields are required.</a></p>";
 
             }
-
+ 
             $('#thrive-edit-task-message').html(message).show();
 
             element.attr('disabled', false);
@@ -689,13 +732,27 @@ $('body').on('click', '#thriveUpdateProjectBtn', function() {
 
     var element = $(this);
 
+    var projectContent = "";
+
+    var __projectContentObj = tinymce.get( 'thriveProjectContent' );
+
+        if ( __projectContentObj ) {
+
+            projectContent = __projectContentObj.getContent();
+
+        } else {
+
+            projectContent = $('#thriveProjectContent').val();
+
+        }
+
     var __http_params = {
         action: 'thrive_transactions_request',
         method: 'thrive_transactions_update_project',
-        id: parseInt($('#thrive-project-id').val()),
-        title: $('#thrive-project-name').val(),
-        content: tinymce.editors.thriveProjectContent.getContent(),
-        group_id: parseInt($('#thrive-project-assigned-group').val()),
+        id: parseInt( $('#thrive-project-id').val() ),
+        title: $( '#thrive-project-name' ).val(),
+        content: projectContent,
+        group_id: parseInt( $('select[name=thrive-project-assigned-group]').val() ),
         nonce: thriveProjectSettings.nonce
     };
 

@@ -114,6 +114,14 @@ var __ThriveProjectView = Backbone.View.extend({
         this.progress(true);
         var __this = this;
 
+        var __taskEditor = tinymce.get('thriveTaskEditDescription');
+
+        if ( __taskEditor ) {
+            __taskEditor.setContent( '' );
+        } else {
+            $( '#thriveTaskEditDescription' ).val( '' );
+        }
+
         $('.thrive-project-tab-content-item').removeClass('active');
         $('.thrive-project-tab-li-item').removeClass('active');
         $('a#thrive-project-edit-tab').css('display', 'block').parent().addClass('active');
@@ -126,20 +134,33 @@ var __ThriveProjectView = Backbone.View.extend({
         this.model.id = task_id;
 
         // Render the task.
-        this.renderTask(function(httpResponse) {
+        this.renderTask( function( httpResponse ) {
 
-            __this.progress(false);
+            __this.progress( false );
 
-            var response = JSON.parse(httpResponse);
+            var response = JSON.parse( httpResponse );
 
-            if (response.task) {
+            if ( response.task ) {
+                
                 var task = response.task;
+
+                var taskEditor = tinymce.get('thriveTaskEditDescription');
+
                 $('#thriveTaskId').val(task.id).removeAttr("disabled");
                 $('#thriveTaskEditTitle').val(task.title).removeAttr("disabled");
-                tinymce.editors.thriveTaskEditDescription.setContent(task.description);
-                $("#thrive-task-edit-select-id").val(task.priority).change().removeAttr("disabled");
+                
+                if ( taskEditor ) {
+                    taskEditor.setContent( task.description );
+                } else {
+                    $( '#thriveTaskEditDescription' ).val( task.description );
+                }
+
+                $( "#thrive-task-edit-select-id" ).val( task.priority ).change().removeAttr("disabled");
+
             }
+
             return;
+            
         });
 
     },

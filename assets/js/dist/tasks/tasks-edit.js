@@ -7,20 +7,34 @@ $('#thrive-edit-btn').click(function(e) {
     element.attr('disabled', true);
     element.text('Loading ...');
 
+    var taskDescription = "";
+    var taskDescriptionObject = tinymce.get( 'thriveTaskEditDescription' );
+
+    if ( taskDescriptionObject ) {
+        taskDescription = taskDescriptionObject.getContent();
+    } else {
+        taskDescription = $('#thriveTaskEditDescription').val();
+    }
+
     $.ajax({
+
         url: ajaxurl,
         data: {
-            action: 'thrive_transactions_request',
-            method: 'thrive_transaction_edit_ticket',
-            title: $('#thriveTaskEditTitle').val(),
-            description: tinymce.editors.thriveTaskEditDescription.getContent(),
-            milestone_id: $('#thriveTaskMilestone').val(),
-            id: $('#thriveTaskId').val(),
+
+            description: taskDescription,
+            nonce: thriveProjectSettings.nonce,
             project_id: thriveTaskConfig.currentProjectId,
             user_id: thriveTaskConfig.currentUserId,
-            priority: $('#thrive-task-edit-select-id').val(),
-            nonce: thriveProjectSettings.nonce
-        },
+
+            action: 'thrive_transactions_request',
+            method: 'thrive_transaction_edit_ticket',
+
+            title: $('#thriveTaskEditTitle').val(),
+            milestone_id: $('#thriveTaskMilestone').val(),
+            id: $('#thriveTaskId').val(),
+            priority: $('select[name="thrive-task-edit-priority"]').val()
+
+        }, 
 
         method: 'post',
 
@@ -35,7 +49,7 @@ $('#thrive-edit-btn').click(function(e) {
                 message = "<p class='error'>There was an error updating the task. All fields are required.</a></p>";
 
             }
-
+ 
             $('#thrive-edit-task-message').html(message).show();
 
             element.attr('disabled', false);

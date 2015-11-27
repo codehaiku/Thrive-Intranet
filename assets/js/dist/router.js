@@ -47,14 +47,8 @@ var __ThriveProjectRoute = Backbone.Router.extend({
         this.view.render();
     },
     edit: function(task_id) {
-        
         this.view.showEditForm(task_id);
-
         $('#thrive-edit-task-message').html('');
-
-        if ( tinymce.editors.thriveTaskEditDescription ) {
-            tinymce.editors.thriveTaskEditDescription.setContent('');
-        }
     },
     next: function(page) {
         this.model.page = page;

@@ -7,18 +7,32 @@ $('#thrive-submit-btn').click(function(e) {
     element.attr('disabled', true);
     element.text('Loading ...');
 
+    var taskDescription = "";
+    var __taskEditor = tinymce.get( 'thriveTaskDescription' );
+
+    if ( __taskEditor ) {
+       taskDescription =  __taskEditor.getContent();
+    } else {
+       taskDescription = $( '#thriveTaskDescription' ).val();
+    }
+
     $.ajax({
         url: ajaxurl,
         data: {
+            
             action: 'thrive_transactions_request',
             method: 'thrive_transaction_add_ticket',
+            
+            description: taskDescription,
+            
             title: $('#thriveTaskTitle').val(),
-            description: tinymce.editors.thriveTaskDescription.getContent(),
             milestone_id: $('#thriveTaskMilestone').val(),
-            project_id: thriveTaskConfig.currentProjectId,
-            user_id: thriveTaskConfig.currentUserId,
             priority: $('#thrive-task-priority-select').val(),
-            nonce: thriveProjectSettings.nonce
+
+            nonce: thriveProjectSettings.nonce,
+
+            project_id: thriveTaskConfig.currentProjectId,
+            user_id: thriveTaskConfig.currentUserId
         },
 
         method: 'post',

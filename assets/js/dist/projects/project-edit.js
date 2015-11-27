@@ -3,13 +3,27 @@ $('body').on('click', '#thriveUpdateProjectBtn', function() {
 
     var element = $(this);
 
+    var projectContent = "";
+
+    var __projectContentObj = tinymce.get( 'thriveProjectContent' );
+
+        if ( __projectContentObj ) {
+
+            projectContent = __projectContentObj.getContent();
+
+        } else {
+
+            projectContent = $('#thriveProjectContent').val();
+
+        }
+
     var __http_params = {
         action: 'thrive_transactions_request',
         method: 'thrive_transactions_update_project',
-        id: parseInt($('#thrive-project-id').val()),
-        title: $('#thrive-project-name').val(),
-        content: tinymce.editors.thriveProjectContent.getContent(),
-        group_id: parseInt($('#thrive-project-assigned-group').val()),
+        id: parseInt( $('#thrive-project-id').val() ),
+        title: $( '#thrive-project-name' ).val(),
+        content: projectContent,
+        group_id: parseInt( $('select[name=thrive-project-assigned-group]').val() ),
         nonce: thriveProjectSettings.nonce
     };
 

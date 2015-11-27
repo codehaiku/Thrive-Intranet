@@ -599,9 +599,23 @@ function thrive_project_settings() {
 	return;
 }
 
+function thrive_get_config_base_prefix() {
+	
+	global $wpdb;
+
+	if ( is_multisite() ) 
+	{
+		return	$wpdb->base_prefix;
+	}
+
+	return $wpdb->prefix;
+}
+
 function thrive_get_current_user_groups() {
 
 	global $wpdb;
+
+	$prefix = thrive_get_config_base_prefix();
 
 	$current_user_id = intval( get_current_user_id() );
 
@@ -609,8 +623,8 @@ function thrive_get_current_user_groups() {
 		return array();
 	}
 
-	$bp_groups = $wpdb->prefix . 'bp_groups';
-	$bp_group_members = $wpdb->prefix . 'bp_groups_members';
+	$bp_groups = $prefix . 'bp_groups';
+	$bp_group_members = $prefix . 'bp_groups_members';
 
 	$stmt = sprintf( "SELECT {$bp_group_members}.group_id, {$bp_groups}.name 
 			FROM {$bp_group_members }
