@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) { die(); }
  * @param  array $atts shortcode callback attributes
  * @return string 	output_buffer
  */
-function thrive_wp_login($atts) {
+function thrive_wp_login( $atts ) {
 
 	// begin output buffering
 	ob_start();
@@ -80,13 +80,19 @@ function thrive_wp_login($atts) {
 			}
 		}
 	}
-		echo $error_login_message;
-		echo '<div class="mg-top-35 mg-bottom-35">';
-				wp_login_form( $args );
-		echo '</div>';
 
-		// finally, collect all the buffered output
-		return ob_get_clean();
+	if ( isset( $_GET['_redirected'] ) ) {
+		$error_login_message = '<div id="message" class="error">'.__( 'Only registered users are allowed to view the page.', 'thrive' ).'</div>';
+	}
+		
+	echo $error_login_message;
+
+	echo '<div class="mg-top-35 mg-bottom-35">';
+			wp_login_form( $args );
+	echo '</div>';
+
+	return ob_get_clean();
+
 }
 
 add_action( 'login_form_middle', 'thrive_add_lost_password_link' );
