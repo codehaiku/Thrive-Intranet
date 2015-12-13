@@ -27,7 +27,9 @@ $thrive_publitize_web = intval( get_option( 'thrive_is_public' ) );
 
 if ( $thrive_publitize_web !== 1 ) {
 
-	add_action( 'wp', 'thrive_redirect_pages_except' );
+	add_action( 'wp', 'thrive_redirect_to_login' );
+
+	return;
 
 }
 
@@ -37,31 +39,40 @@ if ( $thrive_publitize_web !== 1 ) {
  *
  * @return void
  */
-function thrive_redirect_pages_except() {
+function thrive_redirect_to_login() {
 
 	global $post;
 
 	$login_page_id = intval( get_option( 'thrive_login_page' ) );
 
-		$excluded_page = thrive_get_excluded_page_id_collection();
+	$excluded_page = thrive_get_excluded_page_id_collection();
 
-		$redirect_page = thrive_get_redirect_page_url();
+	// Already escaped inside 'thrive_get_redirect_page_url'.
+	$redirect_page = thrive_get_redirect_page_url();
 
 	if ( empty( $redirect_page ) ) { return; }
 
-	if ( empty( $post ) ) { return; }
+	// In case their is no post ID assign a 0 value to
+	// $post->ID. This pages applies to custom WordPress pages
+	// like BuddyPress Members and Groups.
+	if ( empty( $post ) ) 
+	{
+		$post = new stdclass;
+		$post->ID = 0;
+	}
 
-	// check if current page is locked down or not
-		$current_page_id = intval( $post->ID );
+	// Check if current page is locked down or not.
+	$current_page_id = intval( $post->ID );
 
+	// Only execute the script for non-loggedin visitors.
 	if ( ! is_user_logged_in() ) {
 
 		if ( $current_page_id !== $login_page_id ) {
 
 			if ( ! in_array( $current_page_id, $excluded_page ) ) {
 
-				wp_safe_redirect( $redirect_page );
-
+				wp_safe_redirect ( add_query_arg(array('_redirected'=>'yes'), $redirect_page ) );
+				
 				die();
 
 			}
@@ -71,6 +82,7 @@ function thrive_redirect_pages_except() {
 	}
 
 	return;
+
 }
 
 /**
