@@ -1,13 +1,11 @@
 jQuery(document).ready( function($) {
 	
 	'use strict';
-	$(window).load(function(){
 
+	$( window ).load( function() {
 
 		if ( typeof thriveAjaxUrl === 'undefined' ) {
-			
 			return;
-
 		}
 
 		var ajaxurl = thriveAjaxUrl;
@@ -24,30 +22,72 @@ jQuery(document).ready( function($) {
 				element.text('Removing Ticket ...');
 				element.parent().parent().parent().parent().remove();
 
+				$.ajax({
+					url: ajaxurl,
+					method: 'post',
+					data: {
+						id: element.attr('data-ticket-id'),
+						action: 'thrive_transactions_request',
+						method: 'thrive_transaction_delete_ticket',
+						nonce: thriveProjectSettings.nonce
+					},
+					success: function(response) {
+						
+					},
+					error: function(error_response, error_message) {
+						console.log('Error:' + error_message);
+					}
+				});
+
+			return;	
+		});
+
+		/**
+		 * Delete Event
+		 */
+		$('#thrive-delete-btn').click(function(e){
+			
+			e.preventDefault();
+
+			var verify_delete = confirm('Are you sure you want to delete this task?');
+
+			if ( ! verify_delete ) {
+				return;
+			}
+
+			var element = $(this);
+			var task_id = $('#thriveTaskId').val();
+			var http_params = {
+				id: task_id,
+				action: 'thrive_transactions_request',
+				method: 'thrive_transaction_delete_ticket',
+				nonce: thriveProjectSettings.nonce
+			};
+
+			element.attr('disabled', true).text('Deleting Task...');
+
 			$.ajax({
 				url: ajaxurl,
 				method: 'post',
-				data: {
-					id: element.attr('data-ticket-id'),
-					action: 'thrive_transactions_request',
-					method: 'thrive_transaction_delete_ticket',
-					nonce: thriveProjectSettings.nonce
-				},
-				success: function(response) {
-					
+				data: http_params,
+				success: function( response ) {
+					element.attr('false', true).text('Delete');
+					location.href = '#tasks';
 				},
 				error: function(error_response, error_message) {
-					console.log('Error:' + error_message);
+					element.attr('false', true).text('Delete');
+					location.href = '#tasks';
 				}
 			});
 
-			return;	
+			return;
 		});
 
 		/**
 		 * Edit Event
 		 */
 		$('#thrive-edit-btn').click(function(e){
+
 			e.preventDefault();
 
 			var element = $(this);
@@ -56,9 +96,16 @@ jQuery(document).ready( function($) {
 
 			var taskDescription = "";
 
-			// Check if tinymce detected our thriveTaskEditDescription object.
-			if ( tinymce.editors.thriveTaskEditDescription ) {
-				taskDescription = tinymce.editors.thriveTaskEditDescription.getContent();		
+			var MCEthriveTaskDescription = tinymce.get( 'thriveTaskEditDescription' );
+
+			if ( MCEthriveTaskDescription ) {
+
+				taskDescription = MCEthriveTaskDescription.getContent();
+
+			} else {
+
+				taskDescription = $('#thriveTaskEditDescription').val();
+
 			}
 
 			$.ajax({
@@ -79,18 +126,40 @@ jQuery(document).ready( function($) {
 				
 				method: 'post',
 
-				success: function(message) {
-					$('#thrive-edit-task-message').text('Task successfully updated').show();
-					setTimeout(function(){
-						$('#thrive-edit-task-message').text('').hide();
-					}, 3000);
+				success: function( __response ) {
 					
-					element.attr('disabled', false);
+					var response = JSON.parse( __response );
+
+					if ( "fail" === response.message && "no_changes" !== response.type ) {
+
+						$('#thrive-edit-task-message').addClass('error').text('There was an error updating the task').show();
+
+					} else {
+
+						$('#thrive-edit-task-message').removeClass('error').text('Task successfully updated').show();
+
+					}
+
+					setTimeout( function() {
+						$('#thrive-edit-task-message').removeClass('error').text('').hide();
+					}, 5000);
 					
-					element.text('Update Task');
+					element.attr('disabled', false).text('Update Task');
+
+					return;
+
 				},
 				error: function() {
 
+					$('#thrive-edit-task-message').addClass('error').text('Ops! Network Error. Please try again later').show();
+
+					setTimeout( function() {
+						$('#thrive-edit-task-message').removeClass('error').text('').hide();
+					}, 5000);
+
+					element.attr('disabled', false).text('Update Task');
+
+					return;
 				}
 			});
 		});
@@ -138,7 +207,7 @@ jQuery(document).ready( function($) {
 
 				method: 'post',
 				success: function(__message) {
-					console.log(this.data);
+
 					var message = JSON.parse(__message);
 
 					if (message.message === 'success') {
@@ -525,7 +594,7 @@ jQuery(document).ready( function($) {
 		var ThriveTaskView = new __ThriveTaskView();
 		
 		/**
-		 * Edit Event
+		 * Thrive Router
 		 */
 		var __ThriveRouter = Backbone.Router.extend({
 
