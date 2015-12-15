@@ -796,8 +796,8 @@
 
 .thrive-project-meta .task-progress-task-count-wrap {
     position: absolute;
-      right: 30px;
-  top: -40px;
+    top: -40px;
+    min-width: 100px;
 }
 .thrive-project-meta .task-progress-bar {
   background: #E0E0E0;
@@ -825,13 +825,15 @@
   margin-bottom: -6px;
   padding: 0 5px;
   box-shadow: 1px 0px 0px 0px #538D4D;
-  min-width: 20%;
 }
 
 .task-progress-percentage-label {
-    float: right;
     padding-right: 15px;
     font-size: 12px;
+}
+.task-progress-percentage-label > span {
+    min-width: 80px;
+    display: block; 
 }
 /**
  * Modal
