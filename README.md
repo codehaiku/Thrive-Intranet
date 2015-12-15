@@ -1,4 +1,4 @@
-~Current Version:1.6.0~
+~Current Version:1.6.1~
 
 # Thrive-Intranet
 
