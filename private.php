@@ -28,10 +28,8 @@ $thrive_publitize_web = intval( get_option( 'thrive_is_public' ) );
 if ( $thrive_publitize_web !== 1 ) {
 
 	add_action( 'wp', 'thrive_redirect_to_login' );
-	
+
 }
-
-
 
 /**
  * Redirects all the pages except for few selected pages inside
