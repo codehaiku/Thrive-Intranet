@@ -4,7 +4,6 @@ add_action( 'admin_head',      		 'thrive_admin_stylesheet' );
 add_action( 'admin_print_scripts',   'thrive_admin_scripts' );
 add_action( 'wp_enqueue_scripts',    'thrive_register_scripts' );
 add_action( 'wp_footer', 			 'thrive_register_config' );
-
 // Disable login modals introduced in WordPress 3.6
 remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
 
@@ -29,6 +28,10 @@ function thrive_admin_scripts() {
 
 	global $post;
 
+	if ( empty( $post) ) {
+		return;
+	}
+	
 	if ( "project" === $post->post_type ) {
 
 		wp_enqueue_script( 'backbone' );
