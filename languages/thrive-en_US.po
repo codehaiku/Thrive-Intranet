@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thrive Intranet l10n\n"
 "POT-Creation-Date: 2015-12-23 16:03+0800\n"
-"PO-Revision-Date: 2015-12-23 16:53+0800\n"
+"PO-Revision-Date: 2015-12-23 17:14+0800\n"
 "Last-Translator: \n"
 "Language-Team: Dunhakdis <codehaiku.io@gmail.com>\n"
 "Language: English\n"
@@ -432,7 +432,7 @@ msgstr ""
 
 #: ../templates/project.php:79
 msgid "Task(s) Completed"
-msgstr "Kompletong Tasks"
+msgstr ""
 
 #: ../templates/task-add.php:14 ../templates/task-edit.php:7
 msgid "Enter the title of this task. Max 160 characters"
