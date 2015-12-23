@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Thrive - Intranet
  * Description: A helper plugin for 'Thrive WordPress Theme'. Contains all the functions for project management, private pages access, etc.
- * Version: 1.6.2
+ * Version: 1.6.4
  * Author: Dunhakdis
  * Author URI: http://dunhakdis.me
  * Text Domain: thrive
@@ -28,6 +28,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'THRIVE_PROJECT_LIMIT', 10 );
 define( 'THRIVE_PROJECT_SLUG', 'project' );
 
+/**
+ * Localize the plugin
+ * 
+ * @return void
+ */
+add_action( 'plugins_loaded', 'thrive_localize_plugin' );
+
+function thrive_localize_plugin() {
+
+	$rel_path = basename( dirname( __FILE__ ) ) . '/languages';
+
+    load_plugin_textdomain( 'thrive', FALSE, $rel_path );
+
+    return;
+}
+
 require_once plugin_dir_path( __FILE__ ) . 'shortcodes.php';
 require_once plugin_dir_path( __FILE__ ) . 'functions.php';
 require_once plugin_dir_path( __FILE__ ) . 'private.php';
@@ -44,7 +60,6 @@ add_action( 'init', 'thrive_register_transactions' );
 
 // Include thrive projects component.
 add_action( 'bp_loaded', 'thrive_register_projects_component' );
-
 
 /**
  * Register our transactions
@@ -67,6 +82,7 @@ function thrive_register_projects_component() {
 				 '/includes/project-component.php';
 	return;
 }
+
 
 /**
  * Enable GitHub Updater Class
