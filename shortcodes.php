@@ -82,7 +82,7 @@ function thrive_wp_login( $atts ) {
 	}
 
 	if ( isset( $_GET['_redirected'] ) ) {
-		$error_login_message = '<div id="message" class="error">'.__( 'Only registered users are allowed to view the page.', 'thrive' ).'</div>';
+		$error_login_message = '<div id="message" class="success">'.__( 'Oops! Looks like you need to login in order to view the page.', 'thrive' ).'</div>';
 	}
 		
 	echo $error_login_message;
@@ -108,7 +108,9 @@ function thrive_add_lost_password_link() {
  * @return  void
  */
 function thrive_register_shortcode() {
+	
 	add_shortcode( 'thrive_login', 'thrive_wp_login' );
+
 	return;
 }
 
