@@ -48,7 +48,24 @@ function thrive_redirect_to_login() {
 	// Already escaped inside 'thrive_get_redirect_page_url'.
 	$redirect_page = thrive_get_redirect_page_url();
 
-	if ( empty( $redirect_page ) ) { return; }
+	// Check if redirect page is empty or not.
+	if ( empty( $redirect_page ) ) { 
+		return; 
+	}
+
+	// Check if buddypress activate page.
+	if ( function_exists( 'bp_is_activation_page' ) ) {
+		if ( bp_is_activation_page() ) {
+			return;
+		}
+	}
+
+	// Check if buddypress registration page.
+	if ( function_exists('bp_is_register_page')) {
+		if ( bp_is_register_page() ) {
+			return;
+		}
+	}
 
 	// In case their is no post ID assign a 0 value to
 	// $post->ID. This pages applies to custom WordPress pages
