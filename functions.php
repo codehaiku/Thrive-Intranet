@@ -27,19 +27,30 @@ function thrive_redirect_login() {
 	// Bypass lost password 
 	$is_lost_password = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
 
+	// Bypass lost password link.
 	if ( $is_lost_password ) {
-
 		return;
-		
+	}
+
+	// Check if buddypress activate page.
+	if ( function_exists( 'bp_is_activation_page' ) ) {
+		if ( bp_is_activation_page() ) {
+			return;
+		}
+	}
+
+	// Check if buddypress registration page.
+	if ( function_exists('bp_is_register_page')) {
+		if ( bp_is_register_page() ) {
+			return;
+		}
 	}
 
 	if ( $no_redirect ) {
-
 		return;
-
 	}
 
-	// Store for checking if this page equals wp-login.php
+	// Store for checking if this page equals wp-login.php.
 	$curr_paged = basename( $_SERVER['REQUEST_URI'] );
 
 	// Set the default to our login page
