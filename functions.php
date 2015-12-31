@@ -32,6 +32,24 @@ function thrive_redirect_login() {
 	// Bypass wp-login.php?action=*
 	$has_action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
 
+	$has_error = filter_input( INPUT_GET, 'error', FILTER_SANITIZE_STRING );
+	$has_type = filter_input( INPUT_GET, 'type', FILTER_SANITIZE_STRING );
+
+	// Set the default to our login page
+	$redirect_page = thrive_get_redirect_page_url();
+
+	if ( $has_error && $has_type ) {
+
+		$redirect_to = add_query_arg( array(
+				'login' => 'failed',
+				'type' => $has_type
+			), $redirect_page );
+
+		wp_safe_redirect( esc_url_raw( $redirect_to ) );
+
+		die();
+	}
+
 	// Bypass wp-login.php?action=* link.
 	if ( $has_action ) {
 		return;
@@ -58,9 +76,6 @@ function thrive_redirect_login() {
 
 	// Store for checking if this page equals wp-login.php.
 	$curr_paged = basename( $_SERVER['REQUEST_URI'] );
-
-	// Set the default to our login page
-	$redirect_page = thrive_get_redirect_page_url();
 
 	if ( empty( $redirect_page ) ) {
 
@@ -205,6 +220,8 @@ function thrive_redirect_login_handle_failure( $user ) {
 			), $custom_sign_in_page_url );
 
 	  		wp_safe_redirect( esc_url_raw( $permalink ) );
+
+	  		die();
 
 	    } else {
 
