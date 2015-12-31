@@ -35,6 +35,8 @@ if ( $thrive_publitize_web !== 1 ) {
  * Redirects all the pages except for few selected pages inside
  * the reading settings
  *
+ * (Front-end General)
+ *
  * @return void
  */
 function thrive_redirect_to_login() {
@@ -45,8 +47,10 @@ function thrive_redirect_to_login() {
 
 	$excluded_page = thrive_get_excluded_page_id_collection();
 
+
 	// Already escaped inside 'thrive_get_redirect_page_url'.
 	$redirect_page = thrive_get_redirect_page_url();
+
 
 	// Check if redirect page is empty or not.
 	if ( empty( $redirect_page ) ) { 
@@ -67,6 +71,7 @@ function thrive_redirect_to_login() {
 		}
 	}
 
+
 	// In case their is no post ID assign a 0 value to
 	// $post->ID. This pages applies to custom WordPress pages
 	// like BuddyPress Members and Groups.
@@ -79,6 +84,17 @@ function thrive_redirect_to_login() {
 	// Check if current page is locked down or not.
 	$current_page_id = intval( $post->ID );
 
+	// Check if $current_page_id && $selected_blog_id is equal to each other
+	// If that's the case, get the page ID instead of global $post->ID that returns
+	// the ID of the first post object inside the loop
+	$blog_id = intval( get_option('page_for_posts') );
+
+	if ( is_home() ) {
+		if ( $blog_id === $login_page_id ) {
+			$current_page_id = $blog_id;
+		}
+	}
+	
 	// Only execute the script for non-loggedin visitors.
 	if ( ! is_user_logged_in() ) {
 
@@ -209,11 +225,11 @@ function thrive_is_public_form() {
 	return;
 }
 
-	/**
-	 * Callback function for 'thrive_login_page' setting
-	 *
-	 * @return void
-	 */
+/**
+ * Callback function for 'thrive_login_page' setting
+ *
+ * @return void
+ */
 function thrive_login_page_form() {
 
 	$thrive_login_page_id = intval( get_option( 'thrive_login_page' ) );
