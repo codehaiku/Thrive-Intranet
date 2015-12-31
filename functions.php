@@ -21,14 +21,23 @@ add_action( 'wp_login_failed', 'thrive_redirect_login_handle_failure' );
  */
 function thrive_redirect_login() {
 
-	// Bypass login if specified
+	// Only run this function when on wp-login.php 
+	if ( ! in_array( $GLOBALS['pagenow'], array( 'wp-login.php' ) ) ) {
+		return;
+	}
+
+	// Bypass login if specified.
 	$no_redirect = filter_input( INPUT_GET, 'no_redirect', FILTER_VALIDATE_BOOLEAN );
 
-	// Bypass lost password 
-	$is_lost_password = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+	// Bypass wp-login.php?action=*
+	$has_action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
 
-	// Bypass lost password link.
-	if ( $is_lost_password ) {
+	// Bypass wp-login.php?action=* link.
+	if ( $has_action ) {
+		return;
+	}
+
+	if ( $no_redirect ) {
 		return;
 	}
 
@@ -46,9 +55,6 @@ function thrive_redirect_login() {
 		}
 	}
 
-	if ( $no_redirect ) {
-		return;
-	}
 
 	// Store for checking if this page equals wp-login.php.
 	$curr_paged = basename( $_SERVER['REQUEST_URI'] );
