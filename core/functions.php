@@ -753,6 +753,7 @@ function thrive_project_user( $user_id = 0, $post_id = 0 ) {
 	?>
 	
 	<?php if ( $post_id === 0 ) { return; } ?>
+	
 	<?php if ( $user_id === 0 ) { return; } ?>
 
 	<?php // Project User ?>
@@ -774,9 +775,13 @@ function thrive_project_user( $user_id = 0, $post_id = 0 ) {
 	<?php _e( 'under &raquo;' ); ?>
 
 	<?php $group_id = absint( get_post_meta( $post_id, 'thrive_project_group_id', true ) ); ?>
-
-	<?php $group = groups_get_group( array( 'group_id' => $group_id ) ); ?>
-
+	
+	<?php if ( function_exists( 'groups_get_group ') ) { ?>
+	
+		<?php $group = groups_get_group( array( 'group_id' => $group_id ) ); ?>
+	
+	<?php } ?>
+	
 	<a href="<?php echo esc_url( bp_get_group_permalink( $group ) ); ?>" title="<?php echo esc_attr( $group->name ); ?>">
 
 		<?php echo bp_core_fetch_avatar( array( 'object' => 'group', 'item_id' => $group_id ) ) ?>
