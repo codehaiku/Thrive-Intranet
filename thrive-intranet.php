@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Thrive - Intranet
  * Description: A helper plugin for 'Thrive WordPress Theme'. Contains all the functions for project management, private pages access, etc.
- * Version: 1.6.5
+ * Version: 1.6.6
  * Author: Dunhakdis
  * Author URI: http://dunhakdis.me
  * Text Domain: thrive
