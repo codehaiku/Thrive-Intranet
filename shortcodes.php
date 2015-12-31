@@ -49,6 +49,7 @@ function thrive_wp_login( $atts ) {
 	);
 
 	$error_login_message = '';
+	$message_types = array();
 
 	if ( isset( $_GET['login'] ) ) {
 
@@ -56,23 +57,45 @@ function thrive_wp_login( $atts ) {
 
 			if ( isset( $_GET['type'] ) ) {
 
-				if ( $_GET['type'] === '__blank' ) {
+				$message_types = array(
 
-					$error_login_message = '<div id="message" class="error">'.__( 'Required: Username and Password cannot not be empty.', 'thrive' ).'</div>';
+					'default' => array(
+							'message' => __('Error: There was an error trying to sign-in to your account. Make sure your credentials are correct', 'thrive')
+						),
+					'__blank' => array(
+							'message' => __( 'Required: Username and Password cannot not be empty.', 'thrive' )
+						),
+					'__userempty' => array(
+							'message' => __( 'Required: Username cannot not be empty.', 'thrive' )
+						),
+					'__passempty' => array(
+							'message' => __( 'Required: Password cannot not be empty.', 'thrive' )
+						),
+					'fb_invalid_email' => array(
+							'message' => __( 'Facebook email is invalid or is not verified.', 'thrive' )
+						),
+					'fb_error' => array(
+							'message' => __( 'Facebook Application Error. Misconfig or App is rejected.', 'thrive' )
+						),
+					'app_not_live' => array(
+							'message' => __( 'Unable to fetch your Facebook profile.', 'thrive' )
+						),
+					'gears_username_or_email_exists' => array(
+							'message' => __('Username or e-mail already exists', 'thrive')
+						),
+					'gp_error_authentication' => array(
+							'message' => __( 'Google Plus Authentication Error. Invalid Client ID or Secret.', 'thrive' )
+						)
+				);
+				
+				$message = $message_types['default']['message'];
 
-				} elseif ( $_GET['type'] === '__userempty' ) {
-
-					$error_login_message = '<div id="message" class="error">'.__( 'Required: Username cannot not be empty.', 'thrive' ).'</div>';
-
-				} elseif ( $_GET['type'] === '__passempty' ) {
-
-					$error_login_message = '<div id="message" class="error">'.__( 'Required: Password cannot not be empty.', 'thrive' ).'</div>';
-
-				} else {
-
-					$error_login_message = '<div id="message" class="error">'.__( 'Error: There was an error trying to sign-in to your account. Make sure your credentials are correct.', 'thrive' ).'</div>';
-
+				if ( array_key_exists ( $_GET['type'], $message_types ) ) {
+					$message = $message_types[ $_GET['type'] ]['message'];
 				}
+
+				$error_login_message = '<div id="message" class="error">'. esc_html( $message ) .'</div>';
+
 			} else {
 
 				$error_login_message = '<div id="message" class="error">'.__( 'Error: Invalid username and password combination.', 'thrive' ).'</div>';
