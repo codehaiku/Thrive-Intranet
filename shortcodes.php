@@ -91,7 +91,9 @@ function thrive_wp_login( $atts ) {
 				$message = $message_types['default']['message'];
 
 				if ( array_key_exists ( $_GET['type'], $message_types ) ) {
+
 					$message = $message_types[ $_GET['type'] ]['message'];
+
 				}
 
 				$error_login_message = '<div id="message" class="error">'. esc_html( $message ) .'</div>';
@@ -108,13 +110,37 @@ function thrive_wp_login( $atts ) {
 		$error_login_message = '<div id="message" class="success">'.__( 'Oops! Looks like you need to login in order to view the page.', 'thrive' ).'</div>';
 	}
 		
-	echo $error_login_message;
-
-	echo '<div class="mg-top-35 mg-bottom-35">';
-		echo do_action( 'gears_login_form' );
-			wp_login_form( $args );
-	echo '</div>';
-
+	?>
+	<div class="mg-top-35 mg-bottom-35 thrive-login-form">
+		<div class="thrive-login-form-form">
+			<div class="thrive-login-form__actions">
+				<h3>
+					<?php _e('Account Sign-in', 'thrive'); ?>
+				</h3>	
+				<?php do_action( 'gears_login_form' ); ?>
+			</div>
+			<div class="thrive-login-form-message">
+				<?php echo $error_login_message; ?>
+			</div>
+			<div class="thrive-login-form__form">
+				<?php echo wp_login_form( $args ); ?>
+			</div>
+		</div>
+	</div>
+	<script>
+	jQuery(document).ready(function($){
+		"use strict";
+		$('.thrive-login-form__form p > input').focusin(function(){
+			$(this).prev('label').addClass('inactive');
+		}).focusout(function(){
+			if ( $(this).val().length < 1 ) {
+				$(this).prev('label').removeClass('inactive');
+			} 
+		});
+	});
+	</script>
+	<?php
+			
 	return ob_get_clean();
 
 }
